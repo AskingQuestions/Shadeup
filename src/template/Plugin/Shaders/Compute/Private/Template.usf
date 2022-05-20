@@ -1,0 +1,7 @@
+#include "/Engine/Public/Platform.ush"
+
+${
+instance.parameters.map(p => `${p.hlslType} ${p.name};`).join('\n')
+}
+
+${instance.shader()}

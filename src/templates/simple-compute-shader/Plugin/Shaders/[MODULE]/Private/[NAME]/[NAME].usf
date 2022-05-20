@@ -1,0 +1,47 @@
+#include "/Engine/Public/Platform.ush"
+
+${instance.example == "pi" ? `
+// Calculate π using the monte carlo method
+// https://en.wikipedia.org/wiki/Monte_Carlo_method
+
+// Output has 1 element: [numInCircle]
+RWBuffer<uint> Output;
+
+// Seed the random number generator
+float Seed = 0.0f;
+
+float random( float2 p )
+{
+    float2 r = float2(
+        23.14069263277926,
+         2.665144142690225
+    );
+    return frac( cos( dot(p,r) ) * 12345.6789 );
+}
+
+[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
+void ${this.answers.name}(
+	uint3 DispatchThreadId : SV_DispatchThreadID,
+	uint GroupIndex : SV_GroupIndex )
+{
+	float2 RandomPosition = float2(
+		random(float2(GroupIndex * THREADS_X + DispatchThreadId.x, 10 + Seed)),
+		random(float2(GroupIndex * THREADS_X + DispatchThreadId.x, 20 * Seed))
+	);
+	float Dist = length(RandomPosition);
+
+	if (Dist < 1.0f) {
+		uint Dummy;
+		InterlockedAdd(Output[0], 1, Dummy);
+	}
+}
+` : ""}
+${instance.example == "" ? `
+[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
+void ${this.answers.name}(
+	uint3 DispatchThreadId : SV_DispatchThreadID,
+	uint GroupIndex : SV_GroupIndex )
+{
+	// Code here
+}
+` : ""}

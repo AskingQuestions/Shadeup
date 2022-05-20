@@ -1,0 +1,114 @@
+#define x 1
+
+namespace MyCustom;
+
+pixel MyShader(
+	in float2 uv : TEXCOORD0,
+	out float4 OutColor : SV_Target0,
+	Texture2D<float3> InputTexture
+) {
+	OutColor = float4(1,1,1,1);
+}
+
+struct MyStruct {
+	Body = {
+		float3 Position;
+		float3 Velocity;
+		float3 Force;
+	}
+
+	Shader = {
+		float2 uv;
+		float4 Color;
+	}
+}
+
+node TerraOutput {
+	DisplayName = "Terra Output";
+	FunctionName = "GetTerraMaterialOutput";
+	
+	Inputs = [
+		{
+			Name = "Height";
+			Components = 1;
+			Exposed = 1;
+			Order = 0;
+			Default = 0.f;
+		}
+	];
+}
+
+shared Utils {
+	Shader = {
+		float3 GetTerraMaterialOutput(float Height) {
+			return float3(0,0,0);
+		}
+	}
+}
+
+compute RenderFromMaterial {
+	Material
+
+	Permutations = [
+		{
+			Type = int
+			Name = "OUTPUT_INDEX"
+			Range = 2
+		}
+	]
+
+	Defines = [
+		THREADGROUPSIZE_X = 32
+	]
+
+	bool PermutationFilter(const FMaterialShaderPermutationParameters& Parameters) {
+		const bool bIsCompatible =
+			Parameters.MaterialParameters.MaterialDomain == MD_Surface
+			&& Parameters.MaterialParameters.BlendMode == BLEND_Opaque
+			&& Parameters.MaterialParameters.ShadingModels == MSM_DefaultLit
+			&& Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh;
+
+		return bIsCompatible;
+	}
+
+	Parameters = [
+		{
+			Name = "CellSize"
+			Type = float3
+		}
+	]
+
+	Shader = {
+		float3 Noise(float2 pos) {
+			return float3(0,0,0);
+		}
+
+		void Main(in ThreadId : uint3, out float4 color) {
+			color = float4(Noise(float2(0,0)), 1);
+		}
+	}
+}
+
+compute RenderFromMaterialNormals : RenderFromMaterial {
+	Parameters += [
+		{
+			Name = "BaseNormal";
+			Type = float3;
+		}
+	];
+}
+
+singleton MyRunner {
+	void Render(float dt) {
+		// Simple dispatch
+		RenderFromMaterial::Dispatch(1, 1, 1);
+
+		// Advanced dispatch
+		auto params = RenderFromMaterial::Prepare();
+		params.SetParameter("CellSize", float3(1,1,1));
+		params.SetPermutation("OUTPUT_INDEX", 1);
+		params.UseMaterial(MaterialRenderProxy);
+
+		params.Dispatch(1, 1, 1);
+	}
+}

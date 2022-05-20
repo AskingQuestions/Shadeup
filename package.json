@@ -1,0 +1,23 @@
+{
+  "name": "shadeup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx nearleyc ./src/grammar.ne -o ./build/grammar.js",
+    "parse": "npm run build && node test.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "node cli.js"
+  },
+  "bin": {
+    "shadeup": "./cli.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "commander": "^9.2.0",
+    "inquirer": "^8.2.4",
+    "nearley": "^2.20.1"
+  }
+}
