@@ -55,8 +55,8 @@ public:
 	void Bind(const FShaderParameterMap& ParameterMap)
 	{
 		// TODO
-		// InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
-		// LodViewOriginParameter.Bind(ParameterMap, TEXT("LodViewOrigin"));
+		InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
+		LodViewOriginParameter.Bind(ParameterMap, TEXT("LodViewOrigin"));
 		// LodDistancesParameter.Bind(ParameterMap, TEXT("LodDistances"));
 	}
 
@@ -71,20 +71,20 @@ public:
 		class FMeshDrawSingleShaderBindings& ShaderBindings,
 		FVertexInputStreamArray& VertexStreams) const
 	{
-		F${NAME}VertexFactory* VertexFactory = (F${NAME}*)InVertexFactory;
+		F${NAME}VertexFactory* VertexFactory = (F${NAME}VertexFactory*)InVertexFactory;
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<F${NAME}Parameters>(), VertexFactory->UniformBuffer);
 
 		F${NAME}UserData* UserData = (F${NAME}UserData*)BatchElement.UserData;
 		// TODO
-		// ShaderBindings.Add(InstanceBufferParameter, UserData->InstanceBufferSRV);
-		// ShaderBindings.Add(LodViewOriginParameter, UserData->LodViewOrigin);
+		ShaderBindings.Add(InstanceBufferParameter, UserData->InstanceBufferSRV);
+		ShaderBindings.Add(LodViewOriginParameter, UserData->LodViewOrigin);
 		// ShaderBindings.Add(LodDistancesParameter, UserData->LodDistances);
 	}
 
 protected:
 	// TODO
-	// LAYOUT_FIELD(FShaderResourceParameter, InstanceBufferParameter);
-	// LAYOUT_FIELD(FShaderParameter, LodViewOriginParameter);
+	LAYOUT_FIELD(FShaderResourceParameter, InstanceBufferParameter);
+	LAYOUT_FIELD(FShaderParameter, LodViewOriginParameter);
 	// LAYOUT_FIELD(FShaderParameter, LodDistancesParameter);
 };
 
@@ -146,7 +146,7 @@ bool F${NAME}VertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderP
 		return false;
 	}
 	// TODO
-	return (Parameters.MaterialParameters.MaterialDomain == MD_Surface && Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh) || Parameters.MaterialParameters.bIsSpecialEngineMaterial;
+	return (Parameters.MaterialParameters.MaterialDomain == MD_Surface && Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh);
 }
 
 void F${NAME}VertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)

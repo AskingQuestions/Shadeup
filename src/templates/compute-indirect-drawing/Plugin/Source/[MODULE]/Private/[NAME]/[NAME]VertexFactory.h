@@ -25,7 +25,7 @@ typedef TUniformBufferRef<F${NAME}Parameters> F${NAME}BufferRef;
  */
 struct F${NAME}UserData : public FOneFrameResource
 {
-	// FRHIShaderResourceView* InstanceBufferSRV;
+	FRHIShaderResourceView* InstanceBufferSRV;
 	FVector3f LodViewOrigin;
 };
 
@@ -52,7 +52,7 @@ class F${NAME}VertexFactory : public FVertexFactory
 	DECLARE_VERTEX_FACTORY_TYPE(F${NAME});
 
 public:
-	F${NAME}VertexFactory(ERHIFeatureLevel::Type InFeatureLevel, const ${NAME}Parameters& InParams);
+	F${NAME}VertexFactory(ERHIFeatureLevel::Type InFeatureLevel, const F${NAME}Parameters& InParams);
 
 	~F${NAME}VertexFactory();
 

@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 // Adapted from the VirtualHeightfieldMesh plugin
 
-#include "${NAME}Component.h"
+#include "${MODULE_NAME}/Public/${NAME}/${NAME}Component.h"
 
 #include "Engine/World.h"
 #include "${NAME}SceneProxy.h"
@@ -18,7 +18,7 @@ U${NAME}Component::U${NAME}Component(const FObjectInitializer& ObjectInitializer
 #if WITH_EDITORONLY_DATA
 	bEnableAutoLODGeneration = false;
 #endif
-	Mobility = EComponentMobility::Dynamic;
+	Mobility = EComponentMobility::Static;
 }
 
 void U${NAME}Component::OnRegister()
@@ -44,7 +44,7 @@ bool U${NAME}Component::IsVisible() const
 
 FBoxSphereBounds U${NAME}Component::CalcBounds(const FTransform& LocalToWorld) const
 {
-	return FBoxSphereBounds(FBox(FVector(0.f, 0.f, 0.f), FVector(1.f, 1.f, 1.f))).TransformBy(LocalToWorld);
+	return FBoxSphereBounds(FBox(FVector(0.f, 0.f, 0.f), FVector(10000.f))).TransformBy(LocalToWorld);
 }
 
 FPrimitiveSceneProxy* U${NAME}Component::CreateSceneProxy()

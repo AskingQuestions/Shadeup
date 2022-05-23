@@ -171,6 +171,19 @@ class ComputeIndirectDrawing extends Template {
 		]);
 		this.answers = answers;
 	}
+
+	async generate() {
+		this.example = "";
+		this.material = false;
+		this.ShaderBase = this.material ? "Material" : "Global";
+		await this.directory(
+			path.join(__dirname, "../templates/compute-indirect-drawing/Plugin"),
+			this.plugin.dir,
+			this.answers.name,
+			this.module.name,
+			this
+		);
+	}
 }
 
 class CustomProxy extends Template {
@@ -210,9 +223,9 @@ class MaterialNodeOutput extends Template {
 }
 
 module.exports = [
+	ComputeIndirectDrawing,
 	SimpleCompute,
 	ComputeRenderTarget,
-	ComputeIndirectDrawing,
 	CustomProxy,
 	MaterialNodeOutput
 ];

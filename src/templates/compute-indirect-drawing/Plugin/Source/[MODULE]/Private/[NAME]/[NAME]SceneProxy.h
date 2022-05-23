@@ -34,9 +34,9 @@ protected:
 	virtual void CreateRenderThreadResources() override;
 	virtual void DestroyRenderThreadResources() override;
 	virtual void OnTransformChanged() override;
-	virtual bool HasSubprimitiveOcclusionQueries() const override;
-	virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override;
-	virtual void AcceptOcclusionResults(const FSceneView* View, TArray<bool>* Results, int32 ResultsStart, int32 NumResults) override;
+	// virtual bool HasSubprimitiveOcclusionQueries() const override;
+	// virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override;
+	// virtual void AcceptOcclusionResults(const FSceneView* View, TArray<bool>* Results, int32 ResultsStart, int32 NumResults) override;
 	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override;
 	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;
 	//~ End FPrimitiveSceneProxy Interface
@@ -52,5 +52,5 @@ public:
 
 	bool bCallbackRegistered;
 
-	class ${NAME}VertexFactory* VertexFactory;
+	class F${NAME}VertexFactory* VertexFactory;
 };

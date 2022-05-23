@@ -3,9 +3,10 @@
 
 #include "/Engine/Private/VertexFactoryCommon.ush"
 #include "/Engine/Private/VirtualTextureCommon.ush"
+#include "${NAME}.ush"
 
-// StructuredBuffer<QuadRenderInstance> InstanceBuffer;
-// float3 LodViewOrigin;
+StructuredBuffer<QuadRenderInstance> InstanceBuffer;
+float3 LodViewOrigin;
 // float4 LodDistances;
 
 /** Per-vertex inputs. No vertex buffers are bound. */
@@ -47,13 +48,14 @@ FVertexFactoryIntermediates GetVertexFactoryIntermediates(FVertexFactoryInput In
 	FVertexFactoryIntermediates Intermediates;
 	Intermediates.SceneData = VF_GPUSCENE_GET_INTERMEDIATES(Input);
 
-	// const QuadRenderInstance Item = InstanceBuffer[Input.InstanceId];
-	const uint2 Pos = uint2(0, 0);
-	const uint Level = 0;
+	const QuadRenderInstance Item = InstanceBuffer[Input.InstanceId];
+	uint2 VertexCoord = uint2(Input.VertexId % 2, Input.VertexId / 2);
+	const uint2 Pos = VertexCoord * 1000.f;
+	const uint Level = UnpackLevel(Item);
+	
 	
 	const float3 LocalUVTransform = float3(0.0f, 0.0f, 0.0f);
 
-	uint2 VertexCoord = uint2(Input.VertexId % 2, Input.VertexId / 2);
 	float2 LocalUV = (float2)VertexCoord / (float)(2 - 1);
 
 	// Calculate vertex UV details before morphing
@@ -62,10 +64,11 @@ FVertexFactoryIntermediates GetVertexFactoryIntermediates(FVertexFactoryInput In
 	float SampleLevel = Level;
 
 	// Position in space of virtual texture volume
-	// Intermediates.VTPos = float3(NormalizedPos, Height);
+	// Intermediates.VTPos = float3(0, 0, 0);
 
 	// Position in local space
-	// Intermediates.LocalPos = mul(float4(Intermediates.VTPos, 1), VHM.VirtualHeightfieldToLocal).xyz;
+	Intermediates.LocalPos = float3(Pos, Input.InstanceId * 100.f);//mul(float4(Intermediates.VTPos, 1), VHM.VirtualHeightfieldToLocal).xyz;
+	Intermediates.LocalPos /= ((float) (Level + 1));
 	
 	Intermediates.LocalUV = NormalizedPos;
 

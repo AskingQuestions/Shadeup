@@ -34,6 +34,7 @@ Texture2D<float> OcclusionTexture;
 int OcclusionLevelOffset;
 
 uint MaxLevel;
+#define MaxLevelLocal 6
 uint NumForceLoadLods;
 uint PageTableFeedbackId;
 uint NumPhysicalAddressBits;
@@ -81,7 +82,7 @@ void InitBuffersCS()
 	RWQueueInfo[0].Write = 1;
 	RWQueueInfo[0].NumActive = 1;
 
-	RWQueueBuffer[0] = Pack(InitQuadItem(0, MaxLevel));
+	RWQueueBuffer[0] = Pack(InitQuadItem(0, 12));
 
 	// CullInstances indirect args
 	RWIndirectArgsBuffer[0] = 0; // Increment this wave counter during CollectQuadsCS.
@@ -133,7 +134,7 @@ void CollectQuadsCS(
 			uint Level = Item.Level;
 			
 			// Check if frustum culled
-			bool bCull = !PlaneTestAABB(FrustumPlanes, UVCenter, UVExtent);
+			bool bCull = false; //!PlaneTestAABB(FrustumPlanes, float2(0.5, 0.5), float2(1, 1));
 
 			bool bSubdivide = false;
 			if (bCull)
@@ -144,21 +145,21 @@ void CollectQuadsCS(
 			else if (Level > 0)
 			{
 				// Subdivide if minimum continuous lod can be less than the current level.
-				bSubdivide = MinDistanceLod - MinMaxLodBias.y < (float)Level;
+				bSubdivide = true;
 			}
 
 			if (bSubdivide)
 			{
-				// // Add children to queue.
-				// uint Write;
-				// InterlockedAdd(RWQueueInfo[0].Write, 4, Write);
+				// Add children to queue.
+				uint Write;
+				InterlockedAdd(RWQueueInfo[0].Write, 4, Write);
 
-				// RWQueueBuffer[(Write + 0) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 0, Level - 1));
-				// RWQueueBuffer[(Write + 1) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 1, Level - 1));
-				// RWQueueBuffer[(Write + 2) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 2, Level - 1));
-				// RWQueueBuffer[(Write + 3) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 3, Level - 1));
+				RWQueueBuffer[(Write + 0) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 0, Level - 1));
+				RWQueueBuffer[(Write + 1) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 1, Level - 1));
+				RWQueueBuffer[(Write + 2) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 2, Level - 1));
+				RWQueueBuffer[(Write + 3) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 3, Level - 1));
 
-				// InterlockedAdd(RWQueueInfo[0].NumActive, 4, NumActive);
+				InterlockedAdd(RWQueueInfo[0].NumActive, 4, NumActive);
 			}
 			else
 			{
@@ -166,29 +167,7 @@ void CollectQuadsCS(
 				InterlockedAdd(RWIndirectArgsBuffer[3], 1, Write);
 				InterlockedMax(RWIndirectArgsBuffer[0], ((Write + 1) + 63) / 64);
 
-				RWQuadBuffer[Write] = Pack(InitQuadRenderItem(Pos, Level, PhysicalAddress, bCull || bOcclude));
-
-				// Add all possible pages that vertex shader might read to the virtual texture feedback buffer.
-				int MinFeedbackLevel = (int)floor(clamp(MinDistanceLod - MinMaxLodBias.y, Level, MaxLevel));
-				int MaxFeedbackLevel = (int)ceil(clamp(MaxDistanceLod - MinMaxLodBias.x, Level, MaxLevel));
-				uint NumFeedbackItems = (uint)max(MaxFeedbackLevel - MinFeedbackLevel + 1, 0);
-
-				uint FeedbackPos;
-				InterlockedAdd(RWFeedbackBuffer[0], NumFeedbackItems, FeedbackPos);
-				
-				for (int FeedbackLevel = MinFeedbackLevel; FeedbackLevel <= MaxFeedbackLevel; ++FeedbackLevel)
-				{
-					// Note that our general virtual texture feedback buffer convention is to write Level+1
-					uint LevelPlusOne = FeedbackLevel + 1;
-					uint LodShift = FeedbackLevel - Level;
-					RWFeedbackBuffer[FeedbackPos + FeedbackLevel] = (Pos.x >> LodShift) | ((Pos.y >> LodShift) << 12) | (LevelPlusOne << 24) | PageTableFeedbackId;
-				}
-
-				// Debug draw the bounds.
-				if (!(bCull || bOcclude))
-				{
-					DebugDrawUVBox(UVMin, UVMax, UVToWorld, float4(1, 0, 0, 1));
-				}
+				RWQuadBuffer[Write] = Pack(InitQuadRenderItem(Pos, Level, 0, bCull));
 			}
 		}
 
@@ -228,41 +207,12 @@ void CullInstancesCS( uint3 DispatchThreadId : SV_DispatchThreadID )
 
 	uint2 PackedItem = QuadBuffer[QuadIndex];
 	QuadRenderItem Item = UnpackQuadRenderItem(PackedItem);
-	uint2 Pos = Item.Pos;
-	uint Level = Item.Level;
-
-#if REUSE_CULL
-	// Reuse main view culling flag set in the Collect pass.
-	bool bCull = Item.bCull;
-#else
-	// Cull against planes for this view.
-	float2 Scale = (float)(1u << Level) * PageTableSize.zw;
-	float2 UV0 = ((float2)Pos + float2(0, 0)) * Scale;
-	float2 UV1 = ((float2)Pos + float2(1, 1)) * Scale;
-
-	float MinMaxTextureLevel = max((float)Level + (float)MinMaxLevelOffset, 0);
-	float2 MinMaxHeight = UnPackMinMaxHeight(HeightMinMaxTexture.SampleLevel(MinMaxTextureSampler, UV0, MinMaxTextureLevel));
-
-	float3 UVMin = float3(UV0, MinMaxHeight.x);
-	float3 UVMax = float3(UV1, MinMaxHeight.y);
-
-	float3 UVCenter = (UVMax + UVMin) * 0.5f;
-	float3 UVExtent = UVMax - UVCenter;
-
-	bool bCull = !PlaneTestAABB(FrustumPlanes, UVCenter, UVExtent);
-#endif
-
-	if (!bCull)
-	{
-		// Add to final render intance list.
-		QuadRenderInstance OutInstance;
-		OutInstance.PosLevelPacked = Pos.x | (Pos.y << 12) | (Level << 24);
-
-		// Unpack physical address for first sample into full LocalToPhysicalUV here ready for use by vertex shader. 
-		OutInstance.UVTransform.xyz = GetVirtualToPhysicalUVTransform(Pos, Level, Item.PhysicalAddress, PhysicalPageTransform, NumPhysicalAddressBits);
-
-		uint Write;
-		InterlockedAdd(RWIndirectArgsBuffer[1], 1, Write);
-		RWInstanceBuffer[Write] = OutInstance;
-	}
+	
+	// Add to final render intance list.
+	QuadRenderInstance OutInstance;
+	OutInstance.UVTransform = float3(0, 0, 0);
+	OutInstance.PosLevelPacked = 0;
+	uint Write;
+	InterlockedAdd(RWIndirectArgsBuffer[1], 1, Write);
+	RWInstanceBuffer[Write] = OutInstance;
 }
