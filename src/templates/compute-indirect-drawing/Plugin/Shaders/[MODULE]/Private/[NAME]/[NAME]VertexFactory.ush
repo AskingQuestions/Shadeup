@@ -51,7 +51,7 @@ FVertexFactoryIntermediates GetVertexFactoryIntermediates(FVertexFactoryInput In
 	const QuadRenderInstance Item = InstanceBuffer[Input.InstanceId];
 	uint2 VertexCoord = uint2(Input.VertexId % 2, Input.VertexId / 2);
 	const uint2 Pos = VertexCoord * 1000.f;
-	const uint Level = UnpackLevel(Item);
+	const uint Level = 0; //UnpackLevel(Item);
 	
 	
 	const float3 LocalUVTransform = float3(0.0f, 0.0f, 0.0f);

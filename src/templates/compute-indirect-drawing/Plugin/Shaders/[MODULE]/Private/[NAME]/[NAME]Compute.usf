@@ -145,7 +145,7 @@ void CollectQuadsCS(
 			else if (Level > 0)
 			{
 				// Subdivide if minimum continuous lod can be less than the current level.
-				bSubdivide = true;
+				// bSubdivide = true;
 			}
 
 			if (bSubdivide)
