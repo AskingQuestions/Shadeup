@@ -75,12 +75,21 @@ async function IQPluginFolder(file) {
 	}else{
 		let project = await IQProjectFolder();
 		if (project) {
+			let pluginsDir = path.join(project.dir, "Plugins");
+			if (!fs.existsSync(pluginsDir)) {
+				console.log("Missing plugins folder. Creating one...".yellow);
+				fs.mkdirSync(pluginsDir);
+			}
+			let pluginsList = fs.readdirSync(path.join(project.dir, "Plugins")).filter(f => !f.startsWith("."));
+			if (pluginsList.length == 0) {
+				throw new Error("No plugins found in this project. Please create one via the Unreal Editor".yellow);
+			}
 			let answers = await inquirer.prompt([
 				{
 					type: "list",
 					name: "plugin",
 					message: "Which plugin do you want to use. (To create a new one use the unreal engine editor)",
-					choices: fs.readdirSync(path.join(project.dir, "Plugins")).filter(f => !f.startsWith(".")),
+					choices: pluginsList,
 				}
 			]);
 			process.chdir(path.join(project.dir, "Plugins", answers.plugin));
@@ -125,6 +134,8 @@ async function CreateModule(plugin, name) {
 	fs.mkdirSync(path.join(dir, "Shaders"), { recursive: true });
 	fs.mkdirSync(path.join(dir, "Shaders", name, ""), { recursive: true });
 	fs.writeFileSync(path.join(dir, "Source", name, name + ".Build.cs"), fs.readFileSync(path.join(__dirname, "./src/template/Template.Build.cs"), "utf8").replace(/\$\{MODULE_NAME\}/gm, name));
+	fs.writeFileSync(path.join(dir, "Source", name, "Private", name + ".cpp"), fs.readFileSync(path.join(__dirname, "./src/template/ModulePrivate.cpp"), "utf8").replace(/\$\{MODULE_NAME\}/gm, name).replace(/\$\{PLUGIN_NAME\}/gm, plugin.name));
+	fs.writeFileSync(path.join(dir, "Source", name, "Public", name + ".h"), fs.readFileSync(path.join(__dirname, "./src/template/ModulePublic.h"), "utf8").replace(/\$\{MODULE_NAME\}/gm, name));
 
 	return path.join(dir, "Source", name);
 }
@@ -153,7 +164,7 @@ async function IQModuleFolder(file) {
 				{
 					type: "list",
 					name: "module",
-					message: "Which module do you want to use",
+					message: "Which module do you want to use (Warning: Don't use the default module for shaders, it will cause errors, please create one instead).",
 					choices: [
 						...fs.readdirSync(path.join(plugin.dir, "Source")).filter(f => !f.startsWith(".")),
 						"Create New"

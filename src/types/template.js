@@ -56,7 +56,7 @@ class Template {
 			d = d.replace(/\[MODULE\]/g, module_name);
 			let full = path.join(to, d);
 			if (!fs.existsSync(full)) {
-				fs.mkdirSync(full);
+				fs.mkdirSync(full, { recursive: true });
 			}
 		}
 
