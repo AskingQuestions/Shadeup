@@ -1,4 +1,4 @@
-class ParsedValue {
+export default class ParsedValue {
 	constructor(file, data) {
 		this.file = file;
 		this.data = data;
@@ -64,5 +64,3 @@ class ParsedValue {
 		return t;
 	}
 }
-
-module.exports = ParsedValue;

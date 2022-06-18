@@ -1,10 +1,14 @@
-const fs = require("fs");
-const path = require("path");
-const UTIL = require("../util.js");
+import fs from "fs";
+import path from "path";
+import UTIL from "../util.js";
 
-const ParsedValue = require("./value.js");
+import ParsedValue from "./value.js";
 
-class BaseGenerator {
+import * as url from 'url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+export default class BaseGenerator {
 	constructor(file, data) {
 		this.file = file;
 		this.data = data;
@@ -207,5 +211,3 @@ ${generated}`;
 		});
 	}
 }
-
-module.exports = BaseGenerator;

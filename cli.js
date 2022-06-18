@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-const colors = require("colors");
-const path = require("path");
-const fs = require("fs");
-const inquirer = require("inquirer");
+import colors from "colors";
+import path from "path";
+import fs from "fs";
+import inquirer from "inquirer";
+import boxen from "boxen";
 
-const templates = require("./src/types/template.js");
+import templates from "./src/types/template.js";
 
-const { program } = require("commander");
+import { program } from "commander";
 
-const { parse } = require("./src/parse.js");
+import { parse } from "./src/parse.js";
 
 function FindPluginData(file) {
 	let files = fs.readdirSync(file);
@@ -88,7 +89,7 @@ async function IQPluginFolder(file) {
 				{
 					type: "list",
 					name: "plugin",
-					message: "Which plugin do you want to use. (To create a new one use the unreal engine editor)",
+					message: "Which plugin do you want to use (To create a new one use the unreal engine editor)",
 					choices: pluginsList,
 				}
 			]);
@@ -164,7 +165,7 @@ async function IQModuleFolder(file) {
 				{
 					type: "list",
 					name: "module",
-					message: "Which module do you want to use (Warning: Don't use the default module for shaders, it will cause errors, please create one instead).",
+					message: "Which module do you want to use (Warning: Don't use the default module for shaders, it will cause errors, please create a new one instead)",
 					choices: [
 						...fs.readdirSync(path.join(plugin.dir, "Source")).filter(f => !f.startsWith(".")),
 						"Create New"
@@ -216,8 +217,31 @@ program
 			]);
 
 			let inst = new templateMap[answers.Template](project, plugin, module);
+			let examps = templateMap[answers.Template].examples();
+			let exampleAns = await inquirer.prompt([
+				{
+					type: "list",
+					name: "Example",
+					choices: examps.map(e => ({name: `${e[1]} ` + `(${e[2]})`.grey, value: e[0]})),
+				}
+			]);
+
+			inst.example = exampleAns.Example;
+
 			await inst.prompt(inquirer);
-			await inst.generate();
+			let mdFile = await inst.generate();
+
+			console.log("Done".green);
+			console.log("");
+			console.log(boxen(
+				mdFile.grey,
+				{padding: 1, borderColor: "green", textAlignment: "center", borderStyle: "round", title: "Next Step", titleAlignment: "center"}));
+
+			console.log(boxen(
+				"https://docs.unrealengine.com/5.0/en-US/render-dependency-graph-in-unreal-engine/".grey
+				+ "\n"
+				+ "https://docs.unrealengine.com/5.0/en-US/mesh-drawing-pipeline-in-unreal-engine/".grey,
+				{padding: 1, borderColor: "blue", textAlignment: "center", borderStyle: "round", title: "Useful Reading", titleAlignment: "center"}));
 		}catch (e) {
 			console.error(e);
 		}

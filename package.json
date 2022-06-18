@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "npx nearleyc ./src/grammar.ne -o ./build/grammar.js",
     "parse": "npm run build && node test.js",
@@ -15,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "boxen": "^7.0.0",
     "colors": "^1.4.0",
     "commander": "^9.2.0",
     "inquirer": "^8.2.4",

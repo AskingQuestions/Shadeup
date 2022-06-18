@@ -1,15 +1,23 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
-const ParsedValue = require("./types/value.js");
+import ParsedValue from "./types/value.js";
+
+import Compute from "./types/compute.js";
+import Actor from "./types/actor.js";
+import Factory from "./types/factory.js";
+
+import * as url from 'url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const Types = {
-	compute: require("./types/compute.js"),
-	actor: require("./types/actor.js"),
-	factory: require("./types/factory.js"),
+	compute: Compute,
+	actor: Actor,
+	factory: Factory,
 };
 
-class ParsedFile {
+export class ParsedFile {
 	constructor(file, data, lines) {
 		this.file = file;
 		this.data = data;
@@ -123,5 +131,3 @@ class ParsedFile {
 		}
 	}
 }
-
-module.exports = ParsedFile;

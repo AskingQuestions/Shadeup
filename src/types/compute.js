@@ -1,7 +1,7 @@
-const ShaderGenerator = require("./shader.js");
-const ParsedValue = require("./value.js");
+import ShaderGenerator from "./shader.js";
+import ParsedValue from "./value.js";
 
-class ComputeGenerator extends ShaderGenerator {
+export default class ComputeGenerator extends ShaderGenerator {
 	verify() {
 		super.verify();
 		// console.log([...this.properties.entries()].map(e => `${e[0]} = ${JSON.stringify(e[1].flatten())}`));
@@ -46,5 +46,3 @@ class ComputeGenerator extends ShaderGenerator {
 		return super.shader().replace("void " + this.name, `[numthreads(${this.threadCounts.join(", ")})]\nvoid ` + this.name)
 	}
 }
-
-module.exports = ComputeGenerator;

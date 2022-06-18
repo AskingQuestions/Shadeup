@@ -311,6 +311,16 @@ void F${NAME}SceneProxy::GetDynamicMeshElements(const TArray<const FSceneView*>&
 {
 	check(IsInRenderingThread());
 
+	if (GMySimpleComputeShaderRendererExtension.IsInFrame())
+	{
+		// Can't add new work while bInFrame.
+		// In UE5 we need to AddWork()/SubmitWork() in two phases: InitViews() and InitViewsAfterPrepass()
+		// The main renderer hooks for that don't exist in UE5.0 and are only added in UE5.1
+		// That means that for UE5.0 we always hit this for shadow drawing and shadows will not be rendered.
+		// Not earlying out here can lead to crashes from buffers being released too soon.
+		return;
+	}
+
 	for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
 	{
 		if (VisibilityMap & (1 << ViewIndex))

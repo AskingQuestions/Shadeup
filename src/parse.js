@@ -1,11 +1,9 @@
-const nearley = require("nearley");
-const grammar = require("../build/grammar.js");
-const fs = require("fs");
-const ParsedFile = require("./file.js");
+import nearley from "nearley";
+import grammar from "../build/grammar.js";
+import fs from "fs";
+import { ParsedFile } from "./file.js";
 
-
-module.exports = {
-	parse: function(file) {
+export function parse(file) {
 		const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 		
 		let f;
@@ -37,5 +35,4 @@ module.exports = {
 		}
 
 		return new ParsedFile(file, parser.results[0], lines);
-	}
-};
+}

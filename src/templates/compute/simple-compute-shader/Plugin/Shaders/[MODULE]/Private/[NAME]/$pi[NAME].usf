@@ -1,6 +1,5 @@
 #include "/Engine/Public/Platform.ush"
 
-${instance.example == "pi" ? `
 // Calculate π using the monte carlo method
 // https://en.wikipedia.org/wiki/Monte_Carlo_method
 
@@ -35,13 +34,3 @@ void ${this.answers.name}(
 		InterlockedAdd(Output[0], 1, Dummy);
 	}
 }
-` : ""}
-${instance.example == "" ? `
-[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
-void ${this.answers.name}(
-	uint3 DispatchThreadId : SV_DispatchThreadID,
-	uint GroupIndex : SV_GroupIndex )
-{
-	// Code here
-}
-` : ""}

@@ -1,7 +1,7 @@
-const ShaderGenerator = require("./shader.js");
-const ParsedValue = require("./value.js");
+import ShaderGenerator from "./shader.js";
+import ParsedValue from "./value.js";
 
-class FactoryGenerator extends ShaderGenerator {
+export default class FactoryGenerator extends ShaderGenerator {
 	verify() {
 		super.verify();
 
@@ -41,5 +41,3 @@ class FactoryGenerator extends ShaderGenerator {
 		return super.shader();
 	}
 }
-
-module.exports = FactoryGenerator;

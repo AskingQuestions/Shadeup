@@ -54,3 +54,6 @@ public:
 
 	class F${NAME}VertexFactory* VertexFactory;
 };
+
+
+//  Notes: Looks like GetMeshShaderMap is returning nullptr during the DepthPass

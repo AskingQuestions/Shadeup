@@ -16,7 +16,7 @@ const REVERSE_TYPE_TABLE = Object.entries(TYPE_TABLE).reduce((acc, [key, value])
 	return acc;
 }, {});
 
-module.exports = {
+export default {
 	RemoveFrontWhitespace: function(str) {
 		let lines = str.split("\n");
 		let minChars = Infinity;

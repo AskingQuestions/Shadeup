@@ -1,8 +1,7 @@
-const BaseGenerator = require("./base.js");
-const { RemoveFrontWhitespace } = require("../util.js");
-const util = require("../util.js");
+import BaseGenerator from "./base.js";
+import util from "../util.js";
 
-class ShaderGenerator extends BaseGenerator {
+export default class ShaderGenerator extends BaseGenerator {
 	verify() {
 		super.verify();
 
@@ -91,7 +90,7 @@ class ShaderGenerator extends BaseGenerator {
 		let code = "";
 
 		for (let shader of this.shaders) {
-			code += RemoveFrontWhitespace(shader.code.text.replace("void Main", "void " + this.name));
+			code += util.RemoveFrontWhitespace(shader.code.text.replace("void Main", "void " + this.name));
 		}
 
 		return code;
@@ -118,5 +117,3 @@ class ShaderGenerator extends BaseGenerator {
 		return output;
 	}
 }
-
-module.exports = ShaderGenerator;

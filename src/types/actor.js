@@ -1,6 +1,6 @@
-const BaseGenerator = require("./base.js");
+import BaseGenerator from "./base.js";
 
-class ActorGenerator extends BaseGenerator {
+export default class ActorGenerator extends BaseGenerator {
 	verify() {
 		super.verify();
 		
@@ -31,5 +31,3 @@ class ActorGenerator extends BaseGenerator {
 		});
 	}
 }
-
-module.exports = ActorGenerator;
