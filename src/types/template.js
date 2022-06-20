@@ -88,6 +88,7 @@ class Template {
 				const MODULE_NAME = module_name;
 				const SCOPE = MODULE_NAME.toUpperCase() + "_API";
 				instance;
+				const ifExample = (x, out) => instance.example == x ? out : "";
 
 				let generated = (() => {
 					try {

@@ -1,0 +1,13 @@
+#include "/Engine/Public/Platform.ush"
+
+RWTexture2D<float3> RenderTarget;
+
+[numthreads(THREADS_X, THREADS_Y, THREADS_Z)]
+void ${this.answers.name}(
+	uint3 DispatchThreadId : SV_DispatchThreadID,
+	uint GroupIndex : SV_GroupIndex )
+{
+	float x = DispatchThreadId.x / 10.f;
+	float y = DispatchThreadId.y / 10.f;
+	RenderTarget[DispatchThreadId.xy] = float3(sin(x), cos(y), 0.0);
+}

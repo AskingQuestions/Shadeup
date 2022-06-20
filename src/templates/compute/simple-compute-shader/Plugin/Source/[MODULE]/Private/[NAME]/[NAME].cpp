@@ -11,6 +11,9 @@
 #include "CanvasTypes.h"
 #include "MaterialShader.h"
 
+DECLARE_STATS_GROUP(TEXT("${NAME}"), STATGROUP_${NAME}, STATCAT_Advanced);
+DECLARE_CYCLE_STAT(TEXT("${NAME} Execute"), STAT_${NAME}_Execute, STATGROUP_${NAME});
+
 /**********************************************************************************************/
 /* This class carries our parameter declarations and acts as the bridge between cpp and HLSL. */
 /**********************************************************************************************/
@@ -62,6 +65,8 @@ public:
 		` : ""}${instance.example == "base" ? `
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<int>, Input)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<int>, Output)
+		` : ""}${instance.example == "rt" ? `
+		SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D, RenderTarget)
 		` : ""}
 
 	END_SHADER_PARAMETER_STRUCT()
@@ -109,74 +114,74 @@ ${instance.material ?
 `IMPLEMENT_GLOBAL_SHADER(F${NAME}, "/${MODULE_NAME}Shaders/${NAME}/${NAME}.usf", "${NAME}", SF_Compute);`
 }
 
-void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams& Params) {
-	F${NAME}::FParameters PassParameters;
+// void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams& Params) {
+// 	F${NAME}::FParameters PassParameters;
 	
-	// Set the shader parameters using the data from the Params passed in
+// 	// Set the shader parameters using the data from the Params passed in
 
-	${instance.example == "pi" ? `
-	FRHIResourceCreateInfo CreateInfo(TEXT("PIOutputBuffer"));
+// 	${instance.example == "pi" ? `
+// 	FRHIResourceCreateInfo CreateInfo(TEXT("PIOutputBuffer"));
 
-	TResourceArray<uint32> ResourceArray;
-	ResourceArray.SetNumZeroed(1);
-	CreateInfo.ResourceArray = &ResourceArray;
+// 	TResourceArray<uint32> ResourceArray;
+// 	ResourceArray.SetNumZeroed(1);
+// 	CreateInfo.ResourceArray = &ResourceArray;
 
-	auto OutputBuffer = RHICreateBuffer(1 * sizeof(uint32), BUF_UnorderedAccess | BUF_ShaderResource, sizeof(uint32), ERHIAccess::UAVCompute, CreateInfo);
+// 	auto OutputBuffer = RHICreateBuffer(1 * sizeof(uint32), BUF_UnorderedAccess | BUF_ShaderResource, sizeof(uint32), ERHIAccess::UAVCompute, CreateInfo);
 
-	uint32* InitialData = (uint32*)RHILockBuffer(OutputBuffer, 0, sizeof(uint32) * 1, RLM_WriteOnly);
-	InitialData[0] = 0;
-	RHIUnlockBuffer(OutputBuffer);
+// 	uint32* InitialData = (uint32*)RHILockBuffer(OutputBuffer, 0, sizeof(uint32) * 1, RLM_WriteOnly);
+// 	InitialData[0] = 0;
+// 	RHIUnlockBuffer(OutputBuffer);
 
-	PassParameters.Output = RHICreateUnorderedAccessView(OutputBuffer, false, false);
-	PassParameters.Seed = Params.Seed;
-	` : ""}${instance.example == "base" ? `
-	uint32 NumInputs = 2;
-	uint32 NumOutputs = 1;
+// 	PassParameters.Output = RHICreateUnorderedAccessView(OutputBuffer, false, false);
+// 	PassParameters.Seed = Params.Seed;
+// 	` : ""}${instance.example == "base" ? `
+// 	uint32 NumInputs = 2;
+// 	uint32 NumOutputs = 1;
 
-	// This array will be used to fill the input buffer
-	TResourceArray<uint32> InputResourceArray;
-	InputResourceArray.SetNumZeroed(2);
-	InputResourceArray[0] = Params.Input[0];
-	InputResourceArray[1] = Params.Input[1];
+// 	// This array will be used to fill the input buffer
+// 	TResourceArray<uint32> InputResourceArray;
+// 	InputResourceArray.SetNumZeroed(2);
+// 	InputResourceArray[0] = Params.Input[0];
+// 	InputResourceArray[1] = Params.Input[1];
 
-	// Create a buffer to store the input values
-	FRHIResourceCreateInfo InputCreateInfo(TEXT("InputBuffer"), &InputResourceArray);
-	auto InputBuffer = RHICreateBuffer(NumInputs * sizeof(int), BUF_Static | BUF_ShaderResource, sizeof(int), ERHIAccess::UAVCompute, InputCreateInfo);
+// 	// Create a buffer to store the input values
+// 	FRHIResourceCreateInfo InputCreateInfo(TEXT("InputBuffer"), &InputResourceArray);
+// 	auto InputBuffer = RHICreateBuffer(NumInputs * sizeof(int), BUF_Static | BUF_ShaderResource, sizeof(int), ERHIAccess::UAVCompute, InputCreateInfo);
 
-	// We fill this with zeros as we don't care about the initial values
-	TResourceArray<uint32> OutputResourceArray;
-	OutputResourceArray.SetNumZeroed(1);
+// 	// We fill this with zeros as we don't care about the initial values
+// 	TResourceArray<uint32> OutputResourceArray;
+// 	OutputResourceArray.SetNumZeroed(1);
 
-	// Create a buffer to store the output values
-	FRHIResourceCreateInfo OutputCreateInfo(TEXT("OutputBuffer"), &OutputResourceArray);
-	auto OutputBuffer = RHICreateBuffer(1 * sizeof(int), BUF_UnorderedAccess | BUF_ShaderResource, sizeof(int), ERHIAccess::UAVCompute, OutputCreateInfo);
+// 	// Create a buffer to store the output values
+// 	FRHIResourceCreateInfo OutputCreateInfo(TEXT("OutputBuffer"), &OutputResourceArray);
+// 	auto OutputBuffer = RHICreateBuffer(1 * sizeof(int), BUF_UnorderedAccess | BUF_ShaderResource, sizeof(int), ERHIAccess::UAVCompute, OutputCreateInfo);
 
-	// Create an SRV to the buffer and assign it to our input. This allows the shader to read the input values (read only)
-	// PassParameters.Input = RHICreateShaderResourceView(InputBuffer);
+// 	// Create an SRV to the buffer and assign it to our input. This allows the shader to read the input values (read only)
+// 	// PassParameters.Input = RHICreateShaderResourceView(InputBuffer);
 
-	// Create a UAV to the buffer and assign it to our output. This allows the shader to write to the buffer
-	// PassParameters.Output = RHICreateUnorderedAccessView(OutputBuffer, false, false);
-	` : ""}
+// 	// Create a UAV to the buffer and assign it to our output. This allows the shader to write to the buffer
+// 	// PassParameters.Output = RHICreateUnorderedAccessView(OutputBuffer, false, false);
+// 	` : ""}
 	
-	typename F${NAME}::FPermutationDomain PermutationVector;
+// 	typename F${NAME}::FPermutationDomain PermutationVector;
 
-	TShaderMapRef<F${NAME}> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
-	FIntVector GroupCounts = FIntVector(FMath::DivideAndRoundUp(Params.X, NUM_THREADS_${NAME}_X), FMath::DivideAndRoundUp(Params.Y, NUM_THREADS_${NAME}_Y), FMath::DivideAndRoundUp(Params.Z, NUM_THREADS_${NAME}_Z));
+// 	TShaderMapRef<F${NAME}> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
+// 	FIntVector GroupCounts = FIntVector(FMath::DivideAndRoundUp(Params.X, NUM_THREADS_${NAME}_X), FMath::DivideAndRoundUp(Params.Y, NUM_THREADS_${NAME}_Y), FMath::DivideAndRoundUp(Params.Z, NUM_THREADS_${NAME}_Z));
 
-	FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, PassParameters, GroupCounts);
+// 	FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, PassParameters, GroupCounts);
 	
-	${instance.example == "pi" ? `
-	auto OutputData = (uint32*) RHILockBuffer(OutputBuffer, 0, sizeof(uint32) * 1, RLM_ReadOnly);
-	Params.TotalInCircle = OutputData[0];
-	RHIUnlockBuffer(OutputBuffer);
-	` : ""}${instance.example == "base" ? `
-	auto OutputData = (int*) RHILockBuffer(OutputBuffer, 0, sizeof(int) * NumOutputs, RLM_ReadOnly);
-	Params.Output = OutputData[0];
-	RHIUnlockBuffer(OutputBuffer);
-	` : ""}
-}
+// 	${instance.example == "pi" ? `
+// 	auto OutputData = (uint32*) RHILockBuffer(OutputBuffer, 0, sizeof(uint32) * 1, RLM_ReadOnly);
+// 	Params.TotalInCircle = OutputData[0];
+// 	RHIUnlockBuffer(OutputBuffer);
+// 	` : ""}${instance.example == "base" ? `
+// 	auto OutputData = (int*) RHILockBuffer(OutputBuffer, 0, sizeof(int) * NumOutputs, RLM_ReadOnly);
+// 	Params.Output = OutputData[0];
+// 	RHIUnlockBuffer(OutputBuffer);
+// 	` : ""}
+// }
 
-void F${NAME}Interface::DispatchRDGRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams Params, TFunction<void(int OutputVal)> AsyncCallback) {
+void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams Params${instance.example == "base" ? `, TFunction<void(int OutputVal)> AsyncCallback` : ``}) {
 	FRDGBuilder GraphBuilder(RHICmdList);
 
 	{
@@ -185,11 +190,22 @@ void F${NAME}Interface::DispatchRDGRenderThread(FRHICommandListImmediate& RHICmd
 		RDG_EVENT_SCOPE(GraphBuilder, "${NAME}");
 		RDG_GPU_STAT_SCOPE(GraphBuilder, ${NAME});
 
-		typename FBaseComp::FPermutationDomain PermutationVector;
-		TShaderMapRef<FBaseComp> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
+		typename F${NAME}::FPermutationDomain PermutationVector;
+		TShaderMapRef<F${NAME}> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
 
-		FBaseComp::FParameters* PassParameters = GraphBuilder.AllocParameters<FBaseComp::FParameters>();
+		F${NAME}::FParameters* PassParameters = GraphBuilder.AllocParameters<F${NAME}::FParameters>();
 
+		${instance.example == "rt" ? `
+		// FRDGTextureRef Texture = GraphBuilder.RegisterExternalTexture(RenderTileResources.GetFinalRenderTarget());
+		// GraphBuilder.SetTextureAccessFinal(Texture, ERHIAccess::CopySrc);
+		FRDGTextureDesc Desc(FRDGTextureDesc::Create2D(Params.RenderTarget->GetSizeXY(), PF_B8G8R8A8, FClearValueBinding::White, TexCreate_RenderTargetable | TexCreate_ShaderResource | TexCreate_UAV));
+		FRDGTextureRef TmpTexture = GraphBuilder.CreateTexture(Desc, TEXT("${NAME}_TempTexture"));
+		FRDGTextureRef TargetTexture = RegisterExternalTexture(GraphBuilder, Params.RenderTarget->GetRenderTargetTexture(), TEXT("${NAME}_RT"));
+		PassParameters->RenderTarget = GraphBuilder.CreateUAV(TmpTexture);
+		// PassParameters.RenderTargets[0] = FRenderTargetBinding(TargetTexture, ERenderTargetLoadAction::EClear, 0, 0);
+		// PassParameters.RenderTarget = RHICreateUnorderedAccessView(OutputBuffer, false, false);
+		// PassParameters.Seed = Params.Seed;
+		` : ""}${instance.example == "base" ? `
 		const void* RawData = (void*)Params.Input;
 		FRDGBufferRef InputBuffer = CreateUploadBuffer(GraphBuilder, TEXT("InputBuffer"), 1, 2, RawData, 2);
 
@@ -200,17 +216,19 @@ void F${NAME}Interface::DispatchRDGRenderThread(FRHICommandListImmediate& RHICmd
 			TEXT("OutputBuffer"));
 
 		PassParameters->Output = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_SINT));
+		` : ""}
 
-		auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(1, 1, 1), FComputeShaderUtils::kGolden2DGroupSize);
+		auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
 		GraphBuilder.AddPass(
 			RDG_EVENT_NAME("Execute${NAME}"),
 			PassParameters,
 			ERDGPassFlags::AsyncCompute,
-			[OutputBuffer, &PassParameters, ComputeShader, GroupCount](FRHIComputeCommandList& RHICmdList)
+			[&PassParameters, ComputeShader, GroupCount](FRHIComputeCommandList& RHICmdList)
 		{
 			FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);
 		});
 
+		${instance.example == "base" ? `
 		FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("Execute${NAME}Output"));
 		AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
 
@@ -235,6 +253,9 @@ void F${NAME}Interface::DispatchRDGRenderThread(FRHICommandListImmediate& RHICmd
 		AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
 			RunnerFunc(RunnerFunc);
 		});
+		` : ``}${instance.example == "rt" ? `
+		AddCopyToResolveTargetPass(GraphBuilder, TargetTexture, TmpTexture, FResolveParams());
+		` : ``}
 	}
 
 	GraphBuilder.Execute();
