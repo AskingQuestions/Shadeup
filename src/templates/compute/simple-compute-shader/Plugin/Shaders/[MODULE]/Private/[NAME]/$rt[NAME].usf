@@ -1,3 +1,4 @@
+#include "/Engine/Generated/Material.ush"
 #include "/Engine/Public/Platform.ush"
 
 RWTexture2D<float3> RenderTarget;
@@ -7,7 +8,10 @@ void ${this.answers.name}(
 	uint3 DispatchThreadId : SV_DispatchThreadID,
 	uint GroupIndex : SV_GroupIndex )
 {
-	float x = DispatchThreadId.x / 10.f;
-	float y = DispatchThreadId.y / 10.f;
-	RenderTarget[DispatchThreadId.xy] = float3(sin(x), cos(y), 0.0);
+	// Simple checkerboard
+	int x = floor(DispatchThreadId.x / 16.f);
+	int y = floor(DispatchThreadId.y / 16.f);
+	int c = (x + y % 2) % 2;
+	
+	RenderTarget[DispatchThreadId.xy] = float3(c, c, c);
 }

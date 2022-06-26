@@ -14,9 +14,7 @@
 DECLARE_STATS_GROUP(TEXT("${NAME}"), STATGROUP_${NAME}, STATCAT_Advanced);
 DECLARE_CYCLE_STAT(TEXT("${NAME} Execute"), STAT_${NAME}_Execute, STATGROUP_${NAME});
 
-/**********************************************************************************************/
-/* This class carries our parameter declarations and acts as the bridge between cpp and HLSL. */
-/**********************************************************************************************/
+// This class carries our parameter declarations and acts as the bridge between cpp and HLSL.
 class ${SCOPE} F${NAME} : public ${instance.material ? "FMeshMaterialShader" : "FGlobalShader"}
 {
 public:
@@ -33,8 +31,6 @@ public:
 	using FPermutationDomain = TShaderPermutationDomain<
 		F${NAME}_Perm_TEST
 	>;
-
-	
 
 	BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
 		/*
@@ -61,12 +57,17 @@ public:
 
 		${instance.example == "pi" ? `
 		SHADER_PARAMETER(float, Seed)
-		SHADER_PARAMETER_UAV(RWBuffer<uint32>, Output)
+		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<uint32>, Output)
 		` : ""}${instance.example == "base" ? `
 		SHADER_PARAMETER_RDG_BUFFER_SRV(Buffer<int>, Input)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<int>, Output)
 		` : ""}${instance.example == "rt" ? `
 		SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D, RenderTarget)
+		` : ""}${instance.example == "mat" ? `
+		SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D, RenderTarget)
+		` : ""}${instance.example == "basemat" ? `
+		SHADER_PARAMETER(FVector2f, Position)
+		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float4>, OutputColor)
 		` : ""}
 
 	END_SHADER_PARAMETER_STRUCT()
@@ -75,7 +76,14 @@ public:
 	static bool ShouldCompilePermutation(const F${instance.ShaderBase}ShaderPermutationParameters& Parameters)
 	{
 		const FPermutationDomain PermutationVector(Parameters.PermutationId);
-		
+		${instance.material ? `
+		const bool bIsCompatible =
+			Parameters.MaterialParameters.MaterialDomain == MD_Surface
+			&& Parameters.MaterialParameters.BlendMode == BLEND_Opaque
+			&& Parameters.MaterialParameters.ShadingModels == MSM_DefaultLit
+			&& Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh;
+
+		return bIsCompatible;` : ``}
 		return true;
 	}
 
@@ -181,7 +189,7 @@ ${instance.material ?
 // 	` : ""}
 // }
 
-void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams Params${instance.example == "base" ? `, TFunction<void(int OutputVal)> AsyncCallback` : ``}) {
+void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdList, F${NAME}DispatchParams Params${ifExample(['base', 'pi', 'basemat'], `, TFunction<void(${ifExample(['base', 'pi'], "int OutputVal")}${ifExample(['basemat'], "FVector3f OutputColor")})> AsyncCallback`)}) {
 	FRDGBuilder GraphBuilder(RHICmdList);
 
 	{
@@ -189,73 +197,143 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 		DECLARE_GPU_STAT(${NAME})
 		RDG_EVENT_SCOPE(GraphBuilder, "${NAME}");
 		RDG_GPU_STAT_SCOPE(GraphBuilder, ${NAME});
+		${instance.material ? `
+		const FScene* LocalScene = Params.Scene;
+		const FMaterialRenderProxy* MaterialRenderProxy = nullptr;
+		const FMaterial* MaterialResource = &Params.MaterialRenderProxy->GetMaterialWithFallback(GMaxRHIFeatureLevel, MaterialRenderProxy);
+		MaterialRenderProxy = MaterialRenderProxy ? MaterialRenderProxy : Params.MaterialRenderProxy;
 
 		typename F${NAME}::FPermutationDomain PermutationVector;
+
+		// Add any static permutation options here
+		// PermutationVector.Set<F${NAME}::FMyPermutationName>(12345);
+		
+		TShaderRef<F${NAME}> ComputeShader = MaterialResource->GetShader<F${NAME}>(&FLocalVertexFactory::StaticType, PermutationVector, false);
+		` : `
+		typename F${NAME}::FPermutationDomain PermutationVector;
+		
+		// Add any static permutation options here
+		// PermutationVector.Set<F${NAME}::FMyPermutationName>(12345);
+
 		TShaderMapRef<F${NAME}> ComputeShader(GetGlobalShaderMap(GMaxRHIFeatureLevel), PermutationVector);
+		`}
 
-		F${NAME}::FParameters* PassParameters = GraphBuilder.AllocParameters<F${NAME}::FParameters>();
+		bool bIsShaderValid = ComputeShader${instance.material ? `.` : `.`}IsValid();
 
-		${instance.example == "rt" ? `
-		// FRDGTextureRef Texture = GraphBuilder.RegisterExternalTexture(RenderTileResources.GetFinalRenderTarget());
-		// GraphBuilder.SetTextureAccessFinal(Texture, ERHIAccess::CopySrc);
-		FRDGTextureDesc Desc(FRDGTextureDesc::Create2D(Params.RenderTarget->GetSizeXY(), PF_B8G8R8A8, FClearValueBinding::White, TexCreate_RenderTargetable | TexCreate_ShaderResource | TexCreate_UAV));
-		FRDGTextureRef TmpTexture = GraphBuilder.CreateTexture(Desc, TEXT("${NAME}_TempTexture"));
-		FRDGTextureRef TargetTexture = RegisterExternalTexture(GraphBuilder, Params.RenderTarget->GetRenderTargetTexture(), TEXT("${NAME}_RT"));
-		PassParameters->RenderTarget = GraphBuilder.CreateUAV(TmpTexture);
-		// PassParameters.RenderTargets[0] = FRenderTargetBinding(TargetTexture, ERenderTargetLoadAction::EClear, 0, 0);
-		// PassParameters.RenderTarget = RHICreateUnorderedAccessView(OutputBuffer, false, false);
-		// PassParameters.Seed = Params.Seed;
-		` : ""}${instance.example == "base" ? `
-		const void* RawData = (void*)Params.Input;
-		FRDGBufferRef InputBuffer = CreateUploadBuffer(GraphBuilder, TEXT("InputBuffer"), 1, 2, RawData, 2);
+		if (bIsShaderValid) {
+			F${NAME}::FParameters* PassParameters = GraphBuilder.AllocParameters<F${NAME}::FParameters>();
 
-		PassParameters->Input = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBuffer, PF_R32_SINT));
+			${ifExample(['rt', 'mat'], `
+			FRDGTextureDesc Desc(FRDGTextureDesc::Create2D(Params.RenderTarget->GetSizeXY(), PF_B8G8R8A8, FClearValueBinding::White, TexCreate_RenderTargetable | TexCreate_ShaderResource | TexCreate_UAV));
+			FRDGTextureRef TmpTexture = GraphBuilder.CreateTexture(Desc, TEXT("${NAME}_TempTexture"));
+			FRDGTextureRef TargetTexture = RegisterExternalTexture(GraphBuilder, Params.RenderTarget->GetRenderTargetTexture(), TEXT("${NAME}_RT"));
+			PassParameters->RenderTarget = GraphBuilder.CreateUAV(TmpTexture);
+			`)}${instance.example == "base" ? `
+			const void* RawData = (void*)Params.Input;
+			int NumInputs = Params.Input.Num();
+			int InputSize = sizeof(int);
+			FRDGBufferRef InputBuffer = CreateUploadBuffer(GraphBuilder, TEXT("InputBuffer"), InputSize, NumInputs, RawData, InputSize * NumInputs);
 
-		FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
-			FRDGBufferDesc::CreateBufferDesc(sizeof(int32), 1),
-			TEXT("OutputBuffer"));
+			PassParameters->Input = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(InputBuffer, PF_R32_SINT));
 
-		PassParameters->Output = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_SINT));
-		` : ""}
+			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
+				FRDGBufferDesc::CreateBufferDesc(sizeof(int32), 1),
+				TEXT("OutputBuffer"));
 
-		auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
-		GraphBuilder.AddPass(
-			RDG_EVENT_NAME("Execute${NAME}"),
-			PassParameters,
-			ERDGPassFlags::AsyncCompute,
-			[&PassParameters, ComputeShader, GroupCount](FRHIComputeCommandList& RHICmdList)
-		{
-			FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);
-		});
+			PassParameters->Output = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_SINT));
+			` : ""}${instance.example == "pi" ? `
+			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
+				FRDGBufferDesc::CreateBufferDesc(sizeof(int32), 1),
+				TEXT("OutputBuffer"));
 
-		${instance.example == "base" ? `
-		FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("Execute${NAME}Output"));
-		AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
+			PassParameters->Output = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_R32_SINT));
+			` : ""}${instance.example == "basemat" ? `
+			FRDGBufferRef OutputBuffer = GraphBuilder.CreateBuffer(
+				FRDGBufferDesc::CreateBufferDesc(sizeof(FVector4f), 1),
+				TEXT("OutputBuffer"));
 
-		auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
-			if (GPUBufferReadback->IsReady()) {
-				int32* Buffer = (int32*)GPUBufferReadback->Lock(1);
-				int OutVal = Buffer[0];
-				GPUBufferReadback->Unlock();
+			PassParameters->OutputColor = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_A32B32G32R32F));
+			` : ""}
 
-				AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal]() {
-					AsyncCallback(OutVal);
-				});
+			auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
+			GraphBuilder.AddPass(
+				RDG_EVENT_NAME("Execute${NAME}"),
+				PassParameters,
+				ERDGPassFlags::AsyncCompute,
+				[&PassParameters, ComputeShader, ${instance.material ? `MaterialRenderProxy, MaterialResource, LocalScene, GameTime = Params.GameTime, Random = Params.Random, ` : ``}GroupCount](FRHIComputeCommandList& RHICmdList)
+			{
+				${instance.material ? `
+				FMeshPassProcessorRenderState DrawRenderState;
+				
+				MaterialRenderProxy->UpdateUniformExpressionCacheIfNeeded(LocalScene->GetFeatureLevel());
+				
+				FViewUniformShaderParameters ViewUniformShaderParameters;
 
-				delete GPUBufferReadback;
-			} else {
-				AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
-					RunnerFunc(RunnerFunc);
-				});
-			}
-		};
+				ViewUniformShaderParameters.GameTime = GameTime;
+				ViewUniformShaderParameters.Random = Random;
 
-		AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
-			RunnerFunc(RunnerFunc);
-		});
-		` : ``}${instance.example == "rt" ? `
-		AddCopyToResolveTargetPass(GraphBuilder, TargetTexture, TmpTexture, FResolveParams());
-		` : ``}
+				auto ViewUniformBuffer = TUniformBufferRef<FViewUniformShaderParameters>::CreateUniformBufferImmediate(ViewUniformShaderParameters, UniformBuffer_SingleFrame);
+				DrawRenderState.SetViewUniformBuffer(ViewUniformBuffer);
+
+				FMeshMaterialShaderElementData ShaderElementData;
+
+				FMeshProcessorShaders PassShaders;
+				PassShaders.ComputeShader = ComputeShader;
+
+				FMeshDrawShaderBindings ShaderBindings;
+				ShaderBindings.Initialize(PassShaders);
+
+				int32 DataOffset = 0;
+				FMeshDrawSingleShaderBindings SingleShaderBindings = ShaderBindings.GetSingleShaderBindings(SF_Compute, DataOffset);
+				ComputeShader->GetShaderBindings(LocalScene, LocalScene->GetFeatureLevel(), nullptr, *MaterialRenderProxy, *MaterialResource, DrawRenderState, ShaderElementData, SingleShaderBindings);
+
+				ShaderBindings.Finalize(&PassShaders);
+
+				FRHIComputeShader* ComputeShaderRHI = ComputeShader.GetComputeShader();
+				RHICmdList.SetComputeShader(ComputeShaderRHI);
+				ShaderBindings.SetOnCommandList(RHICmdList, ComputeShaderRHI);
+				SetShaderParameters(RHICmdList, ComputeShader, ComputeShaderRHI, *PassParameters);
+				RHICmdList.DispatchComputeShader(GroupCount.X, GroupCount.Y, GroupCount.Z);
+				` : `FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);`}
+			});
+
+			${ifExample(['base', 'pi', 'basemat'], `
+			FRHIGPUBufferReadback* GPUBufferReadback = new FRHIGPUBufferReadback(TEXT("Execute${NAME}Output"));
+			AddEnqueueCopyPass(GraphBuilder, GPUBufferReadback, OutputBuffer, 0u);
+
+			auto RunnerFunc = [GPUBufferReadback, AsyncCallback](auto&& RunnerFunc) -> void {
+				if (GPUBufferReadback->IsReady()) {
+					${ifExample(['base', 'pi'], `
+					int32* Buffer = (int32*)GPUBufferReadback->Lock(1);
+					int OutVal = Buffer[0];
+					`)}${ifExample(['basemat'], `
+					FVector4f* Buffer = (FVector4f*)GPUBufferReadback->Lock(1);
+					FVector3f OutVal = FVector3f(Buffer[0].X, Buffer[0].Y, Buffer[0].Z);
+					`)}
+					GPUBufferReadback->Unlock();
+
+					AsyncTask(ENamedThreads::GameThread, [AsyncCallback, OutVal]() {
+						AsyncCallback(OutVal);
+					});
+
+					delete GPUBufferReadback;
+				} else {
+					AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
+						RunnerFunc(RunnerFunc);
+					});
+				}
+			};
+
+			AsyncTask(ENamedThreads::ActualRenderingThread, [RunnerFunc]() {
+				RunnerFunc(RunnerFunc);
+			});
+			`)}${ifExample(['rt', 'mat'], `
+			AddCopyTexturePass(GraphBuilder, TmpTexture, TargetTexture, FRHICopyTextureInfo());
+			`)}
+		} else {
+			// We silently exit here as we don't want to crash the game if the shader is not found or has an error.
+			${ifExample('basemat', `AsyncCallback(FVector3f(0.f));`)}
+		}
 	}
 
 	GraphBuilder.Execute();

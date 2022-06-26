@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import vm from "vm";
 
 import * as url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
@@ -88,12 +89,19 @@ class Template {
 				const MODULE_NAME = module_name;
 				const SCOPE = MODULE_NAME.toUpperCase() + "_API";
 				instance;
-				const ifExample = (x, out) => instance.example == x ? out : "";
+				const ifExample = (x, out) => typeof x == "object" ? (x.includes(instance.example) ? out : "") : (instance.example == x ? out : "");
 
 				let generated = (() => {
 					try {
 						return eval("`" + raw + "`");
 					}catch (e) {
+						try {
+							let s = new vm.Script("`" + raw + "`", {filename: path.join(from, f)});
+							s.runInThisContext();
+						} catch (err) {
+							console.log(err.stack);
+						}
+
 						console.log(f);
 						console.error(e);
 					}
@@ -133,10 +141,10 @@ class ComputeShader extends Template {
 	static examples() {
 		return [
 			["base", "Base", "Executable compute shader with inputs and outputs"],
+			["basemat", "Base with material", "Compute shader that extends materials"],
 			["pi", "PI", "Calculate PI using random sampling [monte carlo]"],
 			["rt", "Render Target", "Draw into a render target using a compute shader"],
-			["mat", "Material Evaluation", "Execute a material graph from within a compute shader"],
-			["mat2", "Material Evaluation Render Target", "Draw into a render target using a material graph"],
+			["mat", "Material Evaluation Render Target", "Draw into a render target using a material graph"],
 		];
 	}
 
@@ -147,25 +155,26 @@ class ComputeShader extends Template {
 				name: "name",
 				message: "What is the name of the shader",
 				default: "MySimpleComputeShader"
-			},
-			COMPUTE_MATERIAL_EXTENDS
+			}
 		]);
 		this.answers = answers;
 	}
 
 	async generate() {
+		this.material = false;
 		this.threadCounts = [1, 1, 1];
 		if (this.example == "pi") {
 			this.threadCounts = [32, 1, 1];
 		}else if (this.example == "rt") {
 			this.threadCounts = [32, 32, 1];
 		}else if (this.example == "mat") {
-			this.threadCounts = [1, 1, 1];
-		}else if (this.example == "mat2") {
 			this.threadCounts = [32, 32, 1];
+			this.material = true;
+		}else if (this.example == "basemat") {
+			this.threadCounts = [1, 1, 1];
+			this.material = true;
 		}
 
-		this.material = false;
 		this.ShaderBase = this.material ? "Material" : "Global";
 		return await this.directory(
 			path.join(__dirname, "../templates/compute/simple-compute-shader/Plugin"),
@@ -177,24 +186,6 @@ class ComputeShader extends Template {
 	}
 }
 
-class ComputeRenderTarget extends Template {
-	static display() {
-		return "[COMPUTE]".magenta + " Simple Compute Shader" + " (writing to render target)".grey;
-	}
-
-	async prompt(inquirer) {
-		let answers = await inquirer.prompt([
-			{
-				type: "input",
-				name: "name",
-				message: "What is the name of the shader",
-				default: "MySimpleComputeShader"
-			},
-			COMPUTE_MATERIAL_EXTENDS
-		]);
-		this.answers = answers;
-	}
-}
 
 class IndirectInstancing extends Template {
 	static display() {

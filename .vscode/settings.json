@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"*.basic": "mvbasic",
+		"*.pipeline": "ini",
+		"*.jinja": "jinja-html",
+		"*.usf": "hlsl",
+		"*.ush": "hlsl",
+		"*.rh": "cpp"
+	}
+}
