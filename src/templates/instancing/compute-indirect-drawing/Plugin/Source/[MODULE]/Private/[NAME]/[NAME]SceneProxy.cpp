@@ -43,6 +43,8 @@ public:
 	virtual ~F${NAME}RendererExtension()
 	{}
 
+	bool IsInFrame() { return bInFrame; }
+
 	/** Call once to register this extension. */
 	void RegisterExtension();
 
@@ -311,7 +313,7 @@ void F${NAME}SceneProxy::GetDynamicMeshElements(const TArray<const FSceneView*>&
 {
 	check(IsInRenderingThread());
 
-	if (GMySimpleComputeShaderRendererExtension.IsInFrame())
+	if (G${NAME}RendererExtension.IsInFrame())
 	{
 		// Can't add new work while bInFrame.
 		// In UE5 we need to AddWork()/SubmitWork() in two phases: InitViews() and InitViewsAfterPrepass()

@@ -13,7 +13,7 @@
 
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(F${NAME}Parameters, "${NAME}Params");
 
-namespace
+namespace F${NAME}Util
 {
 	template< typename T >
 	FBufferRHIRef CreateIndexBuffer()
@@ -40,7 +40,7 @@ namespace
 
 void F${NAME}IndexBuffer::InitRHI()
 {
-	IndexBufferRHI = CreateIndexBuffer<uint16>();
+	IndexBufferRHI = F${NAME}Util::CreateIndexBuffer<uint16>();
 }
 
 
