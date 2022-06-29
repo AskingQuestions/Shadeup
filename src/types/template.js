@@ -215,16 +215,25 @@ class IndirectInstancing extends Template {
 	}
 
 	async generate() {
-		this.example = "";
 		this.material = false;
 		this.ShaderBase = this.material ? "Material" : "Global";
-		return await this.directory(
-			path.join(__dirname, "../templates/instancing/compute-indirect-drawing/Plugin"),
-			this.plugin.dir,
-			this.answers.name,
-			this.module.name,
-			this
-		);
+		if (this.example == "base") {
+			return await this.directory(
+				path.join(__dirname, "../templates/instancing/compute-indirect-drawing/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		}else if (this.example == "inst") {
+			return await this.directory(
+				path.join(__dirname, "../templates/instancing/compute-instanced-static-mesh-component/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		}
 	}
 }
 
