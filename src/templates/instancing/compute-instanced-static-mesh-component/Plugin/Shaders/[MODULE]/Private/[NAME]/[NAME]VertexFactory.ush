@@ -1,19 +1,24 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
-// Adapted from the VirtualHeightfieldMesh plugin
+// Adapted from the VirtualHeightfieldMesh plugin/Niagara Mesh VF
 
 #include "/Engine/Private/VertexFactoryCommon.ush"
 #include "/Engine/Private/VirtualTextureCommon.ush"
 #include "${NAME}.ush"
 
-StructuredBuffer<QuadRenderInstance> InstanceBuffer;
+StructuredBuffer<MeshItem> InstanceBuffer;
 
 #ifndef MANUAL_VERTEX_FETCH
 #define MANUAL_VERTEX_FETCH 0
 #endif
 
+#if MANUAL_VERTEX_FETCH
+	#define VF_ColorIndexMask_Index 0
+	#define VF_NumTexcoords_Index 1
+#endif // MANUAL_VERTEX_FETCH
+
 struct FVertexFactoryInput
 {
-	float4 Position;
+	float4 Position 	: ATTRIBUTE0;
 	
 #if !MANUAL_VERTEX_FETCH
 	half3	TangentX	: ATTRIBUTE1;
@@ -47,8 +52,29 @@ struct FVertexFactoryInput
 	#endif // NUM_MATERIAL_TEXCOORDS_VERTEX
 #endif // !MANUAL_VERTEX_FETCH
 
+#if (VF_USE_PRIMITIVE_SCENE_DATA == 1)
+	uint InstanceIdOffset : ATTRIBUTE13;
+#endif
+
 	uint InstanceId : SV_InstanceID;
 	uint VertexId : SV_VertexID;
+};
+
+
+struct FVertexFactoryInterpolantsVSToPS
+{
+	TANGENTTOWORLD_INTERPOLATOR_BLOCK
+#if NUM_TEX_COORD_INTERPOLATORS
+	float4	TexCoords[(NUM_TEX_COORD_INTERPOLATORS+1)/2]	: TEXCOORD0;
+#endif
+
+#if INTERPOLATE_VERTEX_COLOR
+	float4	VertexColor : COLOR0;
+#endif
+
+#if (VF_USE_PRIMITIVE_SCENE_DATA == 1)
+	nointerpolation uint PrimitiveId : PRIMITIVE_ID;
+#endif
 };
 
 /** Cached intermediates that would otherwise have to be computed multiple times. Avoids relying on the compiler to optimize out redundant operations. */
@@ -148,8 +174,6 @@ FMaterialVertexParameters GetMaterialVertexParameters(FVertexFactoryInput Input,
 
 	Result.TangentToWorld = mul(TangentToLocal, GetInstanceRotationNoScale(Intermediates));
 
-	// Result.PrevFrameLocalToWorld = GetParticlePrevTransform(Intermediates);
-
 #if NUM_MATERIAL_TEXCOORDS_VERTEX
 	for(int CoordinateIndex = 0; CoordinateIndex < NUM_MATERIAL_TEXCOORDS_VERTEX; CoordinateIndex++)
 	{
@@ -170,9 +194,6 @@ float3x3 CalculateTangentToLocal(FVertexFactoryInput Input, out float TangentDet
 	float3 TangentX = TangentBias(Input.TangentX);
 	float4 TangentZ = TangentBias(Input.TangentZ);
 #endif // MANUAL_VERTEX_FETCH
-
-	float3 TangentX = TangentBias(Input.TangentX);
-	float4 TangentZ = TangentBias(Input.TangentZ);
 
 	// pass-thru the tangent
 	Result[0] = TangentX;
@@ -196,7 +217,7 @@ FVertexFactoryIntermediates GetVertexFactoryIntermediates(FVertexFactoryInput In
 	FVertexFactoryIntermediates Intermediates = (FVertexFactoryIntermediates)0;
 
 #if (VF_USE_PRIMITIVE_SCENE_DATA == 1)
-	Intermediates.SceneData = GetSceneDataIntermediates(Input.InstanceIdOffset, Input.InstanceId);
+	Intermediates.SceneData = GetSceneDataIntermediates(Input.InstanceIdOffset, 0);
 #else
 	Intermediates.SceneData = GetSceneDataIntermediates();
 #endif // (VF_USE_PRIMITIVE_SCENE_DATA == 1)
@@ -279,9 +300,14 @@ float3x3 VertexFactoryGetTangentToLocal( FVertexFactoryInput Input, FVertexFacto
 
 // @return translated world position
 float4 VertexFactoryGetWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
-{	
+{
 	FLWCMatrix Transform = GetInstanceTransform(Intermediates);
 	float3 WorldPosition = LWCToFloat(LWCAdd(LWCMultiply(Input.Position.xyz, Transform), ResolvedView.PreViewTranslation));
+
+	MeshItem Item = InstanceBuffer[Input.InstanceId];
+
+	WorldPosition += Item.Position;
+
 	return float4(WorldPosition, Input.Position.w);
 }
 
@@ -304,7 +330,7 @@ void CalcTangentToWorld(FVertexFactoryInput Input, FVertexFactoryIntermediates I
 {
 	const float3x3 TangentToLocal = VertexFactoryGetTangentToLocal(Input, Intermediates);
 
-	const float3x3 TransformNoScale = GetLocalRotationNoScale(Intermediates);
+	const float3x3 TransformNoScale = GetInstanceRotationNoScale(Intermediates);
 	const float3x3 TangentToWorld = mul(TangentToLocal, TransformNoScale);
 	const float DetSign = Intermediates.SceneData.InstanceData.DeterminantSign;
 
@@ -357,13 +383,21 @@ FVertexFactoryInterpolantsVSToPS VertexFactoryGetInterpolantsVSToPS(FVertexFacto
 	return Interpolants;
 }
 
-// @return previous translated world position
-// float4 VertexFactoryGetPreviousWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
-// {
-//     FLWCMatrix Transform = GetParticlePrevTransform(Intermediates);
-//     float3 WorldPosition = LWCToFloat(LWCAdd(LWCMultiply(Input.Position.xyz, Transform), ResolvedView.PreViewTranslation));
-//     return float4(WorldPosition, Input.Position.w);
-// }
+float4 VertexFactoryGetPreviousWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+    FLWCMatrix Transform = GetInstanceTransform(Intermediates);
+    float3 WorldPosition = LWCToFloat(LWCAdd(LWCMultiply(Input.Position.xyz, Transform), ResolvedView.PreViewTranslation));
+    return float4(WorldPosition, Input.Position.w);
+}
+
+float4 VertexFactoryGetInstanceHitProxyId(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+		float R = 0;
+		float G = 0;
+		float B = 0;
+
+	return float4(R/255.0, G/255.0, B/255.0, 0);
+}
 
 uint VertexFactoryGetPrimitiveId(FVertexFactoryInterpolantsVSToPS Interpolants)
 {

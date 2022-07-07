@@ -19,9 +19,20 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Rendering)
 	UMaterialInterface* Material = nullptr;
 
+	UPROPERTY(EditAnywhere, Category = Rendering)
+	UStaticMesh* StaticMesh = nullptr;
+
 public:
 
+	/** LOD level to use when rendering the mesh */
+	UPROPERTY(EditAnywhere, Category = Rendering)
+	int LODIndex = 0;
+
 	UMaterialInterface* GetMaterial() const { return Material; }
+	UStaticMesh* GetStaticMesh() const { return StaticMesh; }
+
+	UFUNCTION(BlueprintCallable, CallInEditor, Category = Rendering)
+	void AddInstances();
 
 protected:
 	//~ Begin UActorComponent Interface

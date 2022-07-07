@@ -25,7 +25,6 @@ $ shadeup # This will start the scaffolding wizard
 * **Base** (single triangle)
 * **View dependent subdividing grid** (triangle grid that increases in resolution)
 * **Mesh instancing** (ISM component but GPU-driven)
-* **Multi-frame instance state** (growing orbs)
 
 ## **Custom Material Nodes**
 

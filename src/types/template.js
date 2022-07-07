@@ -197,7 +197,6 @@ class IndirectInstancing extends Template {
 			["base", "Base", "Single triangle"],
 			["grid", "View dependent subdividing grid", "Triangle grid that increases in resolution"],
 			["inst", "Mesh instancing", "ISM component but GPU-driven"],
-			["state", "Multi-frame instance state", "Growing orbs"],
 		];
 	}
 

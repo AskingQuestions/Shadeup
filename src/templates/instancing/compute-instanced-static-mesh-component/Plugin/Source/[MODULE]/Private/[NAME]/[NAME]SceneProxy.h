@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "${NAME}VertexFactory.h"
 #include "PrimitiveSceneProxy.h"
 
 namespace ${NAME}Mesh
@@ -34,25 +35,39 @@ protected:
 	virtual void CreateRenderThreadResources() override;
 	virtual void DestroyRenderThreadResources() override;
 	virtual void OnTransformChanged() override;
-	// virtual bool HasSubprimitiveOcclusionQueries() const override;
-	// virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override;
-	// virtual void AcceptOcclusionResults(const FSceneView* View, TArray<bool>* Results, int32 ResultsStart, int32 NumResults) override;
 	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override;
 	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;
 	//~ End FPrimitiveSceneProxy Interface
+
+	F${NAME}MeshUniformBufferRef CreateVFUniformBuffer() const;
 
 private:
 	void BuildOcclusionVolumes(TArrayView<FVector2D> const& InMinMaxData, FIntPoint const& InMinMaxSize, TArrayView<int32> const& InMinMaxMips, int32 InNumLods);
 
 public:
-	bool bHiddenInEditor;
+	bool bIsMeshValid;
+
+	mutable std::atomic<bool> AddInstancesNextFrame;
 
 	class FMaterialRenderProxy* Material;
+	class UStaticMesh* LocalStaticMesh;
+	FStaticMeshRenderData* RenderData;
 	FMaterialRelevance MaterialRelevance;
+
+	int LODIndex;
+
+	mutable TUniformBuffer<FPrimitiveUniformShaderParameters> UniformBufferStore;
+	mutable FStaticMeshDataType StaticMeshData;
+	mutable F${NAME}MeshUniformBufferRef VertexFactoryUniformBuffer;
+
+	// Multi-frame buffers used to store the instance data.
+	// This is initialized in RenderExtension::InitializeResources()
+	mutable TRefCountPtr<FRDGPooledBuffer> BaseInstanceBuffer;
+	mutable TRefCountPtr<FRDGPooledBuffer> InstanceInfoBuffer;
 
 	bool bCallbackRegistered;
 
-	class F${NAME}VertexFactory* VertexFactory;
+	class F${NAME}MeshVertexFactory* VertexFactory;
 };
 
 

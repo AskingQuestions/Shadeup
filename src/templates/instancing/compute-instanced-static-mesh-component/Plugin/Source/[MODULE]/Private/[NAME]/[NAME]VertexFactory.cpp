@@ -29,7 +29,7 @@ void F${NAME}VertexFactoryShaderParametersBase::GetElementShaderBindings(
 	class FMeshDrawSingleShaderBindings& ShaderBindings,
 	FVertexInputStreamArray& VertexStreams) const
 {
-	const F${NAME}VertexFactoryBase* ${NAME}VF = static_cast<const F${NAME}VertexFactoryBase*>(VertexFactory);
+	
 }
 
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(F${NAME}MeshUniformParameters, "${NAME}MeshVF");
@@ -41,6 +41,7 @@ public:
 	void Bind(const FShaderParameterMap& ParameterMap)
 	{
 		F${NAME}VertexFactoryShaderParametersBase::Bind(ParameterMap);
+		InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
 	}
 
 	void GetElementShaderBindings(
@@ -58,7 +59,14 @@ public:
 
 		const F${NAME}MeshVertexFactory* ${NAME}MeshVF = static_cast<const F${NAME}MeshVertexFactory*>(VertexFactory);
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<F${NAME}MeshUniformParameters>(), ${NAME}MeshVF->GetUniformBuffer());
+
+		F${NAME}UserData* UserData = (F${NAME}UserData*)BatchElement.UserData;
+	
+		ShaderBindings.Add(InstanceBufferParameter, UserData->InstanceBufferSRV);
 	}
+
+protected:
+	LAYOUT_FIELD(FShaderResourceParameter, InstanceBufferParameter);
 };
 
 IMPLEMENT_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersVS);
@@ -87,6 +95,16 @@ public:
 };
 
 IMPLEMENT_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersPS);
+
+void F${NAME}MeshVertexFactory::SetupMeshData(const FStaticMeshLODResources& LODResources) {
+	FStaticMeshDataType LocalData;
+
+	LODResources.VertexBuffers.PositionVertexBuffer.BindPositionVertexBuffer(this, LocalData);
+	LODResources.VertexBuffers.StaticMeshVertexBuffer.BindTangentVertexBuffer(this, LocalData);
+	LODResources.VertexBuffers.StaticMeshVertexBuffer.BindTexCoordVertexBuffer(this, LocalData, MAX_TEXCOORDS);
+	LODResources.VertexBuffers.ColorVertexBuffer.BindColorVertexBuffer(this, LocalData);
+	SetData(LocalData);
+}
 
 void F${NAME}MeshVertexFactory::InitRHI()
 {
@@ -171,11 +189,13 @@ bool F${NAME}MeshVertexFactory::ShouldCompilePermutation(const FVertexFactorySha
 
 void F${NAME}MeshVertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)
 {
-	F${NAME}VertexFactoryBase::ModifyCompilationEnvironment(Parameters, OutEnvironment);
+	FVertexFactory::ModifyCompilationEnvironment(Parameters, OutEnvironment);
 
 	// Set a define so we can tell in MaterialTemplate.usf when we are compiling a mesh particle vertex factory
 	OutEnvironment.SetDefine(TEXT("${NAME}_MESH_FACTORY"), TEXT("1"));
 	OutEnvironment.SetDefine(TEXT("${NAME}_MESH_INSTANCED"), TEXT("1"));
+	OutEnvironment.SetDefine(TEXT("USE_INSTANCING"), TEXT("1"));
+	OutEnvironment.SetDefine(TEXT("USE_DITHERED_LOD_TRANSITION_FOR_INSTANCED"), TEXT("0"));
 	OutEnvironment.SetDefine(TEXT("${NAME}VFLooseParameters"), TEXT("${NAME}MeshVF"));
 
 #if ${NAME}_ENABLE_GPU_SCENE_MESHES

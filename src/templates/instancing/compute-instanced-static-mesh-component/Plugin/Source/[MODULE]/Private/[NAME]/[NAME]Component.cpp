@@ -47,6 +47,13 @@ FBoxSphereBounds U${NAME}Component::CalcBounds(const FTransform& LocalToWorld) c
 	return FBoxSphereBounds(FBox(FVector(0.f, 0.f, 0.f), FVector(10000.f))).TransformBy(LocalToWorld);
 }
 
+void U${NAME}Component::AddInstances()
+ {
+	if (SceneProxy) {
+		((F${NAME}SceneProxy*) SceneProxy)->AddInstancesNextFrame = true;
+	}
+}
+
 FPrimitiveSceneProxy* U${NAME}Component::CreateSceneProxy()
 {
 	return new F${NAME}SceneProxy(this);
