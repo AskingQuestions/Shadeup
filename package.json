@@ -16,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "archiver": "^5.3.1",
     "boxen": "^7.0.0",
     "colors": "^1.4.0",
     "commander": "^9.2.0",

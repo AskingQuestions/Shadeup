@@ -230,7 +230,7 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 			PassParameters->RenderTarget = GraphBuilder.CreateUAV(TmpTexture);
 			`)}${instance.example == "base" ? `
 			const void* RawData = (void*)Params.Input;
-			int NumInputs = Params.Input.Num();
+			int NumInputs = 2;
 			int InputSize = sizeof(int);
 			FRDGBufferRef InputBuffer = CreateUploadBuffer(GraphBuilder, TEXT("InputBuffer"), InputSize, NumInputs, RawData, InputSize * NumInputs);
 

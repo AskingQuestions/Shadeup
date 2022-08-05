@@ -14,7 +14,7 @@ void ${this.answers.name}(
 	FMaterialPixelParameters MaterialParameters = MakeInitializedMaterialPixelParameters();
 
 	// There are various inputs we can provide to the material graph via FMaterialPixelParameters
-	// See: https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Shaders/Private/MaterialTemplate.ush#L262
+	// See: https://github.com/EpicGames/UnrealEngine/blob/5.0/Engine/Shaders/Private/MaterialTemplate.ush#L262
 	
 	MaterialParameters.VertexColor = half4(1, 1, 0, 1);
 	
@@ -25,7 +25,7 @@ void ${this.answers.name}(
 
 	// PixelMaterialInputs is a struct that contains the outputs of the material graph
 	// Use the provided helper methods ( GetMaterialXYZ(...) ) to access the outputs
-	// See: https://github.com/chendi-YU/UnrealEngine/blob/master/Engine/Shaders/MaterialTemplate.usf#L1298
+	// See: https://github.com/EpicGames/UnrealEngine/blob/5.0/Engine/Shaders/Private/MaterialTemplate.ush#L2485
 
 	OutputColor[0] = float4(GetMaterialBaseColor(PixelMaterialInputs), 0);
 

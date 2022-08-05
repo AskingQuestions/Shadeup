@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 import vm from "vm";
 
-import * as url from 'url';
+import * as url from "url";
 const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 class Template {
 	constructor(project, plugin, mod) {
@@ -13,17 +13,11 @@ class Template {
 		this.module = mod;
 	}
 
-	static display() {
+	static display() {}
 
-	}
+	static examples() {}
 
-	static examples() {
-
-	}
-
-	async prompt(inquirer) {
-
-	}
+	async prompt(inquirer) {}
 
 	readDirRecur(from) {
 		let files = [];
@@ -33,9 +27,8 @@ class Template {
 			if (f.startsWith(".")) continue;
 
 			if (f.startsWith("$")) {
-				if (f.startsWith("$" + this.example)) {
-					
-				}else{
+				if (f.startsWith("$" + this.example + "[")) {
+				} else {
 					continue;
 				}
 			}
@@ -57,10 +50,7 @@ class Template {
 	}
 
 	async directory(from, to, name, module_name, instance) {
-		let {
-			files,
-			dirs
-		} = this.readDirRecur(from);
+		let { files, dirs } = this.readDirRecur(from);
 
 		// Sort the dirs by length
 		dirs = dirs.sort((a, b) => {
@@ -77,11 +67,14 @@ class Template {
 				fs.mkdirSync(full, { recursive: true });
 			}
 		}
-		
+
 		let mdFile = "";
 		// Copy the files
 		for (let f of files) {
-			let freal = f.replace(/\[NAME\]/g, name).replace(/\[MODULE\]/g, module_name).replace(new RegExp("\\$" + this.example, "g"), "");
+			let freal = f
+				.replace(/\[NAME\]/g, name)
+				.replace(/\[MODULE\]/g, module_name)
+				.replace(new RegExp("\\$" + this.example, "g"), "");
 			let full = path.join(to, freal);
 			if (!fs.existsSync(full) || true) {
 				let raw = fs.readFileSync(path.join(from, f), "utf8");
@@ -89,14 +82,23 @@ class Template {
 				const MODULE_NAME = module_name;
 				const SCOPE = MODULE_NAME.toUpperCase() + "_API";
 				instance;
-				const ifExample = (x, out) => typeof x == "object" ? (x.includes(instance.example) ? out : "") : (instance.example == x ? out : "");
+				const ifExample = (x, out) =>
+					typeof x == "object"
+						? x.includes(instance.example)
+							? out
+							: ""
+						: instance.example == x
+						? out
+						: "";
 
 				let generated = (() => {
 					try {
 						return eval("`" + raw + "`");
-					}catch (e) {
+					} catch (e) {
 						try {
-							let s = new vm.Script("`" + raw + "`", {filename: path.join(from, f)});
+							let s = new vm.Script("`" + raw + "`", {
+								filename: path.join(from, f)
+							});
 							s.runInThisContext();
 						} catch (err) {
 							console.log(err.stack);
@@ -113,7 +115,7 @@ class Template {
 				if (bn.endsWith(".md")) {
 					mdFile = full;
 				}
-			}else{
+			} else {
 				console.log("Exists".yellow, full);
 			}
 		}
@@ -121,15 +123,16 @@ class Template {
 		return mdFile;
 	}
 
-	async generate() {
-
-	}
+	async generate() {}
 }
 
 const COMPUTE_MATERIAL_EXTENDS = {
 	type: "confirm",
 	name: "material",
-	message: "Should this compute shader extend materials?" + " (if enabled your compute shader will be able to call an arbitrary material defined in the editor)".grey,
+	message:
+		"Should this compute shader extend materials?" +
+		" (if enabled your compute shader will be able to call an arbitrary material defined in the editor)"
+			.grey,
 	default: false
 };
 
@@ -140,11 +143,27 @@ class ComputeShader extends Template {
 
 	static examples() {
 		return [
-			["base", "Base", "Executable compute shader with inputs and outputs"],
-			["basemat", "Base with material", "Compute shader that extends materials"],
+			[
+				"base",
+				"Base",
+				"Executable compute shader with inputs and outputs"
+			],
+			[
+				"basemat",
+				"Base with material",
+				"Compute shader that extends materials"
+			],
 			["pi", "PI", "Calculate PI using random sampling [monte carlo]"],
-			["rt", "Render Target", "Draw into a render target using a compute shader"],
-			["mat", "Material Evaluation Render Target", "Draw into a render target using a material graph"],
+			[
+				"rt",
+				"Render Target",
+				"Draw into a render target using a compute shader"
+			],
+			[
+				"mat",
+				"Material Evaluation Render Target",
+				"Draw into a render target using a material graph"
+			]
 		];
 	}
 
@@ -165,19 +184,22 @@ class ComputeShader extends Template {
 		this.threadCounts = [1, 1, 1];
 		if (this.example == "pi") {
 			this.threadCounts = [32, 1, 1];
-		}else if (this.example == "rt") {
+		} else if (this.example == "rt") {
 			this.threadCounts = [32, 32, 1];
-		}else if (this.example == "mat") {
+		} else if (this.example == "mat") {
 			this.threadCounts = [32, 32, 1];
 			this.material = true;
-		}else if (this.example == "basemat") {
+		} else if (this.example == "basemat") {
 			this.threadCounts = [1, 1, 1];
 			this.material = true;
 		}
 
 		this.ShaderBase = this.material ? "Material" : "Global";
 		return await this.directory(
-			path.join(__dirname, "../templates/compute/simple-compute-shader/Plugin"),
+			path.join(
+				__dirname,
+				"../templates/compute/simple-compute-shader/Plugin"
+			),
 			this.plugin.dir,
 			this.answers.name,
 			this.module.name,
@@ -185,7 +207,6 @@ class ComputeShader extends Template {
 		);
 	}
 }
-
 
 class IndirectInstancing extends Template {
 	static display() {
@@ -195,8 +216,12 @@ class IndirectInstancing extends Template {
 	static examples() {
 		return [
 			["base", "Base", "Single triangle"],
-			["grid", "View dependent subdividing grid", "Triangle grid that increases in resolution"],
-			["inst", "Mesh instancing", "ISM component but GPU-driven"],
+			[
+				"grid",
+				"View dependent subdividing grid",
+				"Triangle grid that increases in resolution"
+			],
+			["inst", "Mesh instancing", "ISM component but GPU-driven"]
 		];
 	}
 
@@ -218,15 +243,21 @@ class IndirectInstancing extends Template {
 		this.ShaderBase = this.material ? "Material" : "Global";
 		if (this.example == "base") {
 			return await this.directory(
-				path.join(__dirname, "../templates/instancing/compute-indirect-drawing/Plugin"),
+				path.join(
+					__dirname,
+					"../templates/instancing/compute-indirect-drawing/Plugin"
+				),
 				this.plugin.dir,
 				this.answers.name,
 				this.module.name,
 				this
 			);
-		}else if (this.example == "inst") {
+		} else if (this.example == "inst") {
 			return await this.directory(
-				path.join(__dirname, "../templates/instancing/compute-instanced-static-mesh-component/Plugin"),
+				path.join(
+					__dirname,
+					"../templates/instancing/compute-instanced-static-mesh-component/Plugin"
+				),
 				this.plugin.dir,
 				this.answers.name,
 				this.module.name,
@@ -243,8 +274,12 @@ class CustomProxy extends Template {
 
 	static examples() {
 		return [
-			["base", "Base", "Pass through StaticMeshComponent with a custom pixel/vertex shader"],
-			["stream", "Dynamic Vertex Stream", "CPU-driven vertex data"],
+			[
+				"base",
+				"Base",
+				"Pass through StaticMeshComponent with a custom pixel/vertex shader"
+			],
+			["stream", "Dynamic Vertex Stream", "CPU-driven vertex data"]
 		];
 	}
 
@@ -269,9 +304,13 @@ class MaterialNodeOutput extends Template {
 	static examples() {
 		return [
 			["fn", "Base Function", "Input -> Output setup with HLSL"],
-			["output", "Base Final Output", "Custom node that accepts inputs and allows you to evaluate the graph in other contexts [compute, vertex, pixel]"],
+			[
+				"output",
+				"Base Final Output",
+				"Custom node that accepts inputs and allows you to evaluate the graph in other contexts [compute, vertex, pixel]"
+			],
 			["input", "Base Input Only", "Input only setup"],
-			["dynamic", "Dynamic Inputs", "Variable number of input pins"],
+			["dynamic", "Dynamic Inputs", "Variable number of input pins"]
 		];
 	}
 
