@@ -246,7 +246,7 @@ program
 	.description("CLI tool for compiling shadeup files")
 	.version("0.1.0")
 	.action(async () => {
-		console.log("Shadeup v0.1.0".magenta);
+		console.log("Shadeup v1.0.2".magenta);
 		try {
 			let project = await IQProjectFolder();
 			let plugin = await IQPluginFolder();
