@@ -12,6 +12,7 @@
 #include "RenderGraphBuilder.h"
 #include "RenderGraphUtils.h"
 #include "RenderUtils.h"
+#include "PrimitiveSceneInfo.h"
 #include "${MODULE_NAME}/Public/${NAME}/${NAME}Component.h"
 #include "${NAME}VertexFactory.h"
 
@@ -860,7 +861,7 @@ namespace ${NAME}Mesh
 		TShaderMapRef<FAddInstances_CS> ComputeShader(InGlobalShaderMap);
 
 		FAddInstances_CS::FParameters* PassParameters = GraphBuilder.AllocParameters<FAddInstances_CS::FParameters>();
-		PassParameters->ViewOrigin = (FVector3f)FVector(InDesc.SceneProxy->GetLocalToWorld().Inverse().TransformPosition((FVector3f)InViewDesc.ViewOrigin));
+		PassParameters->ViewOrigin = (FVector3f)FVector(InDesc.SceneProxy->GetLocalToWorld().Inverse().TransformPosition(InViewDesc.ViewOrigin));
 		for (int32 PlaneIndex = 0; PlaneIndex < 5; ++PlaneIndex)
 		{
 			PassParameters->FrustumPlanes[PlaneIndex] = FVector4f(InViewDesc.Planes[PlaneIndex]); // LWC_TODO: precision loss

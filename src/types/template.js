@@ -13,6 +13,8 @@ class Template {
 		this.module = mod;
 	}
 
+	static link() {}
+
 	static display() {}
 
 	static examples() {}
@@ -37,15 +39,15 @@ class Template {
 			if (fs.statSync(full).isDirectory()) {
 				dirs.push(f);
 				let children = this.readDirRecur(full);
-				files = files.concat(children.files.map(cf => f + "/" + cf));
-				dirs = dirs.concat(children.dirs.map(cf => f + "/" + cf));
+				files = files.concat(children.files.map((cf) => f + "/" + cf));
+				dirs = dirs.concat(children.dirs.map((cf) => f + "/" + cf));
 			} else {
 				files.push(f);
 			}
 		}
 		return {
 			files,
-			dirs
+			dirs,
 		};
 	}
 
@@ -97,7 +99,7 @@ class Template {
 					} catch (e) {
 						try {
 							let s = new vm.Script("`" + raw + "`", {
-								filename: path.join(from, f)
+								filename: path.join(from, f),
 							});
 							s.runInThisContext();
 						} catch (err) {
@@ -133,10 +135,14 @@ const COMPUTE_MATERIAL_EXTENDS = {
 		"Should this compute shader extend materials?" +
 		" (if enabled your compute shader will be able to call an arbitrary material defined in the editor)"
 			.grey,
-	default: false
+	default: false,
 };
 
 class ComputeShader extends Template {
+	static link() {
+		return "compute";
+	}
+
 	static display() {
 		return "[COMPUTE]".magenta + " Compute Shader";
 	}
@@ -146,24 +152,24 @@ class ComputeShader extends Template {
 			[
 				"base",
 				"Base",
-				"Executable compute shader with inputs and outputs"
+				"Executable compute shader with inputs and outputs",
 			],
 			[
 				"basemat",
 				"Base with material",
-				"Compute shader that extends materials"
+				"Compute shader that extends materials",
 			],
 			["pi", "PI", "Calculate PI using random sampling [monte carlo]"],
 			[
 				"rt",
 				"Render Target",
-				"Draw into a render target using a compute shader"
+				"Draw into a render target using a compute shader",
 			],
 			[
 				"mat",
 				"Material Evaluation Render Target",
-				"Draw into a render target using a material graph"
-			]
+				"Draw into a render target using a material graph",
+			],
 		];
 	}
 
@@ -173,8 +179,8 @@ class ComputeShader extends Template {
 				type: "input",
 				name: "name",
 				message: "What is the name of the shader",
-				default: "MySimpleComputeShader"
-			}
+				default: "MySimpleComputeShader",
+			},
 		]);
 		this.answers = answers;
 	}
@@ -209,6 +215,10 @@ class ComputeShader extends Template {
 }
 
 class IndirectInstancing extends Template {
+	static link() {
+		return "instancing";
+	}
+
 	static display() {
 		return "[INSTANCING]".red + " Indirect Instancing";
 	}
@@ -219,9 +229,9 @@ class IndirectInstancing extends Template {
 			[
 				"grid",
 				"View dependent subdividing grid",
-				"Triangle grid that increases in resolution"
+				"Triangle grid that increases in resolution",
 			],
-			["inst", "Mesh instancing", "ISM component but GPU-driven"]
+			["inst", "Mesh instancing", "ISM component but GPU-driven"],
 		];
 	}
 
@@ -231,9 +241,9 @@ class IndirectInstancing extends Template {
 				type: "input",
 				name: "name",
 				message: "What is the name of the Shader",
-				default: "MySimpleComputeShader"
+				default: "MySimpleComputeShader",
 			},
-			COMPUTE_MATERIAL_EXTENDS
+			COMPUTE_MATERIAL_EXTENDS,
 		]);
 		this.answers = answers;
 	}
@@ -263,11 +273,17 @@ class IndirectInstancing extends Template {
 				this.module.name,
 				this
 			);
+		} else if (this.example == "grid") {
+			throw new Error("Coming soon!");
 		}
 	}
 }
 
 class CustomProxy extends Template {
+	static link() {
+		return "proxies";
+	}
+
 	static display() {
 		return "[COMPONENT]".blue + " SceneProxy/VertexFactory";
 	}
@@ -277,9 +293,9 @@ class CustomProxy extends Template {
 			[
 				"base",
 				"Base",
-				"Pass through StaticMeshComponent with a custom pixel/vertex shader"
+				"Pass through StaticMeshComponent with a custom pixel/vertex shader",
 			],
-			["stream", "Dynamic Vertex Stream", "CPU-driven vertex data"]
+			["stream", "Dynamic Vertex Stream", "CPU-driven vertex data"],
 		];
 	}
 
@@ -289,14 +305,22 @@ class CustomProxy extends Template {
 				type: "input",
 				name: "name",
 				message: "What is the name of the component",
-				default: "MyCustomComponent"
-			}
+				default: "MyCustomComponent",
+			},
 		]);
 		this.answers = answers;
+	}
+
+	async generate() {
+		throw new Error("Coming soon!");
 	}
 }
 
 class MaterialNodeOutput extends Template {
+	static link() {
+		return "nodes";
+	}
+
 	static display() {
 		return "[MATERIAL]".green + " Custom Material Nodes";
 	}
@@ -307,10 +331,10 @@ class MaterialNodeOutput extends Template {
 			[
 				"output",
 				"Base Final Output",
-				"Custom node that accepts inputs and allows you to evaluate the graph in other contexts [compute, vertex, pixel]"
+				"Custom node that accepts inputs and allows you to evaluate the graph in other contexts [compute, vertex, pixel]",
 			],
 			["input", "Base Input Only", "Input only setup"],
-			["dynamic", "Dynamic Inputs", "Variable number of input pins"]
+			["dynamic", "Dynamic Outputs", "Variable number of input pins"],
 		];
 	}
 
@@ -320,10 +344,46 @@ class MaterialNodeOutput extends Template {
 				type: "input",
 				name: "name",
 				message: "What is the name of the node",
-				default: "MyCustomComponent"
-			}
+				default: "MyCustomOperation",
+			},
 		]);
 		this.answers = answers;
+	}
+
+	async generate() {
+		if (this.example == "fn") {
+			return await this.directory(
+				path.join(__dirname, "../templates/nodes/fn/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		} else if (this.example == "input") {
+			return await this.directory(
+				path.join(__dirname, "../templates/nodes/input/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		} else if (this.example == "output") {
+			return await this.directory(
+				path.join(__dirname, "../templates/nodes/output/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		} else if (this.example == "dynamic") {
+			return await this.directory(
+				path.join(__dirname, "../templates/nodes/dynamic/Plugin"),
+				this.plugin.dir,
+				this.answers.name,
+				this.module.name,
+				this
+			);
+		}
 	}
 }
 
@@ -331,5 +391,5 @@ export default [
 	IndirectInstancing,
 	MaterialNodeOutput,
 	CustomProxy,
-	ComputeShader
+	ComputeShader,
 ];

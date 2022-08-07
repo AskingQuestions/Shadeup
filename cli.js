@@ -25,7 +25,7 @@ function FindPluginData(file) {
 			return {
 				file: path.join(file, f),
 				dir: file,
-				name: f.replace(".uplugin", "")
+				name: f.replace(".uplugin", ""),
 			};
 		}
 	}
@@ -47,7 +47,7 @@ async function IQProjectFolder(file) {
 			return {
 				file: path.join(file, f),
 				dir: file,
-				name: f.replace(".uproject", "")
+				name: f.replace(".uproject", ""),
 			};
 		}
 	}
@@ -70,7 +70,7 @@ async function IQPluginFolder(file) {
 			return {
 				file: path.join(file, f),
 				dir: file,
-				name: f.replace(".uplugin", "")
+				name: f.replace(".uplugin", ""),
 			};
 		}
 	}
@@ -89,7 +89,7 @@ async function IQPluginFolder(file) {
 			}
 			let pluginsList = fs
 				.readdirSync(path.join(project.dir, "Plugins"))
-				.filter(f => !f.startsWith("."));
+				.filter((f) => !f.startsWith("."));
 			if (pluginsList.length == 0) {
 				throw new Error(
 					"No plugins found in this project. Please create one via the Unreal Editor".yellow
@@ -101,8 +101,8 @@ async function IQPluginFolder(file) {
 					name: "plugin",
 					message:
 						"Which plugin do you want to use (To create a new one use the unreal engine editor)",
-					choices: pluginsList
-				}
+					choices: pluginsList,
+				},
 			]);
 			process.chdir(path.join(project.dir, "Plugins", answers.plugin));
 			return await IQPluginFolder();
@@ -127,7 +127,7 @@ export async function CreateModule(plugin, name) {
 		pluginData.Modules = [];
 	}
 
-	let existingModule = pluginData.Modules.find(m => m.Name === name);
+	let existingModule = pluginData.Modules.find((m) => m.Name === name);
 	if (existingModule) {
 		throw new Error(
 			"A module with this name already exists in this plugin."
@@ -138,7 +138,7 @@ export async function CreateModule(plugin, name) {
 	pluginData.Modules.push({
 		Name: name,
 		Type: "Runtime",
-		LoadingPhase: "PostConfigInit" // PostConfigInit is for registering our shaders
+		LoadingPhase: "PostConfigInit", // PostConfigInit is for registering our shaders
 	});
 
 	fs.writeFileSync(
@@ -149,7 +149,7 @@ export async function CreateModule(plugin, name) {
 
 	fs.mkdirSync(path.join(dir, "Source", name), { recursive: true });
 	fs.mkdirSync(path.join(dir, "Source", name, "Private"), {
-		recursive: true
+		recursive: true,
 	});
 	fs.mkdirSync(path.join(dir, "Source", name, "Public"), { recursive: true });
 	fs.mkdirSync(path.join(dir, "Shaders"), { recursive: true });
@@ -197,7 +197,7 @@ async function IQModuleFolder(file) {
 			return {
 				file: path.join(file, f),
 				dir: file,
-				name: f.replace(".Build.cs", "")
+				name: f.replace(".Build.cs", ""),
 			};
 		}
 	}
@@ -218,16 +218,16 @@ async function IQModuleFolder(file) {
 					choices: [
 						...fs
 							.readdirSync(path.join(plugin.dir, "Source"))
-							.filter(f => !f.startsWith(".")),
-						"Create New"
-					]
+							.filter((f) => !f.startsWith(".")),
+						"Create New",
+					],
 				},
 				{
 					type: "input",
 					name: "name",
 					message: "What is the name of the module",
-					when: answers => answers.module == "Create New"
-				}
+					when: (answers) => answers.module == "Create New",
+				},
 			]);
 			if (answers.module == "Create New") {
 				process.chdir(await CreateModule(plugin, answers.name));
@@ -252,7 +252,7 @@ program
 			let plugin = await IQPluginFolder();
 			let module = await IQModuleFolder();
 
-			let choices = templates.map(t => t.display());
+			let choices = templates.map((t) => t.display());
 			let templateMap = {};
 			for (let t of templates) {
 				templateMap[t.display()] = t;
@@ -262,8 +262,8 @@ program
 				{
 					type: "list",
 					name: "Template",
-					choices
-				}
+					choices,
+				},
 			]);
 
 			let inst = new templateMap[answers.Template](
@@ -276,11 +276,11 @@ program
 				{
 					type: "list",
 					name: "Example",
-					choices: examps.map(e => ({
+					choices: examps.map((e) => ({
 						name: `${e[1]} ` + `(${e[2]})`.grey,
-						value: e[0]
-					}))
-				}
+						value: e[0],
+					})),
+				},
 			]);
 
 			inst.example = exampleAns.Example;
@@ -297,24 +297,22 @@ program
 					textAlignment: "center",
 					borderStyle: "round",
 					title: "Next Step",
-					titleAlignment: "center"
+					titleAlignment: "center",
 				})
 			);
 
 			console.log(
 				boxen(
-					"https://docs.unrealengine.com/5.0/en-US/render-dependency-graph-in-unreal-engine/"
-						.grey +
-						"\n" +
-						"https://docs.unrealengine.com/5.0/en-US/mesh-drawing-pipeline-in-unreal-engine/"
-							.grey,
+					`https://shadeup.dev/docs/${templateMap[
+						answers.Template
+					].link()}/${inst.example}`.grey,
 					{
 						padding: 1,
 						borderColor: "blue",
 						textAlignment: "center",
 						borderStyle: "round",
 						title: "Useful Reading",
-						titleAlignment: "center"
+						titleAlignment: "center",
 					}
 				)
 			);
@@ -413,7 +411,7 @@ program
 			pluginData.Modules = [];
 		}
 
-		let existingModule = pluginData.Modules.find(m => m.Name === name);
+		let existingModule = pluginData.Modules.find((m) => m.Name === name);
 		if (existingModule) {
 			console.error(
 				"A module with this name already exists in this plugin."
@@ -424,7 +422,7 @@ program
 		pluginData.Modules.push({
 			Name: name,
 			Type: "Runtime",
-			LoadingPhase: "PostConfigInit" // PostConfigInit is for registering our shaders
+			LoadingPhase: "PostConfigInit", // PostConfigInit is for registering our shaders
 		});
 
 		fs.writeFileSync(
@@ -434,10 +432,10 @@ program
 
 		fs.mkdirSync(path.join(dir, "Source", name), { recursive: true });
 		fs.mkdirSync(path.join(dir, "Source", name, "Private"), {
-			recursive: true
+			recursive: true,
 		});
 		fs.mkdirSync(path.join(dir, "Source", name, "Public"), {
-			recursive: true
+			recursive: true,
 		});
 		fs.mkdirSync(path.join(dir, "Shaders"), { recursive: true });
 		fs.mkdirSync(path.join(dir, "Shaders", name, ""), { recursive: true });

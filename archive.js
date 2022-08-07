@@ -34,7 +34,7 @@ import templates from "./src/types/template.js";
 					file: path.join(
 						outDirPlugin,
 						"ShadeupExamplePlugin.uplugin"
-					)
+					),
 				},
 				template.name
 			);
@@ -42,25 +42,29 @@ import templates from "./src/types/template.js";
 			let inst = new template(
 				{
 					name: "archive",
-					dir: path.join(__dirname, "archives")
+					dir: path.join(__dirname, "archives"),
 				},
 				{
 					dir: outDirPlugin,
-					name: template.name + "_Plugin"
+					name: template.name + "_Plugin",
 				},
 				{
 					file: path.join(moduleDir, template.name + ".Build.cs"),
 					dir: moduleDir,
-					name: template.name
+					name: template.name,
 				}
 			);
 			inst.example = example[0];
 			inst.answers = { name: "Example" + template.name };
-			let mdFile = await inst.generate();
+			try {
+				let mdFile = await inst.generate();
+			} catch (e) {
+				continue;
+			}
 			await unlink(
 				path.join(outDirPlugin, "./ShadeupExamplePlugin.uplugin.back")
 			);
-			await new Promise(res => {
+			await new Promise((res) => {
 				const output = fs.createWriteStream(
 					path.resolve(
 						"./",
@@ -69,14 +73,14 @@ import templates from "./src/types/template.js";
 					)
 				);
 				const archive = archiver("zip", {
-					zlib: { level: 9 }
+					zlib: { level: 9 },
 				});
 
-				output.on("close", function() {
+				output.on("close", function () {
 					res();
 				});
 
-				archive.on("warning", function(err) {
+				archive.on("warning", function (err) {
 					if (err.code === "ENOENT") {
 						console.warn(err);
 					} else {
@@ -84,7 +88,7 @@ import templates from "./src/types/template.js";
 					}
 				});
 
-				archive.on("error", function(err) {
+				archive.on("error", function (err) {
 					throw err;
 				});
 

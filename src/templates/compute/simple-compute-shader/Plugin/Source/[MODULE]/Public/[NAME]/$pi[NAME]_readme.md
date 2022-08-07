@@ -1,14 +1,13 @@
 # ${NAME} usage
 
 ## Blueprint
-1. Right-click in any blueprint editor and add the node: "${
-	({
-		"base": "ExecuteBaseComputeShader",
-		"pi": "CalculatePIComputeShader"
-	})[instance.example]
-}"
+
+1. Right-click in any blueprint editor and add the node: "CalculatePIComputeShader"
+2. Pass in a moderately high non-even number under 256k for the number of samples
+3. Enjoy, and get digging into the code
 
 ## C++
+
 \`\`\`cpp
 // Params struct used to pass args to our compute shader
 F${NAME}DispatchParams Params(1, 1, 1);

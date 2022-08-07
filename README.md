@@ -6,9 +6,13 @@
 
 </center>
 
-Shadeup is a CLI tool for scaffolding various Unreal Engine shader patterns.
+## More shaders less boilerplate
 
-# Installation & Usage
+Shadeup is a CLI-based scaffolding tool for rapidly whipping up shaders in Unreal Engine
+
+---
+
+## Installation & Usage
 
 ```sh
 $ npm install shadeup
@@ -19,4 +23,4 @@ $ cd MyUnrealProject
 $ shadeup # This will start the scaffolding wizard
 ```
 
-# See [shadeup.dev](https://shadeup.dev/docs) for usage
+For more information visit [shadeup.dev](https://shadeup.dev/docs)
