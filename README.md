@@ -5,7 +5,7 @@
   <a href="https://www.npmjs.com/package/shadeup"><img src="https://img.shields.io/npm/l/shadeup.svg?sanitize=true" alt="License"></a>
 </p>
 
-<h1 align="center">Shadeup</h1>
+<h1 align="center"><a href="https://shadeup.dev">Shadeup</a></h1>
 
 ## More shaders less boilerplate
 
