@@ -244,9 +244,13 @@ async function IQModuleFolder(file) {
 program
 	.name("shadeup")
 	.description("CLI tool for compiling shadeup files")
-	.version("0.1.0")
-	.action(async () => {
-		console.log("Shadeup v1.0.2".magenta);
+	.version("1.1.0")
+	.option("-v")
+	.action(async (opts) => {
+		console.log("Shadeup v1.1.0".magenta + " (UE 5.1 compatible)".grey);
+		if (opts.v) {
+			return;
+		}
 		try {
 			let project = await IQProjectFolder();
 			let plugin = await IQPluginFolder();

@@ -261,10 +261,21 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 				RunnerFunc(RunnerFunc);
 			});
 			`)}${ifExample(['rt', 'mat'], `
-			AddCopyTexturePass(GraphBuilder, TmpTexture, TargetTexture, FRHICopyTextureInfo());
+			// The copy will fail if we don't have matching formats, let's check and make sure we do.
+			if (TargetTexture->Desc.Format == PF_B8G8R8A8) {
+				AddCopyTexturePass(GraphBuilder, TmpTexture, TargetTexture, FRHICopyTextureInfo());
+			} else {
+				#if WITH_EDITOR
+					GEngine->AddOnScreenDebugMessage((uint64)42145125184, 6.f, FColor::Red, FString(TEXT("The provided render target has an incompatible format (Please change the RT format to: RGBA8).")));
+				#endif
+			}
 			`)}
 		} else {
-			// We silently exit here as we don't want to crash the game if the shader is not found or has an error.
+			#if WITH_EDITOR
+				GEngine->AddOnScreenDebugMessage((uint64)42145125184, 6.f, FColor::Red, FString(TEXT("The compute shader has a problem.")));
+			#endif
+
+			// We exit here as we don't want to crash the game if the shader is not found or has an error.
 			${ifExample('basemat', `AsyncCallback(FVector3f(0.f));`)}
 		}
 	}
