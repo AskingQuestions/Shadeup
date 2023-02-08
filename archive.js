@@ -4,7 +4,7 @@ import { cp, rm, rmdir, unlink } from "fs/promises";
 import archiver from "archiver";
 import { CreateModule } from "./cli.js";
 
-// Generates all examples and zips them for distribution on the https://shadeup.dev site
+// Generates all examples and zips them for distribution on the https://unreal.shadeup.dev site
 
 import * as url from "url";
 const __filename = url.fileURLToPath(import.meta.url);

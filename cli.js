@@ -303,7 +303,7 @@ program
 
 			console.log(
 				boxen(
-					`https://shadeup.dev/docs/${templateMap[
+					`https://unreal.shadeup.dev/docs/${templateMap[
 						answers.Template
 					].link()}/${inst.example}`.grey,
 					{
