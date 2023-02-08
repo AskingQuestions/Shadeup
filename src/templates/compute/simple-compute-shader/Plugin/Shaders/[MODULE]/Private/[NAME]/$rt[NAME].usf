@@ -1,4 +1,3 @@
-#include "/Engine/Generated/Material.ush"
 #include "/Engine/Public/Platform.ush"
 
 RWTexture2D<float3> RenderTarget;

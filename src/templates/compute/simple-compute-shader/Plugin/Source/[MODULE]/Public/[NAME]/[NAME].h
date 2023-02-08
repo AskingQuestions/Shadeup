@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericPlatform/GenericPlatformMisc.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
+#include "Engine/TextureRenderTarget2D.h"
 ${instance.material ? `#include "Renderer/Private/ScenePrivate.h"\n` : ``}
 #include "${NAME}.generated.h"
 
