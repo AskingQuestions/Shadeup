@@ -1,6 +1,6 @@
 {
 	"name": "shadeup",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "",
 	"main": "index.js",
 	"type": "module",
@@ -20,11 +20,13 @@
 	"author": "AskingQuestions <npm@jrmy.dev>",
 	"license": "MIT",
 	"dependencies": {
-		"archiver": "^5.3.1",
 		"boxen": "^7.0.0",
 		"colors": "^1.4.0",
 		"commander": "^9.2.0",
 		"inquirer": "^8.2.4",
 		"nearley": "^2.20.1"
+	},
+	"devDependencies": {
+		"archiver": "^5.3.1"
 	}
 }
