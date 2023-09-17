@@ -5,6 +5,8 @@
 
 #include "CoreMinimal.h"
 #include "${NAME}VertexFactory.h"
+#include "PrimitiveUniformShaderParametersBuilder.h"
+#include "Materials/MaterialRenderProxy.h"
 #include "PrimitiveSceneProxy.h"
 
 namespace ${NAME}Mesh
@@ -26,7 +28,7 @@ namespace ${NAME}Mesh
 class F${NAME}SceneProxy final : public FPrimitiveSceneProxy
 {
 public:
-	F${NAME}SceneProxy(class U${NAME}Component* InComponent);
+	F${NAME}SceneProxy(class U${NAME}Component * InComponent);
 
 protected:
 	//~ Begin FPrimitiveSceneProxy Interface
@@ -35,23 +37,23 @@ protected:
 	virtual void CreateRenderThreadResources() override;
 	virtual void DestroyRenderThreadResources() override;
 	virtual void OnTransformChanged() override;
-	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override;
-	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;
+	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView *View) const override;
+	virtual void GetDynamicMeshElements(const TArray<const FSceneView *> &Views, const FSceneViewFamily &ViewFamily, uint32 VisibilityMap, FMeshElementCollector &Collector) const override;
 	//~ End FPrimitiveSceneProxy Interface
 
 	F${NAME}MeshUniformBufferRef CreateVFUniformBuffer() const;
 
 private:
-	void BuildOcclusionVolumes(TArrayView<FVector2D> const& InMinMaxData, FIntPoint const& InMinMaxSize, TArrayView<int32> const& InMinMaxMips, int32 InNumLods);
+	void BuildOcclusionVolumes(TArrayView<FVector2D> const &InMinMaxData, FIntPoint const &InMinMaxSize, TArrayView<int32> const &InMinMaxMips, int32 InNumLods);
 
 public:
 	bool bIsMeshValid;
 
 	mutable std::atomic<bool> AddInstancesNextFrame;
 
-	class FMaterialRenderProxy* Material;
-	class UStaticMesh* LocalStaticMesh;
-	FStaticMeshRenderData* RenderData;
+	class FMaterialRenderProxy *Material;
+	class UStaticMesh *LocalStaticMesh;
+	FStaticMeshRenderData *RenderData;
 	FMaterialRelevance MaterialRelevance;
 
 	int LODIndex;
@@ -67,8 +69,7 @@ public:
 
 	bool bCallbackRegistered;
 
-	class F${NAME}MeshVertexFactory* VertexFactory;
+	class F${NAME}MeshVertexFactory *VertexFactory;
 };
-
 
 //  Notes: Looks like GetMeshShaderMap is returning nullptr during the DepthPass

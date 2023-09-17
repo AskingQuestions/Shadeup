@@ -9,20 +9,23 @@
 #include "MeshMaterialShader.h"
 #include "RHIStaticStates.h"
 #include "ShaderParameters.h"
+#include "DataDrivenShaderPlatformInfo.h"
+#include "MaterialDomain.h"
+#include "MeshDrawShaderBindings.h"
 #include "ShaderParameterUtils.h"
 
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(F${NAME}Parameters, "${NAME}Params");
 
 namespace F${NAME}Util
 {
-	template< typename T >
-	FBufferRHIRef CreateIndexBuffer()
+	template <typename T>
+	FBufferRHIRef CreateIndexBuffer(FRHICommandListBase & RHICmdList)
 	{
 		TResourceArray<T, INDEXBUFFER_ALIGNMENT> Indices;
 
 		// Allocate room for indices
 		Indices.Reserve(3);
-		
+
 		// Top left
 		// CCW triangle winding order
 		Indices.Add(1);
@@ -34,15 +37,14 @@ namespace F${NAME}Util
 
 		// Create index buffer. Fill buffer with initial data upon creation
 		FRHIResourceCreateInfo CreateInfo(TEXT("${NAME}IndexBuffer"), &Indices);
-		return RHICreateIndexBuffer(Stride, Size, BUF_Static, CreateInfo);
+		return RHICmdList.CreateIndexBuffer(Stride, Size, BUF_Static, CreateInfo);
 	}
 }
 
-void F${NAME}IndexBuffer::InitRHI()
+void F${NAME}IndexBuffer::InitRHI(FRHICommandListBase &RHICmdList)
 {
-	IndexBufferRHI = F${NAME}Util::CreateIndexBuffer<uint16>();
+	IndexBufferRHI = F${NAME}Util::CreateIndexBuffer<uint16>(RHICmdList);
 }
-
 
 /**
  * Shader parameters for vertex factory.
@@ -52,7 +54,7 @@ class F${NAME}ShaderParameters : public FVertexFactoryShaderParameters
 	DECLARE_TYPE_LAYOUT(F${NAME}ShaderParameters, NonVirtual);
 
 public:
-	void Bind(const FShaderParameterMap& ParameterMap)
+	void Bind(const FShaderParameterMap &ParameterMap)
 	{
 		// TODO
 		InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
@@ -61,20 +63,20 @@ public:
 	}
 
 	void GetElementShaderBindings(
-		const class FSceneInterface* Scene,
-		const class FSceneView* View,
-		const class FMeshMaterialShader* Shader,
-		const EVertexInputStreamType InputStreamType,
-		ERHIFeatureLevel::Type FeatureLevel,
-		const class FVertexFactory* InVertexFactory,
-		const struct FMeshBatchElement& BatchElement,
-		class FMeshDrawSingleShaderBindings& ShaderBindings,
-		FVertexInputStreamArray& VertexStreams) const
+			const class FSceneInterface *Scene,
+			const class FSceneView *View,
+			const class FMeshMaterialShader *Shader,
+			const EVertexInputStreamType InputStreamType,
+			ERHIFeatureLevel::Type FeatureLevel,
+			const class FVertexFactory *InVertexFactory,
+			const struct FMeshBatchElement &BatchElement,
+			class FMeshDrawSingleShaderBindings &ShaderBindings,
+			FVertexInputStreamArray &VertexStreams) const
 	{
-		F${NAME}VertexFactory* VertexFactory = (F${NAME}VertexFactory*)InVertexFactory;
+		F${NAME}VertexFactory *VertexFactory = (F${NAME}VertexFactory *)InVertexFactory;
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<F${NAME}Parameters>(), VertexFactory->UniformBuffer);
 
-		F${NAME}UserData* UserData = (F${NAME}UserData*)BatchElement.UserData;
+		F${NAME}UserData *UserData = (F${NAME}UserData *)BatchElement.UserData;
 		// TODO
 		ShaderBindings.Add(InstanceBufferParameter, UserData->InstanceBufferSRV);
 		ShaderBindings.Add(LodViewOriginParameter, UserData->LodViewOrigin);
@@ -93,10 +95,8 @@ IMPLEMENT_TYPE_LAYOUT(F${NAME}ShaderParameters);
 IMPLEMENT_VERTEX_FACTORY_PARAMETER_TYPE(F${NAME}VertexFactory, SF_Vertex, F${NAME}ShaderParameters);
 IMPLEMENT_VERTEX_FACTORY_PARAMETER_TYPE(F${NAME}VertexFactory, SF_Pixel, F${NAME}ShaderParameters);
 
-
-F${NAME}VertexFactory::F${NAME}VertexFactory(ERHIFeatureLevel::Type InFeatureLevel, const F${NAME}Parameters& InParams)
-	: FVertexFactory(InFeatureLevel)
-	, Params(InParams)
+F${NAME}VertexFactory::F${NAME}VertexFactory(ERHIFeatureLevel::Type InFeatureLevel, const F${NAME}Parameters &InParams)
+		: FVertexFactory(InFeatureLevel), Params(InParams)
 {
 	IndexBuffer = new F${NAME}IndexBuffer();
 }
@@ -106,11 +106,11 @@ F${NAME}VertexFactory::~F${NAME}VertexFactory()
 	delete IndexBuffer;
 }
 
-void F${NAME}VertexFactory::InitRHI()
+void F${NAME}VertexFactory::InitRHI(FRHICommandListBase &RHICmdList)
 {
 	UniformBuffer = F${NAME}BufferRef::CreateUniformBufferImmediate(Params, UniformBuffer_MultiFrame);
 
-	IndexBuffer->InitResource();
+	IndexBuffer->InitResource(RHICmdList);
 
 	FVertexStream NullVertexStream;
 	NullVertexStream.VertexBuffer = nullptr;
@@ -122,7 +122,7 @@ void F${NAME}VertexFactory::InitRHI()
 	Streams.Add(NullVertexStream);
 
 	FVertexDeclarationElementList Elements;
-	
+
 	InitDeclaration(Elements);
 }
 
@@ -138,9 +138,9 @@ void F${NAME}VertexFactory::ReleaseRHI()
 	FVertexFactory::ReleaseRHI();
 }
 
-bool F${NAME}VertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters& Parameters)
+bool F${NAME}VertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters &Parameters)
 {
-	//todo[vhm]: Fallback path for mobile.
+	// todo[vhm]: Fallback path for mobile.
 	if (!IsFeatureLevelSupported(Parameters.Platform, ERHIFeatureLevel::SM5))
 	{
 		return false;
@@ -149,19 +149,16 @@ bool F${NAME}VertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderP
 	return (Parameters.MaterialParameters.MaterialDomain == MD_Surface && Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh) || Parameters.MaterialParameters.bIsSpecialEngineMaterial;
 }
 
-void F${NAME}VertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)
+void F${NAME}VertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters &Parameters, FShaderCompilerEnvironment &OutEnvironment)
 {
 	// TODO
 	// OutEnvironment.SetDefine(TEXT("VF_VIRTUAL_HEIGHFIELD_MESH"), 1);
 }
 
-void F${NAME}VertexFactory::ValidateCompiledResult(const FVertexFactoryType* Type, EShaderPlatform Platform, const FShaderParameterMap& ParameterMap, TArray<FString>& OutErrors)
+void F${NAME}VertexFactory::ValidateCompiledResult(const FVertexFactoryType *Type, EShaderPlatform Platform, const FShaderParameterMap &ParameterMap, TArray<FString> &OutErrors)
 {
 }
 
 // TODO
 IMPLEMENT_VERTEX_FACTORY_TYPE(F${NAME}VertexFactory, "/${MODULE_NAME}Shaders/${NAME}/${NAME}VertexFactory.ush",
-	  EVertexFactoryFlags::UsedWithMaterials
-	| EVertexFactoryFlags::SupportsDynamicLighting
-	| EVertexFactoryFlags::SupportsPrimitiveIdStream
-);
+															EVertexFactoryFlags::UsedWithMaterials | EVertexFactoryFlags::SupportsDynamicLighting | EVertexFactoryFlags::SupportsPrimitiveIdStream);

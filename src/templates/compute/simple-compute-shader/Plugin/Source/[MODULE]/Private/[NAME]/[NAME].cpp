@@ -1,7 +1,6 @@
 #include "${NAME}.h"
 #include "${MODULE_NAME}/Public/${NAME}/${NAME}.h"
 #include "PixelShaderUtils.h"
-#include "RenderCore/Public/RenderGraphUtils.h"
 #include "MeshPassProcessor.inl"
 #include "StaticMeshResources.h"
 #include "DynamicMeshBuilder.h"
@@ -9,13 +8,15 @@
 #include "GlobalShader.h"
 #include "UnifiedBuffer.h"
 #include "CanvasTypes.h"
+#include "MeshDrawShaderBindings.h"
+#include "RHIGPUReadback.h"
 #include "MaterialShader.h"
 
 DECLARE_STATS_GROUP(TEXT("${NAME}"), STATGROUP_${NAME}, STATCAT_Advanced);
 DECLARE_CYCLE_STAT(TEXT("${NAME} Execute"), STAT_${NAME}_Execute, STATGROUP_${NAME});
 
 // This class carries our parameter declarations and acts as the bridge between cpp and HLSL.
-class ${SCOPE} F${NAME} : public ${instance.material ? "FMeshMaterialShader" : "FGlobalShader"}
+class ${SCOPE} F${NAME}: public ${instance.material ? "FMeshMaterialShader" : "FGlobalShader"}
 {
 public:
 	${instance.material ? `
@@ -131,7 +132,7 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 		RDG_EVENT_SCOPE(GraphBuilder, "${NAME}");
 		RDG_GPU_STAT_SCOPE(GraphBuilder, ${NAME});
 		${instance.material ? `
-		const FScene* LocalScene = Params.Scene;
+		const FSceneInterface* LocalScene = Params.Scene;
 		const FMaterialRenderProxy* MaterialRenderProxy = nullptr;
 		const FMaterial* MaterialResource = &Params.MaterialRenderProxy->GetMaterialWithFallback(GMaxRHIFeatureLevel, MaterialRenderProxy);
 		MaterialRenderProxy = MaterialRenderProxy ? MaterialRenderProxy : Params.MaterialRenderProxy;
@@ -205,8 +206,8 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 				ViewUniformShaderParameters.GameTime = GameTime;
 				ViewUniformShaderParameters.Random = Random;
 
-				auto ViewUniformBuffer = TUniformBufferRef<FViewUniformShaderParameters>::CreateUniformBufferImmediate(ViewUniformShaderParameters, UniformBuffer_SingleFrame);
-				DrawRenderState.SetViewUniformBuffer(ViewUniformBuffer);
+				//auto ViewUniformBuffer = TUniformBufferRef<FViewUniformShaderParameters>::CreateUniformBufferImmediate(ViewUniformShaderParameters, UniformBuffer_SingleFrame);
+				//DrawRenderState.SetViewUniformBuffer(ViewUniformBuffer);
 
 				FMeshMaterialShaderElementData ShaderElementData;
 
@@ -218,12 +219,13 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 
 				int32 DataOffset = 0;
 				FMeshDrawSingleShaderBindings SingleShaderBindings = ShaderBindings.GetSingleShaderBindings(SF_Compute, DataOffset);
-				ComputeShader->GetShaderBindings(LocalScene, LocalScene->GetFeatureLevel(), nullptr, *MaterialRenderProxy, *MaterialResource, DrawRenderState, ShaderElementData, SingleShaderBindings);
+				ComputeShader->GetShaderBindings(LocalScene->GetRenderScene(), LocalScene->GetFeatureLevel(), nullptr, *MaterialRenderProxy, *MaterialResource, DrawRenderState, ShaderElementData, SingleShaderBindings);
 
 				ShaderBindings.Finalize(&PassShaders);
 
 				FRHIComputeShader* ComputeShaderRHI = ComputeShader.GetComputeShader();
-				RHICmdList.SetComputeShader(ComputeShaderRHI);
+				
+				SetComputePipelineState(RHICmdList, ComputeShaderRHI);
 				ShaderBindings.SetOnCommandList(RHICmdList, ComputeShaderRHI);
 				SetShaderParameters(RHICmdList, ComputeShader, ComputeShaderRHI, *PassParameters);
 				RHICmdList.DispatchComputeShader(GroupCount.X, GroupCount.Y, GroupCount.Z);

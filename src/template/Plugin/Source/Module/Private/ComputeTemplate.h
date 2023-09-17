@@ -19,7 +19,7 @@
 #include "UniformBuffer.h"
 #include "RHICommandList.h"
 #include "ShaderCompilerCore.h"
-#include "Renderer/Private/ScenePrivate.h"
+#include "SceneInterface.h"
 #include "EngineDefines.h"
 #include "RendererInterface.h"
 #include "RenderResource.h"

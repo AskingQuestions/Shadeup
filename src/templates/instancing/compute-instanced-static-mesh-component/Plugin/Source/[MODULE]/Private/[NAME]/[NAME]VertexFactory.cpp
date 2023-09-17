@@ -5,31 +5,31 @@
 
 #include "Engine/Engine.h"
 #include "EngineGlobals.h"
+#include "MaterialDomain.h"
 #include "Materials/Material.h"
 #include "MeshMaterialShader.h"
 #include "RHIStaticStates.h"
 #include "ShaderParameters.h"
+#include "MeshDrawShaderBindings.h"
 #include "ShaderParameterUtils.h"
 
 IMPLEMENT_TYPE_LAYOUT(F${NAME}VertexFactoryShaderParametersBase);
 
-void F${NAME}VertexFactoryShaderParametersBase::Bind(const FShaderParameterMap& ParameterMap)
+void F${NAME}VertexFactoryShaderParametersBase::Bind(const FShaderParameterMap &ParameterMap)
 {
-
 }
 
 void F${NAME}VertexFactoryShaderParametersBase::GetElementShaderBindings(
-	const FSceneInterface* Scene,
-	const FSceneView* View,
-	const FMeshMaterialShader* Shader,
-	const EVertexInputStreamType VertexStreamType,
-	ERHIFeatureLevel::Type FeatureLevel,
-	const FVertexFactory* VertexFactory,
-	const FMeshBatchElement& BatchElement,
-	class FMeshDrawSingleShaderBindings& ShaderBindings,
-	FVertexInputStreamArray& VertexStreams) const
+		const FSceneInterface *Scene,
+		const FSceneView *View,
+		const FMeshMaterialShader *Shader,
+		const EVertexInputStreamType VertexStreamType,
+		ERHIFeatureLevel::Type FeatureLevel,
+		const FVertexFactory *VertexFactory,
+		const FMeshBatchElement &BatchElement,
+		class FMeshDrawSingleShaderBindings &ShaderBindings,
+		FVertexInputStreamArray &VertexStreams) const
 {
-	
 }
 
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(F${NAME}MeshUniformParameters, "${NAME}MeshVF");
@@ -37,31 +37,32 @@ IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(F${NAME}MeshUniformParameters, "${NAME}
 class F${NAME}MeshVertexFactoryShaderParametersVS : public F${NAME}VertexFactoryShaderParametersBase
 {
 	DECLARE_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersVS, NonVirtual);
+
 public:
-	void Bind(const FShaderParameterMap& ParameterMap)
+	void Bind(const FShaderParameterMap &ParameterMap)
 	{
 		F${NAME}VertexFactoryShaderParametersBase::Bind(ParameterMap);
 		InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
 	}
 
 	void GetElementShaderBindings(
-		const FSceneInterface* Scene,
-		const FSceneView* View,
-		const FMeshMaterialShader* Shader,
-		const EVertexInputStreamType InputStreamType,
-		ERHIFeatureLevel::Type FeatureLevel,
-		const FVertexFactory* VertexFactory,
-		const FMeshBatchElement& BatchElement,
-		class FMeshDrawSingleShaderBindings& ShaderBindings,
-		FVertexInputStreamArray& VertexStreams) const
+			const FSceneInterface *Scene,
+			const FSceneView *View,
+			const FMeshMaterialShader *Shader,
+			const EVertexInputStreamType InputStreamType,
+			ERHIFeatureLevel::Type FeatureLevel,
+			const FVertexFactory *VertexFactory,
+			const FMeshBatchElement &BatchElement,
+			class FMeshDrawSingleShaderBindings &ShaderBindings,
+			FVertexInputStreamArray &VertexStreams) const
 	{
 		F${NAME}VertexFactoryShaderParametersBase::GetElementShaderBindings(Scene, View, Shader, InputStreamType, FeatureLevel, VertexFactory, BatchElement, ShaderBindings, VertexStreams);
 
-		const F${NAME}MeshVertexFactory* ${NAME}MeshVF = static_cast<const F${NAME}MeshVertexFactory*>(VertexFactory);
+		const F${NAME}MeshVertexFactory *${NAME}MeshVF = static_cast<const F${NAME}MeshVertexFactory *>(VertexFactory);
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<F${NAME}MeshUniformParameters>(), ${NAME}MeshVF->GetUniformBuffer());
 
-		F${NAME}UserData* UserData = (F${NAME}UserData*)BatchElement.UserData;
-	
+		F${NAME}UserData *UserData = (F${NAME}UserData *)BatchElement.UserData;
+
 		ShaderBindings.Add(InstanceBufferParameter, UserData->InstanceBufferSRV);
 	}
 
@@ -74,29 +75,30 @@ IMPLEMENT_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersVS);
 class F${NAME}MeshVertexFactoryShaderParametersPS : public F${NAME}VertexFactoryShaderParametersBase
 {
 	DECLARE_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersPS, NonVirtual);
+
 public:
 	void GetElementShaderBindings(
-		const FSceneInterface* Scene,
-		const FSceneView* View,
-		const FMeshMaterialShader* Shader,
-		const EVertexInputStreamType InputStreamType,
-		ERHIFeatureLevel::Type FeatureLevel,
-		const FVertexFactory* VertexFactory,
-		const FMeshBatchElement& BatchElement,
-		class FMeshDrawSingleShaderBindings& ShaderBindings,
-		FVertexInputStreamArray& VertexStreams) const
+			const FSceneInterface *Scene,
+			const FSceneView *View,
+			const FMeshMaterialShader *Shader,
+			const EVertexInputStreamType InputStreamType,
+			ERHIFeatureLevel::Type FeatureLevel,
+			const FVertexFactory *VertexFactory,
+			const FMeshBatchElement &BatchElement,
+			class FMeshDrawSingleShaderBindings &ShaderBindings,
+			FVertexInputStreamArray &VertexStreams) const
 	{
 		F${NAME}VertexFactoryShaderParametersBase::GetElementShaderBindings(Scene, View, Shader, InputStreamType, FeatureLevel, VertexFactory, BatchElement, ShaderBindings, VertexStreams);
 
-		const F${NAME}MeshVertexFactory* ${NAME}MeshVF = static_cast<const F${NAME}MeshVertexFactory*>(VertexFactory);
+		const F${NAME}MeshVertexFactory *${NAME}MeshVF = static_cast<const F${NAME}MeshVertexFactory *>(VertexFactory);
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<F${NAME}MeshUniformParameters>(), ${NAME}MeshVF->GetUniformBuffer());
 	}
-
 };
 
 IMPLEMENT_TYPE_LAYOUT(F${NAME}MeshVertexFactoryShaderParametersPS);
 
-void F${NAME}MeshVertexFactory::SetupMeshData(const FStaticMeshLODResources& LODResources) {
+void F${NAME}MeshVertexFactory::SetupMeshData(const FStaticMeshLODResources &LODResources)
+{
 	FStaticMeshDataType LocalData;
 
 	LODResources.VertexBuffers.PositionVertexBuffer.BindPositionVertexBuffer(this, LocalData);
@@ -106,7 +108,7 @@ void F${NAME}MeshVertexFactory::SetupMeshData(const FStaticMeshLODResources& LOD
 	SetData(LocalData);
 }
 
-void F${NAME}MeshVertexFactory::InitRHI()
+void F${NAME}MeshVertexFactory::InitRHI(FRHICommandListBase &RHICmdList)
 {
 	FVertexDeclarationElementList Elements;
 
@@ -117,7 +119,7 @@ void F${NAME}MeshVertexFactory::InitRHI()
 		}
 
 		// only tangent,normal are used by the stream. the binormal is derived in the shader
-		uint8 TangentBasisAttributes[2] = { 1, 2 };
+		uint8 TangentBasisAttributes[2] = {1, 2};
 		for (int32 AxisIndex = 0; AxisIndex < 2; AxisIndex++)
 		{
 			if (Data.TangentBasisComponents[AxisIndex].VertexBuffer != NULL)
@@ -139,8 +141,8 @@ void F${NAME}MeshVertexFactory::InitRHI()
 		}
 		else
 		{
-			//If the mesh has no color component, set the null color buffer on a new stream with a stride of 0.
-			//This wastes 4 bytes of bandwidth per vertex, but prevents having to compile out twice the number of vertex factories.
+			// If the mesh has no color component, set the null color buffer on a new stream with a stride of 0.
+			// This wastes 4 bytes of bandwidth per vertex, but prevents having to compile out twice the number of vertex factories.
 			FVertexStreamComponent NullColorComponent(&GNullColorVertexBuffer, 0, 0, VET_Color, EVertexStreamUsage::ManualFetch);
 			Elements.Add(AccessStreamComponent(NullColorComponent, 3));
 		}
@@ -151,17 +153,15 @@ void F${NAME}MeshVertexFactory::InitRHI()
 			for (int32 CoordinateIndex = 0; CoordinateIndex < Data.TextureCoordinates.Num(); CoordinateIndex++)
 			{
 				Elements.Add(AccessStreamComponent(
-					Data.TextureCoordinates[CoordinateIndex],
-					BaseTexCoordAttribute + CoordinateIndex
-					));
+						Data.TextureCoordinates[CoordinateIndex],
+						BaseTexCoordAttribute + CoordinateIndex));
 			}
 
 			for (int32 CoordinateIndex = Data.TextureCoordinates.Num(); CoordinateIndex < MAX_TEXCOORDS; CoordinateIndex++)
 			{
 				Elements.Add(AccessStreamComponent(
-					Data.TextureCoordinates[Data.TextureCoordinates.Num() - 1],
-					BaseTexCoordAttribute + CoordinateIndex
-					));
+						Data.TextureCoordinates[Data.TextureCoordinates.Num() - 1],
+						BaseTexCoordAttribute + CoordinateIndex));
 			}
 		}
 
@@ -173,7 +173,7 @@ void F${NAME}MeshVertexFactory::InitRHI()
 		}
 #endif
 
-		//if (Streams.Num() > 0)
+		// if (Streams.Num() > 0)
 		{
 			InitDeclaration(Elements);
 			check(IsValidRef(GetDeclaration()));
@@ -181,13 +181,12 @@ void F${NAME}MeshVertexFactory::InitRHI()
 	}
 }
 
-bool F${NAME}MeshVertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters& Parameters)
+bool F${NAME}MeshVertexFactory::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters &Parameters)
 {
-	return	(Parameters.MaterialParameters.bIsUsedWithNiagaraMeshParticles || Parameters.MaterialParameters.bIsSpecialEngineMaterial)
-			&& (Parameters.MaterialParameters.MaterialDomain != MD_Volume);
+	return (Parameters.MaterialParameters.bIsUsedWithNiagaraMeshParticles || Parameters.MaterialParameters.bIsSpecialEngineMaterial) && (Parameters.MaterialParameters.MaterialDomain != MD_Volume);
 }
 
-void F${NAME}MeshVertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)
+void F${NAME}MeshVertexFactory::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters &Parameters, FShaderCompilerEnvironment &OutEnvironment)
 {
 	FVertexFactory::ModifyCompilationEnvironment(Parameters, OutEnvironment);
 
@@ -204,7 +203,7 @@ void F${NAME}MeshVertexFactory::ModifyCompilationEnvironment(const FVertexFactor
 	// TODO: Support GPU Scene on mobile?
 	const bool bUseGPUScene = UseGPUScene(Parameters.Platform, MaxSupportedFeatureLevel) && MaxSupportedFeatureLevel > ERHIFeatureLevel::ES3_1;
 	const bool bSupportsPrimitiveIdStream = Parameters.VertexFactoryType->SupportsPrimitiveIdStream();
-	
+
 	// TODO: Support GPU Scene for raytracing
 	if (bSupportsPrimitiveIdStream && bUseGPUScene)
 	{
@@ -225,7 +224,7 @@ void F${NAME}MeshVertexFactory::ModifyCompilationEnvironment(const FVertexFactor
 	}
 }
 
-void F${NAME}MeshVertexFactory::SetData(const FStaticMeshDataType& InData)
+void F${NAME}MeshVertexFactory::SetData(const FStaticMeshDataType &InData)
 {
 	check(IsInRenderingThread());
 	Data = InData;

@@ -4,7 +4,8 @@
 #include "GenericPlatform/GenericPlatformMisc.h"
 #include "Kismet/BlueprintAsyncActionBase.h"
 #include "Engine/TextureRenderTarget2D.h"
-${instance.material ? `#include "Renderer/Private/ScenePrivate.h"\n` : ``}
+#include "Materials/MaterialRenderProxy.h"
+${instance.material ? `#include "SceneInterface.h"\n` : ``}
 #include "${NAME}.generated.h"
 
 struct ${SCOPE} F${NAME}DispatchParams
@@ -25,7 +26,7 @@ struct ${SCOPE} F${NAME}DispatchParams
 	` : ""}${instance.example == "basemat" ? `
 	FVector2f Position;
 	` : ""}
-	${instance.material ? `// Set to the desired material uses when executing our compute shader\n\tFMaterialRenderProxy* MaterialRenderProxy;\n\t// Scene reference used to create a uniform buffer for rendering the material graph\n\tFScene* Scene;\n\tfloat GameTime;\n\tuint32 Random;` : ``}
+	${instance.material ? `// Set to the desired material uses when executing our compute shader\n\tFMaterialRenderProxy* MaterialRenderProxy;\n\t// Scene reference used to create a uniform buffer for rendering the material graph\n\tFSceneInterface* Scene;\n\tfloat GameTime;\n\tuint32 Random;` : ``}
 
 	F${NAME}DispatchParams(int x, int y, int z)
 		: X(x)
@@ -100,7 +101,7 @@ public:
 		F${NAME}DispatchParams Params(RT->SizeX, RT->SizeY, 1);
 		Params.RenderTarget = RT->GameThread_GetRenderTargetResource();
 		Params.MaterialRenderProxy = Material->GetRenderProxy();
-		Params.Scene = SceneContext->GetRootComponent()->GetScene()->GetRenderScene();
+		Params.Scene = SceneContext->GetRootComponent()->GetScene();
 		Params.Random = FMath::Rand();
 		Params.GameTime = SceneContext->GetWorld()->GetTimeSeconds();
 
@@ -193,7 +194,7 @@ public:
 		U${NAME}Library_AsyncExecution* Action = NewObject<U${NAME}Library_AsyncExecution>();
 		Action->Position = static_cast<FVector2f>(Position);
 		Action->MaterialRenderProxy = Material->GetRenderProxy();
-		Action->Scene = SceneContext->GetRootComponent()->GetScene()->GetRenderScene();
+		Action->Scene = SceneContext->GetRootComponent()->GetScene();
 		Action->Random = FMath::Rand();
 		Action->GameTime = SceneContext->GetWorld()->GetTimeSeconds();
 		Action->RegisterWithGameInstance(WorldContextObject);
@@ -215,6 +216,6 @@ public:
 	FMaterialRenderProxy* MaterialRenderProxy;
 	float GameTime;
 	uint32 Random;
-	FScene* Scene;
+	FSceneInterface* Scene;
 	` : ``}
 };` : ``}

@@ -5,6 +5,7 @@
 
 #include "CoreMinimal.h"
 #include "PrimitiveSceneProxy.h"
+#include "Materials/MaterialRenderProxy.h"
 
 namespace ${NAME}Mesh
 {
@@ -25,7 +26,7 @@ namespace ${NAME}Mesh
 class F${NAME}SceneProxy final : public FPrimitiveSceneProxy
 {
 public:
-	F${NAME}SceneProxy(class U${NAME}Component* InComponent);
+	F${NAME}SceneProxy(class U${NAME}Component * InComponent);
 
 protected:
 	//~ Begin FPrimitiveSceneProxy Interface
@@ -37,23 +38,22 @@ protected:
 	// virtual bool HasSubprimitiveOcclusionQueries() const override;
 	// virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override;
 	// virtual void AcceptOcclusionResults(const FSceneView* View, TArray<bool>* Results, int32 ResultsStart, int32 NumResults) override;
-	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override;
-	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;
+	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView *View) const override;
+	virtual void GetDynamicMeshElements(const TArray<const FSceneView *> &Views, const FSceneViewFamily &ViewFamily, uint32 VisibilityMap, FMeshElementCollector &Collector) const override;
 	//~ End FPrimitiveSceneProxy Interface
 
 private:
-	void BuildOcclusionVolumes(TArrayView<FVector2D> const& InMinMaxData, FIntPoint const& InMinMaxSize, TArrayView<int32> const& InMinMaxMips, int32 InNumLods);
+	void BuildOcclusionVolumes(TArrayView<FVector2D> const &InMinMaxData, FIntPoint const &InMinMaxSize, TArrayView<int32> const &InMinMaxMips, int32 InNumLods);
 
 public:
 	bool bHiddenInEditor;
 
-	class FMaterialRenderProxy* Material;
+	class FMaterialRenderProxy *Material;
 	FMaterialRelevance MaterialRelevance;
 
 	bool bCallbackRegistered;
 
-	class F${NAME}VertexFactory* VertexFactory;
+	class F${NAME}VertexFactory *VertexFactory;
 };
-
 
 //  Notes: Looks like GetMeshShaderMap is returning nullptr during the DepthPass

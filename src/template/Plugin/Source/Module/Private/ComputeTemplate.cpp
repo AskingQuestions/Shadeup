@@ -54,7 +54,7 @@ public:
 		OutEnvironment.SetDefine(TEXT("SHADEUP_VERSION_MINOR"), TEXT("1"));
 
 		// This shader must support typed UAV load and we are testing if it is supported at runtime using RHIIsTypedUAVLoadSupported
-		//OutEnvironment.CompilerFlags.Add(CFLAG_AllowTypedUAVLoads);
+		// OutEnvironment.CompilerFlags.Add(CFLAG_AllowTypedUAVLoads);
 
 		// FForwardLightingParameters::ModifyCompilationEnvironment(Parameters.Platform, OutEnvironment);
 	}
@@ -87,14 +87,14 @@ void F${CLASS_NAME}Context::DispatchRenderThread(FRHICommandListImmediate& RHICm
 	// }
 	// checkf(${p.name}RenderTargetTextureRHI != nullptr, TEXT("Can't get render target %d texture"));
 
-	// FRHITexture* ${p.name}RenderTargetTextureRef = ${p.name}RenderTargetTextureRHI->GetTextureReference()->GetReferencedTexture();
+																			// FRHITexture* ${p.name}RenderTargetTextureRef = ${p.name}RenderTargetTextureRHI->GetTextureReference()->GetReferencedTexture();
 
-	// PassParameters.${p.name} = RHICreateUnorderedAccessView(${p.name}RenderTargetTextureRHI);
+	// PassParameters.${p.name} = RHICmdList.CreateUnorderedAccessView(${p.name}RenderTargetTextureRHI);
 
 	auto reso${p.name} = Params.${p.name}->GetRenderTargetResource();
 	auto reso2d${p.name} = reso${p.name}->GetTextureRenderTarget2DResource();
 	
-	PassParameters.${p.name} = RHICreateUnorderedAccessView(reso2d${p.name}->GetTextureRHI());
+	PassParameters.${p.name} = RHICmdList.CreateUnorderedAccessView(reso2d${p.name}->GetTextureRHI());
 	`,
 	"Texture": `PassParameters.${p.name} = Params.${p.name}->GetResource()->GetTexture2DRHI();`,
 	"Buffer": `PassParameters.${p.name} = Params.${p.name};`,

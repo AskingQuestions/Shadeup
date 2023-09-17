@@ -12,9 +12,10 @@ ParticleVertexFactory.h: Particle vertex factory definitions.
 #include "SceneView.h"
 #include "Components.h"
 #include "SceneManagement.h"
+#include "MeshDrawShaderBindings.h"
 #include "VertexFactory.h"
 
-// Disable this define to test disabling the use of GPU Scene with ${NAME} mesh renderer
+// Disable this define to test disabling the use of GPU Scene with ${NAME}Mesh renderer
 // NOTE: Changing this will also require you to make a trivial change to the mesh factory shader, or it may use cached shaders
 #define ${NAME}_ENABLE_GPU_SCENE_MESHES 1
 
@@ -135,7 +136,7 @@ public:
 	}
 
 	// FRenderResource interface.
-	virtual void InitRHI() override;
+	virtual void InitRHI(FRHICommandListBase &RHICmdList) override;
 
 	int32 GetMeshIndex() const { return MeshIndex; }
 	void SetMeshIndex(int32 InMeshIndex) { MeshIndex = InMeshIndex; }

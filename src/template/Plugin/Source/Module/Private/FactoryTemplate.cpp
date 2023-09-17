@@ -2,24 +2,27 @@
 
 #include "Engine/Engine.h"
 #include "EngineGlobals.h"
+#include "MaterialDomain.h"
 #include "Materials/Material.h"
 #include "MeshMaterialShader.h"
 #include "RHIStaticStates.h"
 #include "ShaderParameters.h"
+#include "DataDrivenShaderPlatformInfo.h"
+#include "MeshDrawShaderBindings.h"
 #include "ShaderParameterUtils.h"
 
 IMPLEMENT_GLOBAL_SHADER_PARAMETER_STRUCT(${NAME}Parameters, "${NAME}Params");
 
 namespace
 {
-	template< typename T >
-	FBufferRHIRef CreateIndexBuffer()
+	template <typename T>
+	FBufferRHIRef CreateIndexBuffer(FRHICommandListBase &RHICmdList)
 	{
 		TResourceArray<T, INDEXBUFFER_ALIGNMENT> Indices;
 
 		// Allocate room for indices
 		Indices.Reserve(3);
-		
+
 		// Top left
 		// CCW triangle winding order
 		Indices.Add(1);
@@ -31,15 +34,14 @@ namespace
 
 		// Create index buffer. Fill buffer with initial data upon creation
 		FRHIResourceCreateInfo CreateInfo(TEXT("${NAME}IndexBuffer"), &Indices);
-		return RHICreateIndexBuffer(Stride, Size, BUF_Static, CreateInfo);
+		return RHICmdList.CreateIndexBuffer(Stride, Size, BUF_Static, CreateInfo);
 	}
 }
 
-void ${NAME}IndexBuffer::InitRHI()
+void ${NAME}IndexBuffer::InitRHI(FRHICommandListBase &RHICmdList)
 {
-	IndexBufferRHI = CreateIndexBuffer<uint16>();
+	IndexBufferRHI = CreateIndexBuffer<uint16>(RHICmdList);
 }
-
 
 /**
  * Shader parameters for vertex factory.
@@ -49,7 +51,7 @@ class ${NAME}ShaderParameters : public FVertexFactoryShaderParameters
 	DECLARE_TYPE_LAYOUT(${NAME}ShaderParameters, NonVirtual);
 
 public:
-	void Bind(const FShaderParameterMap& ParameterMap)
+	void Bind(const FShaderParameterMap &ParameterMap)
 	{
 		// TODO
 		// InstanceBufferParameter.Bind(ParameterMap, TEXT("InstanceBuffer"));
@@ -58,15 +60,15 @@ public:
 	}
 
 	void GetElementShaderBindings(
-		const class FSceneInterface* Scene,
-		const class FSceneView* View,
-		const class FMeshMaterialShader* Shader,
-		const EVertexInputStreamType InputStreamType,
-		ERHIFeatureLevel::Type FeatureLevel,
-		const class FVertexFactory* InVertexFactory,
-		const struct FMeshBatchElement& BatchElement,
-		class FMeshDrawSingleShaderBindings& ShaderBindings,
-		FVertexInputStreamArray& VertexStreams) const
+			const class FSceneInterface *Scene,
+			const class FSceneView *View,
+			const class FMeshMaterialShader *Shader,
+			const EVertexInputStreamType InputStreamType,
+			ERHIFeatureLevel::Type FeatureLevel,
+			const class FVertexFactory *InVertexFactory,
+			const struct FMeshBatchElement &BatchElement,
+			class FMeshDrawSingleShaderBindings &ShaderBindings,
+			FVertexInputStreamArray &VertexStreams) const
 	{
 		${NAME}* VertexFactory = (${NAME}*)InVertexFactory;
 		ShaderBindings.Add(Shader->GetUniformBufferParameter<${NAME}Parameters>(), VertexFactory->UniformBuffer);
@@ -90,10 +92,8 @@ IMPLEMENT_TYPE_LAYOUT(${NAME}ShaderParameters);
 IMPLEMENT_VERTEX_FACTORY_PARAMETER_TYPE(${NAME}, SF_Vertex, ${NAME}ShaderParameters);
 IMPLEMENT_VERTEX_FACTORY_PARAMETER_TYPE(${NAME}, SF_Pixel, ${NAME}ShaderParameters);
 
-
 ${NAME}::${NAME}(ERHIFeatureLevel::Type InFeatureLevel, const ${NAME}Parameters& InParams)
-	: FVertexFactory(InFeatureLevel)
-	, Params(InParams)
+		: FVertexFactory(InFeatureLevel), Params(InParams)
 {
 	IndexBuffer = new ${NAME}IndexBuffer();
 }
@@ -103,11 +103,11 @@ ${NAME}::~${NAME}()
 	delete IndexBuffer;
 }
 
-void ${NAME}::InitRHI()
+void ${NAME}::InitRHI(FRHICommandListBase &RHICmdList)
 {
 	UniformBuffer = ${NAME}BufferRef::CreateUniformBufferImmediate(Params, UniformBuffer_MultiFrame);
 
-	IndexBuffer->InitResource();
+	IndexBuffer->InitResource(RHICmdList);
 
 	FVertexStream NullVertexStream;
 	NullVertexStream.VertexBuffer = nullptr;
@@ -119,7 +119,7 @@ void ${NAME}::InitRHI()
 	Streams.Add(NullVertexStream);
 
 	FVertexDeclarationElementList Elements;
-	
+
 	InitDeclaration(Elements);
 }
 
@@ -135,9 +135,9 @@ void ${NAME}::ReleaseRHI()
 	FVertexFactory::ReleaseRHI();
 }
 
-bool ${NAME}::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters& Parameters)
+bool ${NAME}::ShouldCompilePermutation(const FVertexFactoryShaderPermutationParameters &Parameters)
 {
-	//todo[vhm]: Fallback path for mobile.
+	// todo[vhm]: Fallback path for mobile.
 	if (!IsFeatureLevelSupported(Parameters.Platform, ERHIFeatureLevel::SM5))
 	{
 		return false;
@@ -146,19 +146,16 @@ bool ${NAME}::ShouldCompilePermutation(const FVertexFactoryShaderPermutationPara
 	return (Parameters.MaterialParameters.MaterialDomain == MD_Surface && Parameters.MaterialParameters.bIsUsedWithVirtualHeightfieldMesh) || Parameters.MaterialParameters.bIsSpecialEngineMaterial;
 }
 
-void ${NAME}::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)
+void ${NAME}::ModifyCompilationEnvironment(const FVertexFactoryShaderPermutationParameters &Parameters, FShaderCompilerEnvironment &OutEnvironment)
 {
 	// TODO
 	// OutEnvironment.SetDefine(TEXT("VF_VIRTUAL_HEIGHFIELD_MESH"), 1);
 }
 
-void ${NAME}::ValidateCompiledResult(const FVertexFactoryType* Type, EShaderPlatform Platform, const FShaderParameterMap& ParameterMap, TArray<FString>& OutErrors)
+void ${NAME}::ValidateCompiledResult(const FVertexFactoryType *Type, EShaderPlatform Platform, const FShaderParameterMap &ParameterMap, TArray<FString> &OutErrors)
 {
 }
 
 // TODO
 IMPLEMENT_VERTEX_FACTORY_TYPE(${NAME}, "/${MODULE_NAME}Shaders/${NAME_NO_PREFIX}.ush",
-	  EVertexFactoryFlags::UsedWithMaterials
-	| EVertexFactoryFlags::SupportsDynamicLighting
-	| EVertexFactoryFlags::SupportsPrimitiveIdStream
-);
+															EVertexFactoryFlags::UsedWithMaterials | EVertexFactoryFlags::SupportsDynamicLighting | EVertexFactoryFlags::SupportsPrimitiveIdStream);
