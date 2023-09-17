@@ -10,6 +10,7 @@
 #include "CanvasTypes.h"
 #include "MeshDrawShaderBindings.h"
 #include "RHIGPUReadback.h"
+#include "MeshPassUtils.h"
 #include "MaterialShader.h"
 
 DECLARE_STATS_GROUP(TEXT("${NAME}"), STATGROUP_${NAME}, STATCAT_Advanced);
@@ -69,6 +70,7 @@ public:
 		` : ""}${instance.example == "basemat" ? `
 		SHADER_PARAMETER(FVector2f, Position)
 		SHADER_PARAMETER_RDG_BUFFER_UAV(RWBuffer<float4>, OutputColor)
+		SHADER_PARAMETER_STRUCT_REF(FViewUniformShaderParameters, View)
 		` : ""}
 
 	END_SHADER_PARAMETER_STRUCT()
@@ -187,6 +189,14 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 				TEXT("OutputBuffer"));
 
 			PassParameters->OutputColor = GraphBuilder.CreateUAV(FRDGBufferUAVDesc(OutputBuffer, PF_A32B32G32R32F));
+			FViewUniformShaderParameters ViewUniformShaderParameters;
+
+			ViewUniformShaderParameters.GameTime = Params.GameTime;
+			ViewUniformShaderParameters.RealTime = Params.GameTime;
+			ViewUniformShaderParameters.Random = Params.Random;
+			
+			auto ViewUniformBuffer = TUniformBufferRef<FViewUniformShaderParameters>::CreateUniformBufferImmediate(ViewUniformShaderParameters, UniformBuffer_SingleFrame);
+			PassParameters->View = ViewUniformBuffer;
 			` : ""}
 
 			auto GroupCount = FComputeShaderUtils::GetGroupCount(FIntVector(Params.X, Params.Y, Params.Z), FComputeShaderUtils::kGolden2DGroupSize);
@@ -194,20 +204,12 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 				RDG_EVENT_NAME("Execute${NAME}"),
 				PassParameters,
 				ERDGPassFlags::AsyncCompute,
-				[&PassParameters, ComputeShader, ${instance.material ? `MaterialRenderProxy, MaterialResource, LocalScene, GameTime = Params.GameTime, Random = Params.Random, ` : ``}GroupCount](FRHIComputeCommandList& RHICmdList)
+				[&PassParameters, ComputeShader, ${instance.material ? `MaterialRenderProxy, MaterialResource, LocalScene, ` : ``}GroupCount](FRHIComputeCommandList& RHICmdList)
 			{
 				${instance.material ? `
 				FMeshPassProcessorRenderState DrawRenderState;
 				
 				MaterialRenderProxy->UpdateUniformExpressionCacheIfNeeded(LocalScene->GetFeatureLevel());
-				
-				FViewUniformShaderParameters ViewUniformShaderParameters;
-
-				ViewUniformShaderParameters.GameTime = GameTime;
-				ViewUniformShaderParameters.Random = Random;
-
-				//auto ViewUniformBuffer = TUniformBufferRef<FViewUniformShaderParameters>::CreateUniformBufferImmediate(ViewUniformShaderParameters, UniformBuffer_SingleFrame);
-				//DrawRenderState.SetViewUniformBuffer(ViewUniformBuffer);
 
 				FMeshMaterialShaderElementData ShaderElementData;
 
@@ -223,12 +225,7 @@ void F${NAME}Interface::DispatchRenderThread(FRHICommandListImmediate& RHICmdLis
 
 				ShaderBindings.Finalize(&PassShaders);
 
-				FRHIComputeShader* ComputeShaderRHI = ComputeShader.GetComputeShader();
-				
-				SetComputePipelineState(RHICmdList, ComputeShaderRHI);
-				ShaderBindings.SetOnCommandList(RHICmdList, ComputeShaderRHI);
-				SetShaderParameters(RHICmdList, ComputeShader, ComputeShaderRHI, *PassParameters);
-				RHICmdList.DispatchComputeShader(GroupCount.X, GroupCount.Y, GroupCount.Z);
+				UE::MeshPassUtils::Dispatch(RHICmdList, ComputeShader, ShaderBindings, *PassParameters, GroupCount);
 				` : `FComputeShaderUtils::Dispatch(RHICmdList, ComputeShader, *PassParameters, GroupCount);`}
 			});
 

@@ -244,10 +244,10 @@ async function IQModuleFolder(file) {
 program
 	.name("shadeup")
 	.description("CLI tool for compiling shadeup files")
-	.version("1.2.0")
+	.version("1.2.1")
 	.option("-v")
 	.action(async (opts) => {
-		console.log("Shadeup v1.2.0".magenta + " (UE 5.3 compatible)".grey);
+		console.log("Shadeup v1.2.1".magenta + " (UE 5.3 compatible)".grey);
 		if (opts.v) {
 			return;
 		}
