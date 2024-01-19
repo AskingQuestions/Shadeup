@@ -1,0 +1,91 @@
+let depth = texture2d<float>(env.screenSize, "depth");
+let albedo = texture2d<float4>(env.screenSize, "16bit");
+let normal = texture2d<float4>(env.screenSize, "16bit");
+
+fn randNeg(seed: int) { return (rand(seed) - 0.5) * 2; }
+
+fn main() {
+	let lights: float3[] = [];
+
+	let lightXZArea = 400.0;
+	let lightYArea = 200.0;
+
+	for (let i = 0; i < 400; i++) {
+		lights.push(
+			lerp(
+				(randNeg(i * 3 + 0) * lightXZArea, randNeg(i * 3 + 1) * lightYArea, randNeg(i * 3 + 2) * lightXZArea),
+				(randNeg(i * 6 + 0) * lightXZArea, randNeg(i * 6 + 1) * lightYArea, randNeg(i * 6 + 2) * lightXZArea),
+				sin(env.time / 1000.0 + i)
+			)
+		);
+	}
+
+	let projectionMatrix = matrix::perspective(120.0, env.screenSize.x / env.screenSize.y, 1.0, 2000.0);
+	let t = env.time / 1000.0;
+	let viewMatrix = (
+		matrix::lookAt((sin(t), 0.5, cos(t)) * 400.0, 0.xyz, (0, 1.0, 0))
+	);
+	let viewProjMatrix = projectionMatrix * viewMatrix;
+	if (true) {
+		viewProjMatrix = env.camera.getPerspectiveMatrix() * env.camera.getWorldToViewMatrix();
+	}
+	let viewProjMatrixInv = inverse(viewProjMatrix);
+
+	let meshes = [
+		mesh::box((sin(t * 2) * 100.0, 0.0, cos(t * 2) * 100.0), 100.xyz),
+		mesh::box((0, -50.1, 0), (1000, 0.1, 1000))
+	];
+
+	for (let m of meshes)
+		drawAdvanced({
+			mesh: m,
+			attachments: [albedo, normal],
+			depth: depth,
+			vertex: shader {
+				out.position = viewProjMatrix * (in.position, 1);
+			},
+			fragment: shader {
+				out.attachment0 = (0.4.xyz, 1.0);
+				out.attachment1 = (in.normal, 1);
+			}
+		});
+	
+	draw(shader{
+		let d = depth[floor(in.uv * depth.size)];
+		let a = albedo.sample(in.uv);
+		let n = normal.sample(in.uv);
+
+		let posClip = float4(in.uv.x * 2.0 - 1.0, (1.0 - in.uv.y) * 2.0 - 1.0, d, 1.0);
+		let posWorldW = viewProjMatrixInv * posClip;
+		let posWorld = posWorldW.xyz / posWorldW.www;
+		
+		let finalColor = 0.0.xyz;
+
+		for (let i = 0; i < lights.len(); i++) {
+			let L = lights[i].xyz - posWorld;
+			let radius = 200.0;
+			let color = lerp((0.3, 0.2, 0.8), (0.1, 0.7, 0.7), rand(float(i) / float(lights.len())));
+			let distance = length(L);
+			if (distance <= radius) {
+				let lambert = max(dot(n.xyz, normalize(L)), 0.0);
+				finalColor += lambert * pow((1.0 - distance / radius),  2.0) * color * a.xyz;
+			}
+		}
+	
+		finalColor += 0.5 * a.xyz;
+
+		out.color = (finalColor, 1);
+
+		let cornerNormal = normal.sample(in.uv * 10.0);
+		let cornerDepth = depth.sample((in.uv - (0.1, 0.0)) * 10.0);
+		if (in.uv.x < 0.1 && in.uv.y < 0.1) {
+			out.color = (cornerNormal + 1.0) / 2.0;
+		} else if (in.uv.x < 0.2 && in.uv.y < 0.1) {
+			out.color = cornerDepth;
+		}
+	});
+
+	albedo.clear();
+	normal.clear();
+	depth.clear();
+}

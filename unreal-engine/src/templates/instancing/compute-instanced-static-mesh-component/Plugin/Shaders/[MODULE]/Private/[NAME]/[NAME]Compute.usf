@@ -1,0 +1,157 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+// Adapted from the VirtualHeightfieldMesh plugin
+
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/MortonCode.ush"
+//#include "/Engine/Private/ShaderPrintCommon.ush"
+//#include "/Engine/Private/ShaderDrawDebug.ush"
+#include "${NAME}.ush"
+
+groupshared uint NumGroupTasks;
+globallycoherent RWStructuredBuffer<InstanceInfo> RWInstanceInfo;
+
+RWStructuredBuffer<MeshItem> RWBaseInstanceBuffer;
+StructuredBuffer<MeshItem> BaseInstanceBuffer;
+
+RWStructuredBuffer<MeshItem> RWMeshBuffer;
+StructuredBuffer<MeshItem> MeshBuffer;
+
+RWBuffer<uint> RWIndirectArgsBuffer;
+Buffer<uint> IndirectArgsBufferSRV;
+
+RWStructuredBuffer<MeshItem> RWInstanceBuffer;
+StructuredBuffer<MeshItem> InstanceBuffer;
+
+RWBuffer<uint> RWFeedbackBuffer;
+
+float4 FrustumPlanes[5];
+float4x4 UVToWorld;
+float3 UVToWorldScale;
+
+float Time;
+
+uint InstanceBufferSize;
+int NumIndices;
+uint NumToAdd;
+int Seed;
+
+float3 ViewOrigin;
+
+float random( float2 p )
+{
+    float2 r = float2(
+        23.14069263277926,
+         2.665144142690225
+    );
+    return frac( cos( dot(p,r) ) * 12345.6789 );
+}
+
+/** Return false if the AABB is completely outside one of the planes. */
+bool PlaneTestAABB(float4 InPlanes[5], float3 InCenter, float3 InExtent)
+{
+	bool bPlaneTest = true;
+	
+	[unroll]
+	for (uint PlaneIndex = 0; PlaneIndex < 5; ++PlaneIndex)
+	{
+		float3 PlaneSigns;
+		PlaneSigns.x = InPlanes[PlaneIndex].x >= 0.f ? 1.f : -1.f;
+		PlaneSigns.y = InPlanes[PlaneIndex].y >= 0.f ? 1.f : -1.f;
+		PlaneSigns.z = InPlanes[PlaneIndex].z >= 0.f ? 1.f : -1.f;
+
+		bool bInsidePlane = dot(InPlanes[PlaneIndex], float4(InCenter + InExtent * PlaneSigns, 1.0f)) > 0.f;
+		bPlaneTest = bPlaneTest && bInsidePlane;
+	}
+
+	return bPlaneTest;
+}
+
+/**
+ * Compute shader to append instances to the persistent instance buffer.
+ */
+[numthreads(64, 1, 1)]
+void AddInstancesCS(
+	uint3 DispatchThreadId : SV_DispatchThreadID,
+	uint GroupIndex : SV_GroupIndex )
+{
+	if (DispatchThreadId.x >= NumToAdd) return;
+
+	uint Write;
+	InterlockedAdd(RWInstanceInfo[0].Num, 1, Write);
+	
+	float RandomX = random(float2(Write, Seed + 415));
+	float RandomY = random(float2(Write, Seed - 1153));
+	float RandomZ = random(float2(Write, Seed - 53));
+
+	RWBaseInstanceBuffer[Write % InstanceBufferSize] = InitMeshItem(float3(RandomX, RandomY, RandomZ) * 1000.f, float3(0.f, 0.f, 0.f), float3(1.f, 1.f, 1.f));
+}
+
+
+/**
+ * Compute shader to initialize all buffers.
+ */
+[numthreads(1, 1, 1)]
+void InitBuffersCS()
+{
+	// CullInstances indirect args
+	uint NumberOfInstancesClamped = min(RWInstanceInfo[0].Num, InstanceBufferSize);
+	RWIndirectArgsBuffer[0] = ((NumberOfInstancesClamped + 1) + 63) / 64;
+	RWIndirectArgsBuffer[1] = 1;
+	RWIndirectArgsBuffer[2] = 1;
+	RWIndirectArgsBuffer[3] = NumberOfInstancesClamped;
+}
+
+/**
+ * Initialise the indirect args for the final culled indirect draw call.
+ */
+[numthreads(1, 1, 1)]
+void InitInstanceBufferCS()
+{
+	RWIndirectArgsBuffer[0] = NumIndices;
+	RWIndirectArgsBuffer[1] = 0; // Increment this counter during CullInstancesCS.
+	RWIndirectArgsBuffer[2] = 0;
+	RWIndirectArgsBuffer[3] = 0;
+	RWIndirectArgsBuffer[4] = 0;
+}
+
+/**
+ * Push instances away from the ViewOrigin.
+ */
+[numthreads(64, 1, 1)]
+void PushInstancesCS( uint3 DispatchThreadId : SV_DispatchThreadID )
+{
+	uint InstIndex = DispatchThreadId.x;
+	if (InstIndex >= IndirectArgsBufferSRV[3])
+		return;
+
+	MeshItem Item = RWBaseInstanceBuffer[InstIndex];
+
+	if (length(Item.Position - ViewOrigin) > 700.f)
+		return;
+
+	Item.Position += normalize(Item.Position - ViewOrigin) * 10.f;
+
+	RWBaseInstanceBuffer[InstIndex] = Item;
+}
+
+/**
+ * Cull the potentially visible render items for a view and generate the final buffer of instances to render.
+ */
+[numthreads(64, 1, 1)]
+void CullInstancesCS( uint3 DispatchThreadId : SV_DispatchThreadID )
+{
+	uint InstIndex = DispatchThreadId.x;
+	if (InstIndex >= IndirectArgsBufferSRV[3])
+		return;
+
+	MeshItem Item = BaseInstanceBuffer[InstIndex];
+	
+	// Check if the instance is inside the view frustum.
+	if (PlaneTestAABB(FrustumPlanes, Item.Position, float3(100.f, 100.f, 100.f)))
+	{
+		// Add to final render intance list.
+		uint Write;
+		InterlockedAdd(RWIndirectArgsBuffer[1], 1, Write);
+		RWInstanceBuffer[Write] = Item;
+	}
+}

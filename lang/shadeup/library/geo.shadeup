@@ -1,0 +1,32 @@
+struct GeoSegment {
+	start: float2,
+	end: float2,
+	kind: int,
+	arcRadius: float,
+	arcStart: float,
+	arcEnd: float
+}
+
+struct GeoPoly {
+	segments: GeoSegment[]
+}
+
+trait Geometry {
+	fn area(self) -> float;
+	fn perimeter(self) -> float;
+	fn discretize(self) -> GeoPoly;
+}
+
+impl Geometry for GeoPoly {
+	pub fn area(self) -> float {
+		return 0.0;
+	}
+
+	pub fn perimeter(self) -> float {
+		return 0.0;
+	}
+
+	pub fn discretize(self) -> GeoPoly {
+		return self.clone();
+	}
+}

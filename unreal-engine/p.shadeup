@@ -1,0 +1,48 @@
+@module "TestShader"
+
+compute MyGradientShader {
+	Parameters = [
+		{
+			Name = "Texture";
+			Type = RWTexture2D;
+		}
+	];
+
+	Public = {
+		static void ShaderEnvironment(const FMaterialShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment) override
+		{
+			OutEnvironment.SetDefine(TEXT("CUSTOM_GLOBAL_DEF"), "1");
+		}
+	};
+
+	Shader = {
+		[numthreads(32, 32, 1)]
+		void Main(uint3 ThreadId : SV_DispatchThreadID) {
+			Texture[ThreadId.x, ThreadId.y] = float4(ThreadId.x / 128.f, ThreadId.y / 128.f, 0.0, 1.0);
+		}
+	};
+}
+
+actor MyGradientActor {
+	Public = {
+		MaterialInterface Material;
+	};
+
+	Private = {
+		RenderTarget RenderTarget;
+
+		void Make() override {
+			RenderTarget = AddRenderTarget(128, 128, Format.R8G8B8A8_UNORM);
+			auto Plane = AddPlane();
+			Plane.SetMaterial(0, Material);
+
+			Material.SetTextureParameter("Texture", RenderTarget);
+		}
+
+		void Tick(float DeltaTime) override {
+			auto shader = MyGradientShader::Prepare();
+			shader.SetTextureParameter("Texture", RenderTarget);
+			shader.Dispatch(128, 128, 1);
+		}
+	};
+}

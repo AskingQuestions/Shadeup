@@ -1,0 +1,27 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+// Adapted from the VirtualHeightfieldMesh plugin
+
+#pragma once
+
+/** Structure used for tracking work queues in persistent wave style shaders. */
+struct InstanceInfo
+{
+	uint Num;
+};
+
+/** Item description used when traversing the virtual page table quad tree. Packs as uint so store in Buffer declared as uint. */
+struct MeshItem
+{
+	float3 Position;
+	float3 Rotation;
+	float3 Scale;
+};
+
+MeshItem InitMeshItem(float3 Pos, float3 Rot, float3 Scale)
+{
+	MeshItem Item;
+	Item.Position = Pos;
+	Item.Rotation = Rot;
+	Item.Scale = Scale;
+	return Item;
+}

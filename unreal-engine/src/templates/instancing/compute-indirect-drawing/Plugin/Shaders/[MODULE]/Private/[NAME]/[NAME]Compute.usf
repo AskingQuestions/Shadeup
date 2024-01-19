@@ -1,0 +1,218 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+// Adapted from the VirtualHeightfieldMesh plugin
+
+#include "/Engine/Private/Common.ush"
+#include "/Engine/Private/MortonCode.ush"
+//#include "/Engine/Private/ShaderPrintCommon.ush"
+//#include "/Engine/Private/ShaderDrawDebug.ush"
+#include "${NAME}.ush"
+
+groupshared uint NumGroupTasks;
+globallycoherent RWStructuredBuffer<WorkerQueueInfo> RWQueueInfo;
+globallycoherent RWBuffer<uint> RWQueueBuffer;
+uint QueueBufferSizeMask;
+
+RWBuffer<uint2> RWQuadBuffer;
+Buffer<uint2> QuadBuffer;
+
+RWBuffer<uint> RWIndirectArgsBuffer;
+Buffer<uint> IndirectArgsBufferSRV;
+
+RWStructuredBuffer<QuadRenderInstance> RWInstanceBuffer;
+StructuredBuffer<QuadRenderInstance> InstanceBuffer;
+
+RWBuffer<uint> RWFeedbackBuffer;
+
+Texture2D<uint> PageTableTexture;
+
+Texture2D<float4> HeightMinMaxTexture;
+Texture2D<float4> LodBiasMinMaxTexture;
+SamplerState MinMaxTextureSampler;
+int MinMaxLevelOffset;
+
+Texture2D<float> OcclusionTexture;
+int OcclusionLevelOffset;
+
+uint MaxLevel;
+#define MaxLevelLocal 6
+uint NumForceLoadLods;
+uint PageTableFeedbackId;
+uint NumPhysicalAddressBits;
+float4 PageTableSize;
+float4 PhysicalPageTransform;
+
+float4 LodDistances;
+float LodBiasScale;
+float3 ViewOrigin;
+float4 FrustumPlanes[5];
+float4x4 UVToWorld;
+float3 UVToWorldScale;
+
+int NumIndices;
+
+/** Return false if the AABB is completely outside one of the planes. */
+bool PlaneTestAABB(float4 InPlanes[5], float3 InCenter, float3 InExtent)
+{
+	bool bPlaneTest = true;
+	
+	[unroll]
+	for (uint PlaneIndex = 0; PlaneIndex < 5; ++PlaneIndex)
+	{
+		float3 PlaneSigns;
+		PlaneSigns.x = InPlanes[PlaneIndex].x >= 0.f ? 1.f : -1.f;
+		PlaneSigns.y = InPlanes[PlaneIndex].y >= 0.f ? 1.f : -1.f;
+		PlaneSigns.z = InPlanes[PlaneIndex].z >= 0.f ? 1.f : -1.f;
+
+		bool bInsidePlane = dot(InPlanes[PlaneIndex], float4(InCenter + InExtent * PlaneSigns, 1.0f)) > 0.f;
+		bPlaneTest = bPlaneTest && bInsidePlane;
+	}
+
+	return bPlaneTest;
+}
+
+/**
+ * Compute shader to initialize all buffers, including adding the lowest mip page(s) to the QuadBuffer.
+ */
+
+[numthreads(1, 1, 1)]
+void InitBuffersCS()
+{
+	// Seed with one item in the queue.
+	RWQueueInfo[0].Read = 0;
+	RWQueueInfo[0].Write = 1;
+	RWQueueInfo[0].NumActive = 1;
+
+	RWQueueBuffer[0] = Pack(InitQuadItem(0, 12));
+
+	// CullInstances indirect args
+	RWIndirectArgsBuffer[0] = 0; // Increment this wave counter during CollectQuadsCS.
+	RWIndirectArgsBuffer[1] = 1;
+	RWIndirectArgsBuffer[2] = 1;
+	RWIndirectArgsBuffer[3] = 0; // Increment this instance counter counter during CollectQuadsCS.
+}
+
+/**
+ * Compute shader to traverse the virtual texture page table and generate an array of items to potentially render for a view.
+ */
+
+[numthreads(64, 1, 1)]
+void CollectQuadsCS(
+	uint3 DispatchThreadId : SV_DispatchThreadID,
+	uint GroupIndex : SV_GroupIndex )
+{
+	// Persistant threads stay alive until the work queue is drained.
+	bool bExit = false;
+	while (!bExit)
+	{
+		// Sync and init group task count.
+		NumGroupTasks = 0;
+		GroupMemoryBarrierWithGroupSync();
+		
+		// Try and pull a task.
+		int NumActive;
+		InterlockedAdd(RWQueueInfo[0].NumActive, -1, NumActive);
+		
+		if (NumActive <= 0)
+		{
+			// No task pulled. Rewind.
+			InterlockedAdd(RWQueueInfo[0].NumActive, 1, NumActive);
+		}
+		else
+		{
+			// Increment group task count for this loop.
+			uint Dummy;
+			InterlockedAdd(NumGroupTasks, 1, Dummy);
+
+			// Read item to process from queue.
+			uint Read;
+			InterlockedAdd(RWQueueInfo[0].Read, 1, Read);
+			
+			uint PackedItem = RWQueueBuffer[Read & QueueBufferSizeMask];
+			QuadItem Item = UnpackQuadItem(PackedItem);
+			uint Address = Item.Address;
+			uint2 Pos = MortonDecode(Address);
+			uint Level = Item.Level;
+			
+			// Check if frustum culled
+			bool bCull = false; //!PlaneTestAABB(FrustumPlanes, float2(0.5, 0.5), float2(1, 1));
+
+			bool bSubdivide = false;
+			if (bCull)
+			{
+				// Store, but don't subdivide.
+				// DebugDrawUVBox(UVMin, UVMax, UVToWorld, float4(0, 0, 1, 1));
+			}
+			else if (Level > 0)
+			{
+				// Subdivide if minimum continuous lod can be less than the current level.
+				// bSubdivide = true;
+			}
+
+			if (bSubdivide)
+			{
+				// Add children to queue.
+				uint Write;
+				InterlockedAdd(RWQueueInfo[0].Write, 4, Write);
+
+				RWQueueBuffer[(Write + 0) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 0, Level - 1));
+				RWQueueBuffer[(Write + 1) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 1, Level - 1));
+				RWQueueBuffer[(Write + 2) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 2, Level - 1));
+				RWQueueBuffer[(Write + 3) & QueueBufferSizeMask] = Pack(InitQuadItem(Address * 4 + 3, Level - 1));
+
+				InterlockedAdd(RWQueueInfo[0].NumActive, 4, NumActive);
+			}
+			else
+			{
+				uint Write;
+				InterlockedAdd(RWIndirectArgsBuffer[3], 1, Write);
+				InterlockedMax(RWIndirectArgsBuffer[0], ((Write + 1) + 63) / 64);
+
+				RWQuadBuffer[Write] = Pack(InitQuadRenderItem(Pos, Level, 0, bCull));
+			}
+		}
+
+		// Exit if no work was found.
+		DeviceMemoryBarrier();
+		if (NumGroupTasks == 0)
+		{
+			bExit = true;
+		}
+	}
+}
+
+/**
+ * Initialise the indirect args for the final culled indirect draw call.
+ */
+
+[numthreads(1, 1, 1)]
+void InitInstanceBufferCS()
+{
+	RWIndirectArgsBuffer[0] = NumIndices;
+	RWIndirectArgsBuffer[1] = 0; // Increment this counter during CullInstancesCS.
+	RWIndirectArgsBuffer[2] = 0;
+	RWIndirectArgsBuffer[3] = 0;
+	RWIndirectArgsBuffer[4] = 0;
+}
+
+/**
+ * Cull the potentially visible render items for a view and generate the final buffer of instances to render.
+ */
+
+[numthreads(64, 1, 1)]
+void CullInstancesCS( uint3 DispatchThreadId : SV_DispatchThreadID )
+{
+	uint QuadIndex = DispatchThreadId.x;
+	if (QuadIndex >= IndirectArgsBufferSRV[3])
+		return;
+
+	uint2 PackedItem = QuadBuffer[QuadIndex];
+	QuadRenderItem Item = UnpackQuadRenderItem(PackedItem);
+	
+	// Add to final render intance list.
+	QuadRenderInstance OutInstance;
+	OutInstance.UVTransform = float3(0, 0, 0);
+	OutInstance.PosLevelPacked = 0;
+	uint Write;
+	InterlockedAdd(RWIndirectArgsBuffer[1], 1, Write);
+	RWInstanceBuffer[Write] = OutInstance;
+}

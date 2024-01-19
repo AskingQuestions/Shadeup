@@ -1,0 +1,1715 @@
+
+import buffer from "/_std/buffer";
+import ui from "/_std/ui";
+import texture2d, texture3d from "/_std/texture";
+
+/**
+* Converts a position in screenSpace to a position in 2d clipSpace. e.g. (0, screenSize.x) -> (-1, 1)
+*/
+pub fn pixelToClip(pixelPosition: float2) -> float2 {
+    let zeroToOne = pixelPosition / env.screenSize;
+    let zeroToTwo = zeroToOne * 2.0;
+    let clipSpace = zeroToTwo - 1.0.xy;
+    return (clipSpace.x, clipSpace.y * -1.0);
+}
+
+/**
+* Value of PI to 35 decimal places.
+*/
+const PI = 3.14159265358979323846264338327950288;
+
+export {
+    PI,
+    buffer,
+    texture2d,
+    texture3d,
+    ui
+};
+
+/**
+* Quaternion helpers
+*/
+pub struct quat {}
+
+impl quat {
+    /**
+    * Creates a quaternion from an angle and axis.
+    */
+	pub fn fromAngleAxis(angle: float, axis: float3) -> float4 {
+		return float4(axis * sin(angle * 0.5), cos(angle * 0.5));
+	}
+
+    /**
+    * Multiplies two quaternions and returns the result.
+    */
+	pub fn mul(a: float4, b: float4) -> float4 {
+		return float4(
+            b.xyz * a.w + a.xyz * b.w + cross(a.xyz, b.xyz),
+            a.w * b.w - dot(a.xyz, b.xyz)
+        );
+	}
+
+    /**
+    * Rotates a vector by a quaternion and returns the rotated vector.
+    */
+    pub fn rotate(quaternion: float4, vector: float3) -> float3 {
+        let q = quat::mul(quat::mul(quaternion, float4(vector, 0)), quat::conjugate(quaternion));
+        return q.xyz;
+    }
+
+    /**
+    * Returns the conjugate of the input quaternion.
+    *
+    * The conjugate of a quaternion number is a quaternion with the same magnitudes but with the sign of the imaginary parts changed
+    */
+    pub fn conjugate(quaternion: float4) -> float4 {
+        return float4(-quaternion.xyz, quaternion.w);
+    }
+
+    /**
+    * Returns the inverse of the input quaternion.
+    */
+    pub fn inverse(quaternion: float4) -> float4 {
+        return quat::conjugate(quaternion) / dot(quaternion, quaternion);
+    }
+
+    /**
+    * Generates a quaternion that rotates from one direction to another via the shortest path.
+    */
+    pub fn fromToRotation(from: float3, to: float3) -> float4 {
+        let q = 0.0.xyzw;
+        let d = dot(from, to);
+        if (d < -0.999999)
+        {
+            let right = float3(1, 0, 0);
+            let up = float3(0, 1, 0);
+            let tmp = cross(right, from);
+            if (length(tmp) < 0.000001)
+            {
+                tmp = cross(up, from);
+            }
+            tmp = normalize(tmp);
+            q = quat::fromAngleAxis(PI, tmp);
+        } else if (d > 0.999999) {
+            q = float4(0, 0, 0, 1);
+        } else {
+            q = float4(cross(from, to), 1 + d);
+            q = normalize(q);
+        }
+        return q;
+    }
+
+    
+    pub fn diff(a: float4, b: float4) -> float {
+        return a * quat::inverse(b);
+    }
+
+
+    /**
+    * Generates lookAt quaternion.
+    */
+    pub fn lookAt(forward: float3, up: float3): float4 {
+        let right = normalize(cross(forward, up));
+        up = normalize(cross(forward, right));
+
+        let m00 = right.x;
+        let m01 = right.y;
+        let m02 = right.z;
+        let m10 = up.x;
+        let m11 = up.y;
+        let m12 = up.z;
+        let m20 = forward.x;
+        let m21 = forward.y;
+        let m22 = forward.z;
+
+        let num8 = (m00 + m11) + m22;
+        let q = float4(0, 0, 0, 1);
+        if (num8 > 0.0)
+        {
+            let num = sqrt(num8 + 1.0);
+            let w = num * 0.5;
+            num = 0.5 / num;
+            let x = (m12 - m21) * num;
+            let y = (m20 - m02) * num;
+            let z = (m01 - m10) * num;
+            return float4(x, y, z, w);
+        }
+
+        if ((m00 >= m11) && (m00 >= m22))
+        {
+            let num7 = sqrt(((1.0 + m00) - m11) - m22);
+            let num4 = 0.5 / num7;
+            let x = 0.5 * num7;
+            let y = (m01 + m10) * num4;
+            let z = (m02 + m20) * num4;
+            let w = (m12 - m21) * num4;
+            return float4(x, y, z, w);
+        }
+
+        if (m11 > m22)
+        {
+            let num6 = sqrt(((1.0 + m11) - m00) - m22);
+            let num3 = 0.5 / num6;
+            let x = (m10 + m01) * num3;
+            let y = 0.5 * num6;
+            let z = (m21 + m12) * num3;
+            let w = (m20 - m02) * num3;
+            return float4(x, y, z, w);
+        }
+
+        let num5 = sqrt(((1.0 + m22) - m00) - m11);
+        let num2 = 0.5 / num5;
+        let x = (m20 + m02) * num2;
+        let y = (m21 + m12) * num2;
+        let z = 0.5 * num5;
+        let w = (m01 - m10) * num2;
+        return float4(x, y, z, w);
+    }
+
+    /**
+    * Smooth interpolation between two quaternions.
+    */
+    pub fn slerp(a: float4, b: float4, t: float) -> float4 {
+        
+        if (length(a) == 0.0)
+        {
+            if (length(b) == 0.0)
+            {
+                return float4(0, 0, 0, 1);
+            }
+            return b;
+        } else if (length(b) == 0.0) {
+            return a;
+        }
+
+        let cosHalfAngle = a.w * b.w + dot(a.xyz, b.xyz);
+
+        if (cosHalfAngle >= 1.0 || cosHalfAngle <= -1.0)
+        {
+            return a;
+        } else if (cosHalfAngle < 0.0) {
+            b *= -1.0;
+            cosHalfAngle = -cosHalfAngle;
+        }
+
+        let blendA = 0.0;
+        let blendB = 0.0;
+        if (cosHalfAngle < 0.99)
+        {
+            let halfAngle = acos(cosHalfAngle);
+            let sinHalfAngle = sin(halfAngle);
+            let oneOverSinHalfAngle = 1.0 / sinHalfAngle;
+            blendA = sin(halfAngle * (1.0 - t)) * oneOverSinHalfAngle;
+            blendB = sin(halfAngle * t) * oneOverSinHalfAngle;
+        }
+        else
+        {
+            blendA = 1.0 - t;
+            blendB = t;
+        }
+
+        let result = float4(blendA * a.xyz + blendB * b.xyz, blendA * a.w + blendB * b.w);
+        if (length(result) > 0.0)
+        {
+            return normalize(result);
+        }
+        return float4(0, 0, 0, 1);
+    }
+
+    /**
+    * Converts quaternion to matrix.
+    */
+    pub fn toMatrix(quaternion: float4) {
+        let x = quaternion.x;
+        let y = quaternion.y;
+        let z = quaternion.z;
+        let w = quaternion.w;
+        let x2 = x + x;
+        let y2 = y + y;
+        let z2 = z + z;
+        let xx = x * x2;
+        let xy = x * y2;
+        let xz = x * z2;
+        let yy = y * y2;
+        let yz = y * z2;
+        let zz = z * z2;
+        let wx = w * x2;
+        let wy = w * y2;
+        let wz = w * z2;
+
+
+        let m = float4x4(
+            1.0 - (yy + zz), xy + wz,         xz - wy,         0,
+            xy - wz,         1.0 - (xx + zz), yz + wx,         0,
+            xz + wy,         yz - wx,         1.0 - (xx + yy), 0,
+            0,               0,               0,               1.0
+        );
+
+        return m;
+    }
+
+    pub fn fromEulerAngles(angles: float3) {
+        let cr = cos(angles.x * 0.5);
+        let sr = sin(angles.x * 0.5);
+        let cp = cos(angles.y * 0.5);
+        let sp = sin(angles.y * 0.5);
+        let cy = cos(angles.z * 0.5);
+        let sy = sin(angles.z * 0.5);
+
+        return float4(
+            sr * cp * cy - cr * sp * sy,
+            cr * sp * cy + sr * cp * sy,
+            cr * cp * sy - sr * sp * cy,
+            cr * cp * cy + sr * sp * sy
+        )
+    }
+}
+
+window.shadeupQuat = quat;
+
+
+pub struct Camera2d {
+    pub position: float2 = float2(0, 0);
+    pub zoom: float = 1;
+}
+
+impl Camera2d {
+    pub fn transform(self, position: float2) -> float2 {
+        return (position - self.position) * self.zoom;
+    }
+
+    /**
+    * Moves and zooms the camera to fit the given size. (centers the camera in the viewport)
+    */
+    pub fn fit(self, size: float2) {
+        let zoom = 1/min(env.screenSize.x / size.x, env.screenSize.y / size.y);
+        let position = (env.screenSize - size * (1/zoom)) / 2;
+        self.position = position;
+        self.zoom = zoom;
+    }
+}
+
+pub struct Camera {
+    pub position: float3 = float3(0, 0, 0);
+	pub rotation: float4 = float4(1, 0, 0, 0);
+    pub width: float = 1920;
+    pub height: float = 1080;
+	pub fov: float = 90;
+	pub near: float = 1;
+	pub far: float = 100000;
+}
+
+impl Camera {
+    pub fn getRay(self, screen: float2) {
+        let aspect = self.width / self.height;
+        let x = screen.x;
+        let y = screen.y;
+        let Px = (2 * ((x + 0.5) / self.width) - 1) * tan(self.fov / 2 * PI / 180) * aspect;
+        let Py = (1 - 2 * ((y + 0.5) / self.height)) * tan(self.fov / 2 * PI / 180);
+        
+        return quat::rotate(self.rotation, normalize((Px, Py, -1)));
+    }
+
+    pub fn getTransformToViewMatrix(self, position: float3, scale: float3, rotation: float4) {
+        let rotationMatrix = quat::toMatrix(rotation);
+        let translationMatrix = float4x4(
+            scale.x, 0, 0, 0,
+            0, scale.y, 0, 0,
+            0, 0, scale.z, 0,
+            position.x, position.y, position.z, 1
+        );
+        return self.getPerspectiveMatrix() * self.getWorldToViewMatrix() * translationMatrix * rotationMatrix;
+    }
+
+    pub fn getCombinedMatrix(self) -> float4x4 {
+        return self.getPerspectiveMatrix() * self.getWorldToViewMatrix();
+    }
+
+    pub fn getCombinedMatrixReverseZ(self) -> float4x4 {
+        return self.getPerspectiveMatrixReverseZ() * self.getWorldToViewMatrix();
+    }
+
+    pub fn getWorldToViewMatrix(self) -> float4x4 {
+        let rotationMatrix = quat::toMatrix(self.rotation);
+        let translationMatrix = float4x4(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            self.position.x, self.position.y, self.position.z, 1
+        );
+        return inverse(translationMatrix * rotationMatrix);
+    }
+
+    pub fn getPerspectiveMatrixReverseZ(self) -> float4x4 {
+        return matrix::perspectiveReverseZ(self.fov, self.width / self.height, self.near);
+    }
+
+    pub fn getPerspectiveMatrix(self) -> float4x4 {
+        return matrix::perspective(self.fov, self.width / self.height, self.near, self.far);
+        // // let matrix = float4x4();
+        // let far = self.far;
+        // let near = self.near;
+        // let aspect = self.width / self.height;
+        // let fovRad = radians(self.fov);
+        // let tanFov = tan( fovRad * 0.5 );
+        // // matrix[0][0] = ;
+        // // matrix[1][1] = 1.0 / tanFov;
+        // // matrix[2][2] = -((far + near)/(far - near));
+        // // matrix[3][2] = -((2*(near*far))/(far - near));
+        // // matrix[2][3] = -1;
+        // // matrix[3][3] = 0;
+
+        // let matrix = float4x4(
+        //     1.0 / (tanFov * aspect), 0, 0, 0,
+        //     0, 1.0 / tanFov, 0, 0,
+        //     0, 0, -((far + near)/(far - near)), -1,
+        //     0, 0, -((2*(near*far))/(far - near)), 0
+        // );
+
+        // return matrix;
+    }
+
+    pub fn getOrthographicMatrix(self) -> float4x4 {
+        let matrix = float4x4();
+        let far = self.far;
+        let near = self.near;
+
+        let w = 1.0 / self.width;
+        let h = 1.0 / self.height;
+
+        matrix[0][0] = w;
+        matrix[1][1] = h;
+        matrix[2][2] = -(2.0/(far - near));
+        matrix[2][3] = ((far + near)/(far-near));
+        //matrix[2][2] = -((far + near)/(far - near));
+        //matrix[3][2] = -((2*(near*far))/(far - near));
+        matrix[3][3] = 1.0;
+
+        return matrix;
+    }
+}
+
+
+window._makeCamera = Camera;
+window._makeCamera2d = Camera2d;
+
+fn easeA(aA1: float, aA2: float) -> float {
+    return 1.0 - 3.0 * aA2 + 3.0 * aA1;
+}
+
+fn easeB(aA1: float, aA2: float) -> float {
+    return 3.0 * aA2 - 6.0 * aA1;
+}
+
+fn easeC(aA1: float) -> float {
+    return 3.0 * aA1;
+}
+
+fn calcBezier(aT: float, aA1: float, aA2: float) -> float {
+    return ((easeA(aA1, aA2) * aT + easeB(aA1, aA2)) * aT + easeC(aA1)) * aT;
+}
+
+fn getSlope(aT: float, aA1: float, aA2: float) -> float {
+    return 3.0 * easeA(aA1, aA2) * aT * aT + 2.0 * easeB(aA1, aA2) * aT + easeC(aA1);
+}
+
+// fn getTForX(aX: float, aA1: float, aA2: float) -> float {
+//     let aGuessT = aX;
+//     for (let i = 0; i <= 10; i++) {
+//         let currentSlope = bezSlope(aGuessT, aA1, aA2);
+//         if (currentSlope == 0.0) {
+//             return aGuessT;
+//         }
+//         let currentX = calcBezier(aGuessT, aA1, aA2) - aX;
+//         aGuessT -= currentX / currentSlope;
+//     }
+//     return aGuessT;
+// }
+
+
+const NEWTON_ITERATIONS =          4;
+const NEWTON_MIN_SLOPE =           0.02;
+const SUBDIVISION_PRECISION =      0.0000001;
+const SUBDIVISION_MAX_ITERATIONS = 10;
+const kSplineTableSize =           11;
+
+const kSampleStepSize =
+                                        1.0 / float(kSplineTableSize - 1);
+
+
+fn getTForX(aX: float, mX1: float, mX2: float) {
+  let mSampleValues: float[11] = array<float>(11, 0);
+  for (let i = 0; i < kSplineTableSize; i++) {
+    mSampleValues[i] = calcBezier(float(i) * kSampleStepSize, mX1, mX2);
+  }
+
+  // Find interval where t lies
+  let intervalStart = 0.0;
+  let currentSample = 1;
+  let lastSample = kSplineTableSize - 1;
+  
+  for (let dummy = 0; currentSample != lastSample && mSampleValues[currentSample] <= aX; currentSample++) {
+    intervalStart += kSampleStepSize;
+  }
+  currentSample--; // t now lies between *currentSample and *currentSample+1
+
+  // Interpolate to provide an initial guess for t
+  let csamp = mSampleValues[currentSample];
+  let dst = (aX - csamp) /
+                (mSampleValues[currentSample + 1] - csamp);
+  let guessForT = intervalStart + dst * kSampleStepSize;
+
+  // Check the slope to see what strategy to use. If the slope is too small
+  // Newton-Raphson iteration won't converge on a root so we use bisection
+  // instead.
+  let initialSlope = getSlope(guessForT, mX1, mX2);
+  if (initialSlope >= NEWTON_MIN_SLOPE) {
+    return newtonRaphsonIterate(aX, guessForT, mX1, mX2);
+  } else if (initialSlope == 0.0) {
+    return guessForT;
+  } else {
+    return binarySubdivide(aX, intervalStart, intervalStart + kSampleStepSize);
+  }
+}
+
+fn newtonRaphsonIterate(aX: float, aGuessT: float, mX1: float, mX2: float) {
+  // Refine guess with Newton-Raphson iteration
+  for (let i = 0; i < NEWTON_ITERATIONS; i++) {
+    // We're trying to find where f(t) = aX,
+    // so we're actually looking for a root for: CalcBezier(t) - aX
+    let currentX = calcBezier(aGuessT, mX1, mX2) - aX;
+    let currentSlope = getSlope(aGuessT, mX1, mX2);
+
+    if (currentSlope == 0.0)
+      return aGuessT;
+
+    aGuessT -= currentX / currentSlope;
+  }
+
+  return aGuessT;
+}
+
+fn binarySubdivide(aX: float, aA: float, aB: float) {
+  let currentX = 0.0;
+  let currentT = 0.0;
+  let i = 0;
+
+  while (true) {
+    i++;
+    if (abs(currentX) > SUBDIVISION_PRECISION && i < SUBDIVISION_MAX_ITERATIONS) {
+        currentT = aA + (aB - aA) / 2.0;
+        currentX = CalcBezier(currentT, mX1, mX2) - aX;
+
+        if (currentX > 0.0) {
+        aB = currentT;
+        } else {
+        aA = currentT;
+        }
+    }else{
+        break;
+    }
+  }
+
+  return currentT;
+}
+
+pub struct bezier {};
+
+impl bezier {
+    pub fn cubic2(a: float2, b: float2, c: float2, d: float2, t: float) -> float2 {
+        return (1.0 - t)**3 * a + 3.0 * (1.0 - t)**2 * t * b + 3.0 * (1.0 - t) * t**2 * c + t**3 * d;
+    }
+
+    pub fn cubic3(a: float3, b: float3, c: float3, d: float3, t: float) -> float3 {
+        return (1.0 - t)**3 * a + 3.0 * (1.0 - t)**2 * t * b + 3.0 * (1.0 - t) * t**2 * c + t**3 * d;
+    }
+
+    pub fn quadratic2(a: float2, b: float2, c: float2, t: float) -> float2 {
+        return (1.0 - t)**2 * a + 2.0 * (1.0 - t) * t * b + t**2 * c;
+    }
+
+    pub fn quadratic3(a: float3, b: float3, c: float3, t: float) -> float3 {
+        return (1.0 - t)**2 * a + 2.0 * (1.0 - t) * t * b + t**2 * c;
+    }
+
+    /**
+    * 3d triangle patch evaulation with barycentric coordinates.
+    */
+    pub fn patch(a: float3, ab: float3, b: float3, bc: float3, c: float3, ca: float3, barycentricT: float3) {
+      return 1.f * c * (s * s) +
+        2.f * bc * s * t +
+        2.f * ca * s * u +
+        1.f * b * (t * t) +
+        2.f * ab * t * u +
+        1.f * a * (u * u);
+    }
+
+    
+
+    pub fn easing(controlA: float2, controlB: float2, t: float) -> float {
+        return calcBezier(getTForX(t, controlA.x, controlB.x), controlA.y, controlB.y);
+    }
+}
+
+/**
+* Provides space related utilities like z-order curves and quadtrees.
+*/
+pub struct spatial {};
+
+impl spatial {
+    pub fn cantorPair(v: int2) -> int {
+        return ((v.x + v.y) * (v.x + v.y + 1)) / 2 + v.y;
+    }
+
+    pub fn cantorUnpair(v: int) -> int2 {
+        let w = floor((sqrt(8.0 * v + 1.0) - 1.0) / 2.0);
+        let t = (w * w + w) / 2.0;
+        let y = v - t;
+        let x = w - y;
+        return int2(x, y);
+    }
+
+    pub fn hilbertRotate(n: int, b: int2, r: int2) -> int2 {
+        let x = b.x;
+        let y = b.y;
+        if (r.y == 0) {
+            if (r.x == 1) {
+                x = n-1 - x;
+                y = n-1 - y;
+            }
+
+            let t = x;
+            x = y;
+            y = t;
+        }
+
+        return int2(x, y);
+    }
+
+    pub fn hilbertUncurve(n: int, v: int2) -> int {
+        let x = v.x;
+        let y = v.y;
+        let rx: int = 0;
+        let ry: int = 0;
+        let s: int = 0;
+        let d: int = 0;
+        for (s=n/2; s>0; s/=2) {
+            rx = ((x & s) > 0) ? 1 : 0;
+            ry = ((y & s) > 0) ? 1 : 0;
+            d += s * s * ((3 * rx) ^ ry);
+            let o = spatial::hilbertRotate(n, (x, y), (rx, ry));
+            x = o.x;
+            y = o.y;
+        }
+        return d;
+    }
+
+    pub fn hilbertCurve(n: int, v: int) -> int2 {
+        let rx: int = 0;
+        let ry: int = 0;
+        let t = v;
+        let x = 0;
+        let y = 0;
+        for (let s: int = 1; s < n; s *= 2) {
+            rx = 1 & (t/2);
+            ry = 1 & (t ^ rx);
+            let o = spatial::hilbertRotate(s, (x, y), (rx, ry));
+            x = o.x;
+            y = o.y;
+            x += s * rx;
+            y += s * ry;
+            t /= 4;
+        }
+
+        return int2(x, y);
+    }
+
+    pub fn mortonDecode(p: uint) -> uint2 {
+        return uint2(reverseMortonCode2(p), reverseMortonCode2(p >> 1u));
+    }
+
+    pub fn mortonEncode(p: uint2) -> uint {
+        return uint(mortonCode2(p.x) | (mortonCode2(p.y) << 1u));
+    }
+
+}
+
+pub fn mortonCode2(x: uint) -> uint {
+	x = x & 0x0000ffffu;
+	x = (x ^ (x << 8)) & 0x00ff00ffu;
+	x = (x ^ (x << 4)) & 0x0f0f0f0fu;
+	x = (x ^ (x << 2)) & 0x33333333u;
+	x = (x ^ (x << 1)) & 0x55555555u;
+	return x;
+}
+
+pub fn randColor(seed: float) -> float4 {
+    return float4(rand2((seed,5)), rand2((seed, 1)), rand2((seed, 4)), 1);
+}
+
+pub fn randColor2(seed: float2) -> float4 {
+    return float4(rand3((seed,5)), rand3((seed, 1)), rand3((seed, 4)), 1);
+}
+
+pub fn reverseMortonCode2(x: uint) -> uint {
+    x = x & 0x55555555u;
+    x = (x ^ (x >> 1)) & 0x33333333u;
+    x = (x ^ (x >> 2)) & 0x0f0f0f0fu;
+    x = (x ^ (x >> 4)) & 0x00ff00ffu;
+    x = (x ^ (x >> 8)) & 0x0000ffffu;
+    return x;
+}
+
+pub struct noise {};
+
+
+const PERLIN_YWRAPB = 4;
+const PERLIN_YWRAP = 1 << PERLIN_YWRAPB;
+const PERLIN_ZWRAPB = 8;
+const PERLIN_ZWRAP = 1 << PERLIN_ZWRAPB;
+const PERLIN_SIZE = 4095;
+
+let perlin_octaves = 4; // default to medium smooth
+let perlin_amp_falloff = 0.5; // 50% reduction/octave
+
+
+fn scaled_cosine(i: float) -> float {
+    return 0.5 * (1.0 - cos(i * PI));
+}
+
+let perlin = buffer<float>(PERLIN_SIZE + 1);
+for (let i = 0; i < PERLIN_SIZE + 1; i++) {
+    perlin[i] = rand(i);
+}
+
+//	<https://www.shadertoy.com/view/4dS3Wd>
+//	By Morgan McGuire @morgan3d, http://graphicscodex.com
+//
+fn hash(n: float) -> float { return frac(sin(n) * 1e4); }
+fn hash2(p: float2) -> float { return frac(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
+fn hash3(p: float3) -> float { let h = dot(p, float3(127.1, 311.7, 74.7)); return frac(sin(h) * 43758.5453123); }
+
+
+
+impl noise {
+    pub fn gaussian3(v: float3) -> float {
+        let p = v;
+    	let a = floor(p);
+	    let d = p - a;
+    	d = d * d * (3.0 - 2.0 * d);
+
+    	let b = a.xxyy + float4(0.0, 1.0, 0.0, 1.0);
+    	let k1 = perm(b.xyxy);
+    	let k2 = perm(k1.xyxy + b.zzww);
+
+    	let c = k2 + a.zzzz;
+    	let k3 = perm(c);
+    	let k4 = perm(c + 1.0);
+
+    	let o1 = frac(k3 * (1.0 / 41.0));
+    	let o2 = frac(k4 * (1.0 / 41.0));
+
+    	let o3 = o2 * d.z + o1 * (1.0 - d.z);
+    	let o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+
+    	return o4.y * d.y + o4.x * (1.0 - d.y);
+    }
+    
+    pub fn gaussian2(v: float2) -> float {
+        return noise::gaussian3((v, 0));
+    }
+
+    pub fn noise1(x: float) {
+        let i = floor(x);
+        let f = frac(x);
+        let u = f * f * (3.0 - 2.0 * f);
+        return lerp(hash(i), hash(i + 1.0), u);
+    }
+
+    pub fn noise2(x: float2) -> float {
+        let i = floor(x);
+        let f = frac(x);
+
+        // Four corners in 2D of a tile
+        let a = hash2(i);
+        let b = hash2(i + float2(1.0, 0.0));
+        let c = hash2(i + float2(0.0, 1.0));
+        let d = hash2(i + float2(1.0, 1.0));
+
+        // Simple 2D lerp using smoothstep envelope between the values.
+        // return float3(lerp(lerp(a, b, smoothstep(0.0, 1.0, f.x)),
+        //			lerp(c, d, smoothstep(0.0, 1.0, f.x)),
+        //			smoothstep(0.0, 1.0, f.y)));
+
+        // Same code, with the clamps in smoothstep and common subexpressions
+        // optimized away.
+        let u = f * f * (3.0 - 2.0 * f);
+        return lerp(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+    }
+
+    pub fn fmb1(x: float) -> float {
+        let v = 0.0;
+        let a = 0.5;
+        let shift = float(100);
+        for (let i = 0; i < 5; i++) {
+            v += a * noise::noise1(x);
+            x = x * 2.0 + shift;
+            a *= 0.5;
+        }
+        return v;
+    }
+
+    pub fn fbm2(x: float2) -> float {
+        let v = 0.0;
+        let a = 0.5;
+        let shift = float2(100.xy);
+        // Rotate to reduce axial bias
+        let rot = float2x2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));
+        for (let i = 0; i < 5; i++) {
+            v += a * noise::noise2(x);
+            x = rot * x * 2.0 + shift;
+            a *= 0.5;
+        }
+        return v;
+    }
+
+    pub fn fbm3(x: float3) -> float {
+        let v = 0.0;
+        let a = 0.5;
+        let shift = float3(100.xyz);
+        for (let i = 0; i < 5; i++) {
+            v += a * noise::noise3(x);
+            x = x * 2.0 + shift;
+            a *= 0.5;
+        }
+        return v;
+    }
+
+    pub fn noise3(x: float3) -> float {
+        const step = float3(110, 241, 171);
+
+        let i = floor(x);
+        let f = frac(x);
+    
+        // For performance, compute the base input to a 1D hash from the integer part of the argument and the 
+        // incremental change to the 1D based on the 3D -> 1D wrapping
+        let n = dot(i, step);
+
+        let u = f * f * (3.0 - 2.0 * f);
+        return lerp(lerp(lerp( hash(n + dot(step, float3(0, 0, 0))), hash(n + dot(step, float3(1, 0, 0))), u.x),
+                lerp( hash(n + dot(step, float3(0, 1, 0))), hash(n + dot(step, float3(1, 1, 0))), u.x), u.y),
+                lerp(lerp( hash(n + dot(step, float3(0, 0, 1))), hash(n + dot(step, float3(1, 0, 1))), u.x),
+                lerp( hash(n + dot(step, float3(0, 1, 1))), hash(n + dot(step, float3(1, 1, 1))), u.x), u.y), u.z);
+    }
+
+    pub fn simplex2(v: float2) -> float {
+        let C = float4(0.211324865405187,
+                            0.366025403784439,
+                            -0.577350269189626,
+                            0.024390243902439);
+
+        let i  = floor(v + dot(v, C.yy));
+        let x0 = v -   i + dot(i, C.xx);
+
+        let xv = step(x0.y, x0.x);
+        
+        let i1 = float2(xv, 1.0 - xv);
+
+        let x1 = x0 + C.xx - i1;
+        let x2 = x0 + C.zz;
+
+        
+        i = mod289_2(i);
+        let p =
+        permute(
+            permute(float3(0.0, i1.y, 1.0) + i.y)
+                        + float3(0.0, i1.x, 1.0) + i.x);
+
+        let m = max(0.5.xyz - float3(dot(x0, x0), dot(x1, x1), dot(x2, x2)), 0.0);
+        m = m * m;
+        m = m * m;
+
+        let x = 2.0 * frac(p * C.www) - 1.0;
+        let h = abs(x) - 0.5;
+        let ox = floor(x + 0.5);
+        let a0 = x - ox;
+
+        // Normalise gradients implicitly by scaling m
+        m *= taylorInvSqrt(a0 * a0 + h * h);
+
+        // Compute final noise value at P
+        let g = float3(
+            a0.x * x0.x + h.x * x0.y,
+            a0.y * x1.x + h.y * x1.y,
+            a0.z * x2.x + h.z * x2.y
+        );
+        return 130.0 * dot(m, g);
+    }
+    
+    pub fn perlin2(v: float2) -> float {
+    let x = v.x;
+    let y = v.y;
+    let z = 0.0;
+
+        if (x < 0) {
+            x = -x;
+        }
+        if (y < 0) {
+            y = -y;
+        }
+        if (z < 0) {
+            z = -z;
+        }
+
+        let xi = int(floor(x)),
+            yi = int(floor(y)),
+            zi = int(floor(z));
+        let xf = x - xi;
+        let yf = y - yi;
+        let zf = z - zi;
+        let rxf = 0.0, ryf = 0.0;
+
+        let r = 0.0;
+        let ampl = 0.5;
+
+        let n1= 0.0, n2 = 0.0, n3 = 0.0;
+
+        for (let o = 0; o < perlin_octaves; o++) {
+            let of1: int = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
+
+            rxf = scaled_cosine(xf);
+            ryf = scaled_cosine(yf);
+
+            n1 = perlin[of1 & PERLIN_SIZE];
+            n1 += rxf * (perlin[(of1 + 1) & PERLIN_SIZE] - n1);
+            n2 = perlin[(of1 + PERLIN_YWRAP) & PERLIN_SIZE];
+            n2 += rxf * (perlin[(of1 + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n2);
+            n1 += ryf * (n2 - n1);
+
+            of1 += PERLIN_ZWRAP;
+            n2 = perlin[of1 & PERLIN_SIZE];
+            n2 += rxf * (perlin[(of1 + 1) & PERLIN_SIZE] - n2);
+            n3 = perlin[(of1 + PERLIN_YWRAP) & PERLIN_SIZE];
+            n3 += rxf * (perlin[(of1 + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
+            n2 += ryf * (n3 - n2);
+
+            n1 += scaled_cosine(zf) * (n2 - n1);
+
+            r += n1 * ampl;
+            ampl *= perlin_amp_falloff;
+            xi = xi << 1;
+            xf *= 2.0;
+            yi = yi << 1;
+            yf *= 2.0;
+            zi = zi << 1;
+            zf *= 2.0;
+
+            if (xf >= 1.0) {
+            xi++;
+            xf-= 1.0;
+            }
+            if (yf >= 1.0) {
+            yi++;
+            yf-= 1.0;
+            }
+            if (zf >= 1.0) {
+            zi++;
+            zf-= 1.0;
+            }
+        }
+        return r;
+
+    }
+
+    pub fn perlin3(v: float3) -> float {
+        let x = v.x;
+        let y = v.y;
+        let z = v.z;
+
+        if (x < 0) {
+            x = -x;
+        }
+        if (y < 0) {
+            y = -y;
+        }
+        if (z < 0) {
+            z = -z;
+        }
+
+        let xi = int(floor(x)),
+            yi = int(floor(y)),
+            zi = int(floor(z));
+        let xf = x - xi;
+        let yf = y - yi;
+        let zf = z - zi;
+        let rxf = 0.0, ryf = 0.0;
+
+        let r = 0.0;
+        let ampl = 0.5;
+
+        let n1= 0.0, n2 = 0.0, n3 = 0.0;
+
+        for (let o = 0; o < perlin_octaves; o++) {
+            let of1: int = xi + (yi << PERLIN_YWRAPB) + (zi << PERLIN_ZWRAPB);
+
+            rxf = scaled_cosine(xf);
+            ryf = scaled_cosine(yf);
+
+            n1 = perlin[of1 & PERLIN_SIZE];
+            n1 += rxf * (perlin[(of1 + 1) & PERLIN_SIZE] - n1);
+            n2 = perlin[(of1 + PERLIN_YWRAP) & PERLIN_SIZE];
+            n2 += rxf * (perlin[(of1 + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n2);
+            n1 += ryf * (n2 - n1);
+
+            of1 += PERLIN_ZWRAP;
+            n2 = perlin[of1 & PERLIN_SIZE];
+            n2 += rxf * (perlin[(of1 + 1) & PERLIN_SIZE] - n2);
+            n3 = perlin[(of1 + PERLIN_YWRAP) & PERLIN_SIZE];
+            n3 += rxf * (perlin[(of1 + PERLIN_YWRAP + 1) & PERLIN_SIZE] - n3);
+            n2 += ryf * (n3 - n2);
+
+            n1 += scaled_cosine(zf) * (n2 - n1);
+
+            r += n1 * ampl;
+            ampl *= perlin_amp_falloff;
+            xi = xi << 1;
+            xf *= 2.0;
+            yi = yi << 1;
+            yf *= 2.0;
+            zi = zi << 1;
+            zf *= 2.0;
+
+            if (xf >= 1.0) {
+            xi++;
+            xf-= 1.0;
+            }
+            if (yf >= 1.0) {
+            yi++;
+            yf-= 1.0;
+            }
+            if (zf >= 1.0) {
+            zi++;
+            zf-= 1.0;
+            }
+        }
+        return r;
+    }
+
+    /**
+    * Returns 3 values: distance to closest cell, random value of closest cell, distance to closest edge.
+    */
+    pub fn voronoi2(v: float2) -> float3 {
+        let n = floor(v);
+        let minDist = 10.0;
+        let toClose = 0.0.xy;
+        let closestCell = 0.0.xy;
+        
+        
+        for (let j = -1; j <= 1; j++) {
+            for (let i = -1; i <= 1; i++) {
+                let cell = n + float2(i, j);
+                let cellPos = cell + hash2(cell);
+                let toCell = cellPos - v;
+                let dst = length(toCell);
+                if (dst < minDist) {
+                    minDist = dst;
+                    toClose = toCell;
+                    closestCell = cell;
+                }
+            }
+        }
+        
+        let minEdge = 10.0;
+        for (let j = -1; j <= 1; j++) {
+            for (let i = -1; i <= 1; i++) {
+                let cell = n + float2(i, j);
+                let cellPos = cell + hash2(cell);
+                let toCell = cellPos - v;
+                let diff = abs(closestCell - cell);
+                let isClosest = diff.x + diff.y < 0.1;
+                if (!isClosest) {
+                    let toCenter = (toClose + toCell) * 0.5;
+                    let cellDiff = normalize(toCell - toClose);
+                    let edge = dot(toCenter, cellDiff);
+                    minEdge = min(minEdge, edge);
+                }
+            }
+        }
+
+        let random = hash2(closestCell);
+        return float3(minDist, random, minEdge);
+    }
+
+    pub fn simplex3(v: float3) -> float {
+        let C = float4(0.138196601125011,
+                            0.276393202250021,
+                            0.414589803375032,
+                            -0.447213595499958);
+
+        let i  = floor(v + dot(v, C.yyy));
+        let x0 = v -   i + dot(i, C.xxx);
+
+        let g = step(x0.yzx, x0.xyz);
+        let l = 1.0 - g;
+        let i1 = min(g.xyz, l.zxy);
+        let i2 = max(g.xyz, l.zxy);
+
+        let x1 = x0 - i1 + 1.0 * C.xxx;
+        let x2 = x0 - i2 + 2.0 * C.xxx;
+        let x3 = x0 - 1. + 3.0 * C.xxx;
+
+        i = mod289_3(i);
+        let p =
+        permute(
+            permute(
+                permute(i.z + float3(0.0, i1.z, i2.z))
+                + i.y + float3(0.0, i1.y, i2.y))
+                + i.x + float3(0.0, i1.x, i2.x));
+
+        let m = max(0.5 - float3(dot(x0,x0), dot(x1,x1), dot(x2,x2)), 0.0);
+        m = m * m;
+        m = m * m;
+
+        let x = 2.0 * frac(p * C.www) - 1.0;
+        let h = abs(x) - 0.5;
+        let ox = floor(x + 0.5);
+        let a0 = x - ox;
+
+        // Normalise gradients implicitly by scaling m
+        // Approximation of: m *= inversesqrt(a0 * a0 + h * h);
+        m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+
+        // Compute final noise value at P
+        let g2 = float3(
+            a0.x * x0.x + h.x * x0.y,
+            a0.y * x1.x + h.y * x1.y,
+            a0.z * x2.x + h.z * x2.y
+        );
+        return 130.0 * dot(m, g2);
+    }
+}
+
+fn mod289_1(x: float) -> float { return x - floor(x * (1.0 / 289.0)) * 289.0;}
+fn mod289_4(x: float4) -> float4 { return x - floor(x * (1.0 / 289.0)) * 289.0;}
+fn perm(x: float4) -> float4  { return mod289_4(((x * 34.0) + 1.0) * x);}
+
+fn mod289_3(x: float3) -> float3 {
+    return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+fn mod289_2(x: float2) -> float2 {
+    return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+
+fn permute(x: float3) -> float3 {
+    return mod289_3((x * 34.0 + 1.0) * x);
+}
+
+fn taylorInvSqrt(r: float3) -> float3 {
+    return 1.79284291400159 - 0.85373472095314 * r;
+}
+
+pub struct matrix {}
+
+impl matrix {
+    pub fn lookAt(from: float3, to: float3, up: float3) -> float4x4 {
+        let zAxis = normalize(from - to);
+        let xAxis = normalize(cross(up, zAxis));
+        let yAxis = normalize(cross(zAxis, xAxis));
+        let dst = float4x4();
+        dst[0][0] = xAxis.x;  dst[0][1] = yAxis.x;  dst[0][2] = zAxis.x;  dst[0][3] = 0;
+        dst[1][0] = xAxis.y;  dst[1][1] = yAxis.y;  dst[1][2] = zAxis.y;  dst[1][3] = 0;
+        dst[2][0] = xAxis.z;  dst[2][1] = yAxis.z;  dst[2][2] = zAxis.z;  dst[2][3] = 0;
+
+        dst[3][0] = -(xAxis.x * from.x + xAxis.y * from.y + xAxis.z * from.z);
+        dst[3][1] = -(yAxis.x * from.x + yAxis.y * from.y + yAxis.z * from.z);
+        dst[3][2] = -(zAxis.x * from.x + zAxis.y * from.y + zAxis.z * from.z);
+        dst[3][3] = 1;
+
+        return dst;
+
+        let forward = normalize(from - to); 
+        
+        let right = normalize(cross(up, forward)); 
+        
+        let newup = cross(forward, right); 
+        let m = float4x4();
+        m[0][0] = right.x,   m[0][1] = right.y,   m[0][2] = right.z; 
+        m[1][0] = newup.x,   m[1][1] = newup.y,   m[1][2] = newup.z; 
+        m[2][0] = forward.x, m[2][1] = forward.y, m[2][2] = forward.z; 
+        m[3][0] = from.x,    m[3][1] = from.y,    m[3][2] = from.z; 
+
+        return m;
+
+    }
+
+
+    pub fn perspective(fov: float, aspect: float, near: float, far: float) -> float4x4 {
+        
+        // set the basic projection matrix
+        // let scale = 1.0 / tan(fov * 0.5 * PI / 180); 
+        // let M = float4x4();
+        // M[0][0] = scale;  //scale the x coordinates of the projected point 
+        // M[1][1] = scale * aspect;  //scale the y coordinates of the projected point 
+        // M[2][2] = -far / (far - near);  //used to remap z to [0,1] 
+        // M[3][2] = -far * near / (far - near);  //used to remap z [0,1] 
+        // M[2][3] = -1;  //set w = -z 
+        // M[3][3] = 0; 
+
+        //return M;
+
+        let fovRad = radians(fov);
+        let tanFov = tan( fovRad * 0.5 );
+
+        let matrx = float4x4(
+            1.0 / (tanFov * aspect), 0, 0, 0,
+            0, 1.0 / tanFov, 0, 0,
+            0, 0, -((far + near)/(far - near)), -1,
+            0, 0, -((2*(near*far))/(far - near)), 0
+        );
+
+        return matrx;
+    }
+
+    pub fn perspectiveReverseZ(fov: float, aspect: float, near: float) -> float4 {
+        // let scale = 1.0 / tan(fov * 0.5 * PI / 180);
+        // let far = 10000000.0;
+        // let M = float4x4();
+        // M[0][0] = scale;  //scale the x coordinates of the projected point 
+        // M[1][1] = scale * aspect;  //scale the y coordinates of the projected point 
+        // M[2][2] = (-far / (far - near)) * -1;  //used to remap z to [0,1] 
+        // M[3][2] = -far * near / (far - near);  //used to remap z [0,1] 
+        // M[2][3] = 0;  //set w = -z 
+        // M[3][3] = 0; 
+        // return M;
+
+        let matrx = float4x4(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, -1, 0,
+            0, 0, 1, 1
+        ) * matrix::perspective(fov, aspect, near, 10000000.0);
+
+        return matrx;
+    }
+}
+
+/**
+* Uses Super Sampling Anti Aliasing to smooth out the image.
+*/
+pub fn screenAA(inScreenPos: float2, gridSize: int, func: (screenPos: float2) -> float4) {
+    let weightSum = 0.0;
+    let accumulatedColor = float4(0, 0, 0, 0);
+
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+            let offset = float2(
+                (x + 0.5 - gridSize * 0.5) / gridSize,
+                (y + 0.5 - gridSize * 0.5) / gridSize
+            );
+            
+            let weight = exp(-dot(offset, offset) * 5); // Gaussian weight
+            accumulatedColor += func(inScreenPos + offset) * weight;
+            weightSum += weight;
+        }
+    }
+
+    return accumulatedColor / weightSum;
+}
+
+
+// Color conversion helpers
+// A color = float4 containing rgba values in the range [0, 1]
+// All functions have an extra alpha functon and a reverse
+// i.e. hsl, hsla, hslFromColor, hslaFromColor
+// fn hsl(v: float3) -> float4
+
+pub fn hsl(v: float3) -> float4 {
+    return hsla((v, 1));
+}
+
+pub fn hsla(v: float4) -> float4 {
+    let h = v.x;
+    let s = v.y;
+    let l = v.z;
+    let a = v.w;
+    let c = (1 - abs(2 * l - 1)) * s;
+    let x = c * (1 - abs(((h / 60) % 2) - 1));
+    let m = l - c / 2;
+    let r = 0.0;
+    let g = 0.0;
+    let b = 0.0;
+    if (h < 60) {
+        r = c;
+        g = x;
+        b = 0;
+    } else if (h < 120) {
+        r = x;
+        g = c;
+        b = 0;
+    } else if (h < 180) {
+        r = 0;
+        g = c;
+        b = x;
+    } else if (h < 240) {
+        r = 0;
+        g = x;
+        b = c;
+    } else if (h < 300) {
+        r = x;
+        g = 0;
+        b = c;
+    } else {
+        r = c;
+        g = 0;
+        b = x;
+    }
+    return float4(r + m, g + m, b + m, a);
+}
+
+pub fn hslFromColor(c: float4) -> float3 {
+    let r = c.r;
+    let g = c.g;
+    let b = c.b;
+    let a = c.a;
+    let mx = max(r, max(g, b));
+    let mn = min(r, min(g, b));
+    let h = 0.0;
+    let s = 0.0;
+    let l = (mx + mn) / 2;
+    if (mx == mn) {
+        h = 0;
+        s = 0;
+    } else {
+        let d = mx - mn;
+        s = (l > 0.5) ? d / (2 - mx - mn) : d / (mx + mn);
+        if (mx == r) {
+            h = (g - b) / d + ((g < b) ? 6:0);
+        } else if (mx == g) {
+            h = (b - r) / d + 2;
+        } else if (mx == b) {
+            h = (r - g) / d + 4;
+        }
+        h /= 6;
+    }
+    return float3(h * 360, s, l);
+}
+
+pub fn hslaFromColor(c: float4) -> float4 {
+    let hsl = hslFromColor(c);
+    return float4(hsl, c.a);
+}
+
+pub fn hsv(v: float3) -> float4 {
+    return hsva((v, 1));
+}
+
+pub fn hsva(val: float4) -> float4 {
+    let h = val.x;
+    let s = val.y;
+    let v = val.z;
+    let a = val.w;
+    let c = v * s;
+    let x = c * (1 - abs(mod(h / 60, 2) - 1));
+    let m = v - c;
+    let r = 0.0;
+    let g = 0.0;
+    let b = 0.0;
+    if (h < 60) {
+        r = c;
+        g = x;
+        b = 0;
+    } else if (h < 120) {
+        r = x;
+        g = c;
+        b = 0;
+    } else if (h < 180) {
+        r = 0;
+        g = c;
+        b = x;
+    } else if (h < 240) {
+        r = 0;
+        g = x;
+        b = c;
+    } else if (h < 300) {
+        r = x;
+        g = 0;
+        b = c;
+    } else {
+        r = c;
+        g = 0;
+        b = x;
+    }
+    return float4(r + m, g + m, b + m, a);
+}
+
+pub fn hsvFromColor(c: float4) -> float3 {
+    let r = c.r;
+    let g = c.g;
+    let b = c.b;
+    let mx = max(r, max(g, b));
+    let mn = min(r, min(g, b));
+    let h = 0.0;
+    let s = 0.0;
+    let v = mx;
+    let d = mx - mn;
+    s = (mx == 0) ? 0 :  d / mx ;
+    if (mx == mn) {
+        h = 0;
+    } else {
+        if (mx == r) {
+            h = (g - b) / d + ((g < b) ? 6 : 0 );
+        } else if (mx == g) {
+            h = (b - r) / d + 2;
+        } else if (mx == b) {
+            h = (r - g) / d + 4;
+        }
+        h /= 6;
+    }
+    return float3(h * 360, s, v);
+}
+
+pub fn hsvaFromColor(c: float4) -> float4 {
+    let hsv = hsvFromColor(c);
+    return float4(hsv, c.a);
+}
+
+pub fn rgb(v: float3) -> float4 {
+    return float4(v / 255.0, 1);
+}
+
+pub fn rgba(v: float4) -> float4 {
+    return float4(v / 255.0);
+}
+
+pub fn rgbFromColor(c: float4) -> float3 {
+    return c.rgb * 255.0;
+}
+
+pub fn rgbaFromColor(c: float4) -> float4 {
+    return c * 255.0;
+}
+
+pub fn cmyk(v: float4) -> float4 {
+    let c = v.r;
+    let m = v.g;
+    let y = v.b;
+    let k = v.a;
+    let r = 1 - min(1, c * (1 - k) + k);
+    let g = 1 - min(1, m * (1 - k) + k);
+    let b = 1 - min(1, y * (1 - k) + k);
+    return float4(r, g, b, 1);
+}
+
+pub fn cmykFromColor(c: float4) -> float4 {
+    let r = c.r;
+    let g = c.g;
+    let b = c.b;
+    let k = 1 - max(r, max(g, b));
+    let c1 = (1 - r - k) / (1 - k);
+    let m = (1 - g - k) / (1 - k);
+    let y = (1 - b - k) / (1 - k);
+    return float4(c1, m, y, k);
+}
+
+pub fn hex(v: int) -> float4 {
+    let r: float = (v >> 16) & 0xFF;
+    let g: float = (v >> 8) & 0xFF;
+    let b: float = v & 0xFF;
+    return float4(r / 255.0, g / 255.0, b / 255.0, 1.0);
+}
+
+pub fn hexFromColor(c: float4) -> int {
+    let r = int(c.r * 255.0);
+    let g = int(c.g * 255.0);
+    let b = int(c.b * 255.0);
+    return (r << 16) | (g << 8) | b;
+}
+
+/**
+* Returns sin remapped to [0, 1]
+*/
+pub fn sin1(v: float) -> float {
+    return (sin(v) + 1) * 0.5;
+}
+
+/**
+* Returns cos remapped to [0, 1]
+*/
+pub fn cos1(v: float) -> float {
+    return (cos(v) + 1) * 0.5;
+}
+
+/**
+* Returns tan remapped to [0, 1]
+*/
+pub fn tan1(v: float) -> float {
+    return (tan(v) + 1) * 0.5;
+}
+
+pub fn remap(v: float, low1: float, high1: float, low2: float, high2: float) -> float {
+    return low2 + (v - low1) * (high2 - low2) / (high1 - low1);
+}
+
+pub fn remap1(v: float, low: float, high: float) -> float {
+    return remap(v, low, high, 0, 1);
+}
+
+pub struct color {
+	static slate50: float4 = float4(0.9725490196078431, 0.9803921568627451, 0.9882352941176471, 1);
+	static slate100: float4 = float4(0.9450980392156862, 0.9607843137254902, 0.9764705882352941, 1);
+	static slate200: float4 = float4(0.8862745098039215, 0.9098039215686274, 0.9411764705882353, 1);
+	static slate300: float4 = float4(0.796078431372549, 0.8352941176470589, 0.8823529411764706, 1);
+	static slate400: float4 = float4(0.5803921568627451, 0.6392156862745098, 0.7215686274509804, 1);
+	static slate500: float4 = float4(0.39215686274509803, 0.4549019607843137, 0.5450980392156862, 1);
+	static slate600: float4 = float4(0.2784313725490196, 0.3333333333333333, 0.4117647058823529, 1);
+	static slate700: float4 = float4(0.2, 0.2549019607843137, 0.3333333333333333, 1);
+	static slate800: float4 = float4(0.11764705882352941, 0.1607843137254902, 0.23137254901960785, 1);
+	static slate900: float4 = float4(0.058823529411764705, 0.09019607843137255, 0.16470588235294117, 1);
+	static slate950: float4 = float4(0.00784313725490196, 0.023529411764705882, 0.09019607843137255, 1);
+	static gray50: float4 = float4(0.9764705882352941, 0.9803921568627451, 0.984313725490196, 1);
+	static gray100: float4 = float4(0.9529411764705882, 0.9568627450980393, 0.9647058823529412, 1);
+	static gray200: float4 = float4(0.8980392156862745, 0.9058823529411765, 0.9215686274509803, 1);
+	static gray300: float4 = float4(0.8196078431372549, 0.8352941176470589, 0.8588235294117647, 1);
+	static gray400: float4 = float4(0.611764705882353, 0.6392156862745098, 0.6862745098039216, 1);
+	static gray500: float4 = float4(0.4196078431372549, 0.4470588235294118, 0.5019607843137255, 1);
+	static gray600: float4 = float4(0.29411764705882354, 0.3333333333333333, 0.38823529411764707, 1);
+	static gray700: float4 = float4(0.21568627450980393, 0.2549019607843137, 0.3176470588235294, 1);
+	static gray800: float4 = float4(0.12156862745098039, 0.1607843137254902, 0.21568627450980393, 1);
+	static gray900: float4 = float4(0.06666666666666667, 0.09411764705882353, 0.15294117647058825, 1);
+	static gray950: float4 = float4(0.011764705882352941, 0.027450980392156862, 0.07058823529411765, 1);
+	static zinc50: float4 = float4(0.9803921568627451, 0.9803921568627451, 0.9803921568627451, 1);
+	static zinc100: float4 = float4(0.9568627450980393, 0.9568627450980393, 0.9607843137254902, 1);
+	static zinc200: float4 = float4(0.8941176470588236, 0.8941176470588236, 0.9058823529411765, 1);
+	static zinc300: float4 = float4(0.8313725490196079, 0.8313725490196079, 0.8470588235294118, 1);
+	static zinc400: float4 = float4(0.6313725490196078, 0.6313725490196078, 0.6666666666666666, 1);
+	static zinc500: float4 = float4(0.44313725490196076, 0.44313725490196076, 0.47843137254901963, 1);
+	static zinc600: float4 = float4(0.3215686274509804, 0.3215686274509804, 0.3568627450980392, 1);
+	static zinc700: float4 = float4(0.24705882352941178, 0.24705882352941178, 0.27450980392156865, 1);
+	static zinc800: float4 = float4(0.15294117647058825, 0.15294117647058825, 0.16470588235294117, 1);
+	static zinc900: float4 = float4(0.09411764705882353, 0.09411764705882353, 0.10588235294117647, 1);
+	static zinc950: float4 = float4(0.03529411764705882, 0.03529411764705882, 0.043137254901960784, 1);
+	static neutral50: float4 = float4(0.9803921568627451, 0.9803921568627451, 0.9803921568627451, 1);
+	static neutral100: float4 = float4(0.9607843137254902, 0.9607843137254902, 0.9607843137254902, 1);
+	static neutral200: float4 = float4(0.8980392156862745, 0.8980392156862745, 0.8980392156862745, 1);
+	static neutral300: float4 = float4(0.8313725490196079, 0.8313725490196079, 0.8313725490196079, 1);
+	static neutral400: float4 = float4(0.6392156862745098, 0.6392156862745098, 0.6392156862745098, 1);
+	static neutral500: float4 = float4(0.45098039215686275, 0.45098039215686275, 0.45098039215686275, 1);
+	static neutral600: float4 = float4(0.3215686274509804, 0.3215686274509804, 0.3215686274509804, 1);
+	static neutral700: float4 = float4(0.25098039215686274, 0.25098039215686274, 0.25098039215686274, 1);
+	static neutral800: float4 = float4(0.14901960784313725, 0.14901960784313725, 0.14901960784313725, 1);
+	static neutral900: float4 = float4(0.09019607843137255, 0.09019607843137255, 0.09019607843137255, 1);
+	static neutral950: float4 = float4(0.0392156862745098, 0.0392156862745098, 0.0392156862745098, 1);
+	static stone50: float4 = float4(0.9803921568627451, 0.9803921568627451, 0.9764705882352941, 1);
+	static stone100: float4 = float4(0.9607843137254902, 0.9607843137254902, 0.9568627450980393, 1);
+	static stone200: float4 = float4(0.9058823529411765, 0.8980392156862745, 0.8941176470588236, 1);
+	static stone300: float4 = float4(0.8392156862745098, 0.8274509803921568, 0.8196078431372549, 1);
+	static stone400: float4 = float4(0.6588235294117647, 0.6352941176470588, 0.6196078431372549, 1);
+	static stone500: float4 = float4(0.47058823529411764, 0.44313725490196076, 0.4235294117647059, 1);
+	static stone600: float4 = float4(0.3411764705882353, 0.3254901960784314, 0.3058823529411765, 1);
+	static stone700: float4 = float4(0.26666666666666666, 0.25098039215686274, 0.23529411764705882, 1);
+	static stone800: float4 = float4(0.1607843137254902, 0.1450980392156863, 0.1411764705882353, 1);
+	static stone900: float4 = float4(0.10980392156862745, 0.09803921568627451, 0.09019607843137255, 1);
+	static stone950: float4 = float4(0.047058823529411764, 0.0392156862745098, 0.03529411764705882, 1);
+	static red50: float4 = float4(0.996078431372549, 0.9490196078431372, 0.9490196078431372, 1);
+	static red100: float4 = float4(0.996078431372549, 0.8862745098039215, 0.8862745098039215, 1);
+	static red200: float4 = float4(0.996078431372549, 0.792156862745098, 0.792156862745098, 1);
+	static red300: float4 = float4(0.9882352941176471, 0.6470588235294118, 0.6470588235294118, 1);
+	static red400: float4 = float4(0.9725490196078431, 0.44313725490196076, 0.44313725490196076, 1);
+	static red500: float4 = float4(0.9372549019607843, 0.26666666666666666, 0.26666666666666666, 1);
+	static red600: float4 = float4(0.8627450980392157, 0.14901960784313725, 0.14901960784313725, 1);
+	static red700: float4 = float4(0.7254901960784313, 0.10980392156862745, 0.10980392156862745, 1);
+	static red800: float4 = float4(0.6, 0.10588235294117647, 0.10588235294117647, 1);
+	static red900: float4 = float4(0.4980392156862745, 0.11372549019607843, 0.11372549019607843, 1);
+	static red950: float4 = float4(0.27058823529411763, 0.0392156862745098, 0.0392156862745098, 1);
+	static orange50: float4 = float4(1, 0.9686274509803922, 0.9294117647058824, 1);
+	static orange100: float4 = float4(1, 0.9294117647058824, 0.8352941176470589, 1);
+	static orange200: float4 = float4(0.996078431372549, 0.8431372549019608, 0.6666666666666666, 1);
+	static orange300: float4 = float4(0.9921568627450981, 0.7294117647058823, 0.4549019607843137, 1);
+	static orange400: float4 = float4(0.984313725490196, 0.5725490196078431, 0.23529411764705882, 1);
+	static orange500: float4 = float4(0.9764705882352941, 0.45098039215686275, 0.08627450980392157, 1);
+	static orange600: float4 = float4(0.9176470588235294, 0.34509803921568627, 0.047058823529411764, 1);
+	static orange700: float4 = float4(0.7607843137254902, 0.2549019607843137, 0.047058823529411764, 1);
+	static orange800: float4 = float4(0.6039215686274509, 0.20392156862745098, 0.07058823529411765, 1);
+	static orange900: float4 = float4(0.48627450980392156, 0.17647058823529413, 0.07058823529411765, 1);
+	static orange950: float4 = float4(0.2627450980392157, 0.0784313725490196, 0.027450980392156862, 1);
+	static amber50: float4 = float4(1, 0.984313725490196, 0.9215686274509803, 1);
+	static amber100: float4 = float4(0.996078431372549, 0.9529411764705882, 0.7803921568627451, 1);
+	static amber200: float4 = float4(0.9921568627450981, 0.9019607843137255, 0.5411764705882353, 1);
+	static amber300: float4 = float4(0.9882352941176471, 0.8274509803921568, 0.30196078431372547, 1);
+	static amber400: float4 = float4(0.984313725490196, 0.7490196078431373, 0.1411764705882353, 1);
+	static amber500: float4 = float4(0.9607843137254902, 0.6196078431372549, 0.043137254901960784, 1);
+	static amber600: float4 = float4(0.8509803921568627, 0.4666666666666667, 0.023529411764705882, 1);
+	static amber700: float4 = float4(0.7058823529411765, 0.3254901960784314, 0.03529411764705882, 1);
+	static amber800: float4 = float4(0.5725490196078431, 0.25098039215686274, 0.054901960784313725, 1);
+	static amber900: float4 = float4(0.47058823529411764, 0.20784313725490197, 0.058823529411764705, 1);
+	static amber950: float4 = float4(0.27058823529411763, 0.10196078431372549, 0.011764705882352941, 1);
+	static yellow50: float4 = float4(0.996078431372549, 0.9882352941176471, 0.9098039215686274, 1);
+	static yellow100: float4 = float4(0.996078431372549, 0.9764705882352941, 0.7647058823529411, 1);
+	static yellow200: float4 = float4(0.996078431372549, 0.9411764705882353, 0.5411764705882353, 1);
+	static yellow300: float4 = float4(0.9921568627450981, 0.8784313725490196, 0.2784313725490196, 1);
+	static yellow400: float4 = float4(0.9803921568627451, 0.8, 0.08235294117647059, 1);
+	static yellow500: float4 = float4(0.9176470588235294, 0.7019607843137254, 0.03137254901960784, 1);
+	static yellow600: float4 = float4(0.792156862745098, 0.5411764705882353, 0.01568627450980392, 1);
+	static yellow700: float4 = float4(0.6313725490196078, 0.3843137254901961, 0.027450980392156862, 1);
+	static yellow800: float4 = float4(0.5215686274509804, 0.30196078431372547, 0.054901960784313725, 1);
+	static yellow900: float4 = float4(0.44313725490196076, 0.24705882352941178, 0.07058823529411765, 1);
+	static yellow950: float4 = float4(0.25882352941176473, 0.12549019607843137, 0.023529411764705882, 1);
+	static lime50: float4 = float4(0.9686274509803922, 0.996078431372549, 0.9058823529411765, 1);
+	static lime100: float4 = float4(0.9254901960784314, 0.9882352941176471, 0.796078431372549, 1);
+	static lime200: float4 = float4(0.8509803921568627, 0.9764705882352941, 0.615686274509804, 1);
+	static lime300: float4 = float4(0.7450980392156863, 0.9490196078431372, 0.39215686274509803, 1);
+	static lime400: float4 = float4(0.6392156862745098, 0.9019607843137255, 0.20784313725490197, 1);
+	static lime500: float4 = float4(0.5176470588235295, 0.8, 0.08627450980392157, 1);
+	static lime600: float4 = float4(0.396078431372549, 0.6392156862745098, 0.050980392156862744, 1);
+	static lime700: float4 = float4(0.30196078431372547, 0.48627450980392156, 0.058823529411764705, 1);
+	static lime800: float4 = float4(0.24705882352941178, 0.3843137254901961, 0.07058823529411765, 1);
+	static lime900: float4 = float4(0.21176470588235294, 0.3254901960784314, 0.0784313725490196, 1);
+	static lime950: float4 = float4(0.10196078431372549, 0.1803921568627451, 0.0196078431372549, 1);
+	static green50: float4 = float4(0.9411764705882353, 0.9921568627450981, 0.9568627450980393, 1);
+	static green100: float4 = float4(0.8627450980392157, 0.9882352941176471, 0.9058823529411765, 1);
+	static green200: float4 = float4(0.7333333333333333, 0.9686274509803922, 0.8156862745098039, 1);
+	static green300: float4 = float4(0.5254901960784314, 0.9372549019607843, 0.6745098039215687, 1);
+	static green400: float4 = float4(0.2901960784313726, 0.8705882352941177, 0.5019607843137255, 1);
+	static green500: float4 = float4(0.13333333333333333, 0.7725490196078432, 0.3686274509803922, 1);
+	static green600: float4 = float4(0.08627450980392157, 0.6392156862745098, 0.2901960784313726, 1);
+	static green700: float4 = float4(0.08235294117647059, 0.5019607843137255, 0.23921568627450981, 1);
+	static green800: float4 = float4(0.08627450980392157, 0.396078431372549, 0.20392156862745098, 1);
+	static green900: float4 = float4(0.0784313725490196, 0.3254901960784314, 0.17647058823529413, 1);
+	static green950: float4 = float4(0.0196078431372549, 0.1803921568627451, 0.08627450980392157, 1);
+	static emerald50: float4 = float4(0.9254901960784314, 0.9921568627450981, 0.9607843137254902, 1);
+	static emerald100: float4 = float4(0.8196078431372549, 0.9803921568627451, 0.8980392156862745, 1);
+	static emerald200: float4 = float4(0.6549019607843137, 0.9529411764705882, 0.8156862745098039, 1);
+	static emerald300: float4 = float4(0.43137254901960786, 0.9058823529411765, 0.7176470588235294, 1);
+	static emerald400: float4 = float4(0.20392156862745098, 0.8274509803921568, 0.6, 1);
+	static emerald500: float4 = float4(0.06274509803921569, 0.7254901960784313, 0.5058823529411764, 1);
+	static emerald600: float4 = float4(0.0196078431372549, 0.5882352941176471, 0.4117647058823529, 1);
+	static emerald700: float4 = float4(0.01568627450980392, 0.47058823529411764, 0.3411764705882353, 1);
+	static emerald800: float4 = float4(0.023529411764705882, 0.37254901960784315, 0.27450980392156865, 1);
+	static emerald900: float4 = float4(0.023529411764705882, 0.3058823529411765, 0.23137254901960785, 1);
+	static emerald950: float4 = float4(0.00784313725490196, 0.17254901960784313, 0.13333333333333333, 1);
+	static teal50: float4 = float4(0.9411764705882353, 0.9921568627450981, 0.9803921568627451, 1);
+	static teal100: float4 = float4(0.8, 0.984313725490196, 0.9450980392156862, 1);
+	static teal200: float4 = float4(0.6, 0.9647058823529412, 0.8941176470588236, 1);
+	static teal300: float4 = float4(0.3686274509803922, 0.9176470588235294, 0.8313725490196079, 1);
+	static teal400: float4 = float4(0.17647058823529413, 0.8313725490196079, 0.7490196078431373, 1);
+	static teal500: float4 = float4(0.0784313725490196, 0.7215686274509804, 0.6509803921568628, 1);
+	static teal600: float4 = float4(0.050980392156862744, 0.5803921568627451, 0.5333333333333333, 1);
+	static teal700: float4 = float4(0.058823529411764705, 0.4627450980392157, 0.43137254901960786, 1);
+	static teal800: float4 = float4(0.06666666666666667, 0.3686274509803922, 0.34901960784313724, 1);
+	static teal900: float4 = float4(0.07450980392156863, 0.3058823529411765, 0.2901960784313726, 1);
+	static teal950: float4 = float4(0.01568627450980392, 0.1843137254901961, 0.1803921568627451, 1);
+	static cyan50: float4 = float4(0.9254901960784314, 0.996078431372549, 1, 1);
+	static cyan100: float4 = float4(0.8117647058823529, 0.9803921568627451, 0.996078431372549, 1);
+	static cyan200: float4 = float4(0.6470588235294118, 0.9529411764705882, 0.9882352941176471, 1);
+	static cyan300: float4 = float4(0.403921568627451, 0.9098039215686274, 0.9764705882352941, 1);
+	static cyan400: float4 = float4(0.13333333333333333, 0.8274509803921568, 0.9333333333333333, 1);
+	static cyan500: float4 = float4(0.023529411764705882, 0.7137254901960784, 0.8313725490196079, 1);
+	static cyan600: float4 = float4(0.03137254901960784, 0.5686274509803921, 0.6980392156862745, 1);
+	static cyan700: float4 = float4(0.054901960784313725, 0.4549019607843137, 0.5647058823529412, 1);
+	static cyan800: float4 = float4(0.08235294117647059, 0.3686274509803922, 0.4588235294117647, 1);
+	static cyan900: float4 = float4(0.08627450980392157, 0.3058823529411765, 0.38823529411764707, 1);
+	static cyan950: float4 = float4(0.03137254901960784, 0.2, 0.26666666666666666, 1);
+	static sky50: float4 = float4(0.9411764705882353, 0.9764705882352941, 1, 1);
+	static sky100: float4 = float4(0.8784313725490196, 0.9490196078431372, 0.996078431372549, 1);
+	static sky200: float4 = float4(0.7294117647058823, 0.9019607843137255, 0.9921568627450981, 1);
+	static sky300: float4 = float4(0.49019607843137253, 0.8274509803921568, 0.9882352941176471, 1);
+	static sky400: float4 = float4(0.2196078431372549, 0.7411764705882353, 0.9725490196078431, 1);
+	static sky500: float4 = float4(0.054901960784313725, 0.6470588235294118, 0.9137254901960784, 1);
+	static sky600: float4 = float4(0.00784313725490196, 0.5176470588235295, 0.7803921568627451, 1);
+	static sky700: float4 = float4(0.011764705882352941, 0.4117647058823529, 0.6313725490196078, 1);
+	static sky800: float4 = float4(0.027450980392156862, 0.34901960784313724, 0.5215686274509804, 1);
+	static sky900: float4 = float4(0.047058823529411764, 0.2901960784313726, 0.43137254901960786, 1);
+	static sky950: float4 = float4(0.03137254901960784, 0.1843137254901961, 0.28627450980392155, 1);
+	static blue50: float4 = float4(0.9372549019607843, 0.9647058823529412, 1, 1);
+	static blue100: float4 = float4(0.8588235294117647, 0.9176470588235294, 0.996078431372549, 1);
+	static blue200: float4 = float4(0.7490196078431373, 0.8588235294117647, 0.996078431372549, 1);
+	static blue300: float4 = float4(0.5764705882352941, 0.7725490196078432, 0.9921568627450981, 1);
+	static blue400: float4 = float4(0.3764705882352941, 0.6470588235294118, 0.9803921568627451, 1);
+	static blue500: float4 = float4(0.23137254901960785, 0.5098039215686274, 0.9647058823529412, 1);
+	static blue600: float4 = float4(0.1450980392156863, 0.38823529411764707, 0.9215686274509803, 1);
+	static blue700: float4 = float4(0.11372549019607843, 0.3058823529411765, 0.8470588235294118, 1);
+	static blue800: float4 = float4(0.11764705882352941, 0.25098039215686274, 0.6862745098039216, 1);
+	static blue900: float4 = float4(0.11764705882352941, 0.22745098039215686, 0.5411764705882353, 1);
+	static blue950: float4 = float4(0.09019607843137255, 0.1450980392156863, 0.32941176470588235, 1);
+	static indigo50: float4 = float4(0.9333333333333333, 0.9490196078431372, 1, 1);
+	static indigo100: float4 = float4(0.8784313725490196, 0.9058823529411765, 1, 1);
+	static indigo200: float4 = float4(0.7803921568627451, 0.8235294117647058, 0.996078431372549, 1);
+	static indigo300: float4 = float4(0.6470588235294118, 0.7058823529411765, 0.9882352941176471, 1);
+	static indigo400: float4 = float4(0.5058823529411764, 0.5490196078431373, 0.9725490196078431, 1);
+	static indigo500: float4 = float4(0.38823529411764707, 0.4, 0.9450980392156862, 1);
+	static indigo600: float4 = float4(0.30980392156862746, 0.27450980392156865, 0.8980392156862745, 1);
+	static indigo700: float4 = float4(0.2627450980392157, 0.2196078431372549, 0.792156862745098, 1);
+	static indigo800: float4 = float4(0.21568627450980393, 0.18823529411764706, 0.6392156862745098, 1);
+	static indigo900: float4 = float4(0.19215686274509805, 0.1803921568627451, 0.5058823529411764, 1);
+	static indigo950: float4 = float4(0.11764705882352941, 0.10588235294117647, 0.29411764705882354, 1);
+	static violet50: float4 = float4(0.9607843137254902, 0.9529411764705882, 1, 1);
+	static violet100: float4 = float4(0.9294117647058824, 0.9137254901960784, 0.996078431372549, 1);
+	static violet200: float4 = float4(0.8666666666666667, 0.8392156862745098, 0.996078431372549, 1);
+	static violet300: float4 = float4(0.7686274509803922, 0.7098039215686275, 0.9921568627450981, 1);
+	static violet400: float4 = float4(0.6549019607843137, 0.5450980392156862, 0.9803921568627451, 1);
+	static violet500: float4 = float4(0.5450980392156862, 0.3607843137254902, 0.9647058823529412, 1);
+	static violet600: float4 = float4(0.48627450980392156, 0.22745098039215686, 0.9294117647058824, 1);
+	static violet700: float4 = float4(0.42745098039215684, 0.1568627450980392, 0.8509803921568627, 1);
+	static violet800: float4 = float4(0.3568627450980392, 0.12941176470588237, 0.7137254901960784, 1);
+	static violet900: float4 = float4(0.2980392156862745, 0.11372549019607843, 0.5843137254901961, 1);
+	static violet950: float4 = float4(0.1803921568627451, 0.06274509803921569, 0.396078431372549, 1);
+	static purple50: float4 = float4(0.9803921568627451, 0.9607843137254902, 1, 1);
+	static purple100: float4 = float4(0.9529411764705882, 0.9098039215686274, 1, 1);
+	static purple200: float4 = float4(0.9137254901960784, 0.8352941176470589, 1, 1);
+	static purple300: float4 = float4(0.8470588235294118, 0.7058823529411765, 0.996078431372549, 1);
+	static purple400: float4 = float4(0.7529411764705882, 0.5176470588235295, 0.9882352941176471, 1);
+	static purple500: float4 = float4(0.6588235294117647, 0.3333333333333333, 0.9686274509803922, 1);
+	static purple600: float4 = float4(0.5764705882352941, 0.2, 0.9176470588235294, 1);
+	static purple700: float4 = float4(0.49411764705882355, 0.13333333333333333, 0.807843137254902, 1);
+	static purple800: float4 = float4(0.4196078431372549, 0.12941176470588237, 0.6588235294117647, 1);
+	static purple900: float4 = float4(0.34509803921568627, 0.10980392156862745, 0.5294117647058824, 1);
+	static purple950: float4 = float4(0.23137254901960785, 0.027450980392156862, 0.39215686274509803, 1);
+	static fuchsia50: float4 = float4(0.9921568627450981, 0.9568627450980393, 1, 1);
+	static fuchsia100: float4 = float4(0.9803921568627451, 0.9098039215686274, 1, 1);
+	static fuchsia200: float4 = float4(0.9607843137254902, 0.8156862745098039, 0.996078431372549, 1);
+	static fuchsia300: float4 = float4(0.9411764705882353, 0.6705882352941176, 0.9882352941176471, 1);
+	static fuchsia400: float4 = float4(0.9098039215686274, 0.4745098039215686, 0.9764705882352941, 1);
+	static fuchsia500: float4 = float4(0.8509803921568627, 0.27450980392156865, 0.9372549019607843, 1);
+	static fuchsia600: float4 = float4(0.7529411764705882, 0.14901960784313725, 0.8274509803921568, 1);
+	static fuchsia700: float4 = float4(0.6352941176470588, 0.10980392156862745, 0.6862745098039216, 1);
+	static fuchsia800: float4 = float4(0.5254901960784314, 0.09803921568627451, 0.5607843137254902, 1);
+	static fuchsia900: float4 = float4(0.4392156862745098, 0.10196078431372549, 0.4588235294117647, 1);
+	static fuchsia950: float4 = float4(0.2901960784313726, 0.01568627450980392, 0.3058823529411765, 1);
+	static pink50: float4 = float4(0.9921568627450981, 0.9490196078431372, 0.9725490196078431, 1);
+	static pink100: float4 = float4(0.9882352941176471, 0.9058823529411765, 0.9529411764705882, 1);
+	static pink200: float4 = float4(0.984313725490196, 0.8117647058823529, 0.9098039215686274, 1);
+	static pink300: float4 = float4(0.9764705882352941, 0.6588235294117647, 0.8313725490196079, 1);
+	static pink400: float4 = float4(0.9568627450980393, 0.4470588235294118, 0.7137254901960784, 1);
+	static pink500: float4 = float4(0.9254901960784314, 0.2823529411764706, 0.6, 1);
+	static pink600: float4 = float4(0.8588235294117647, 0.15294117647058825, 0.4666666666666667, 1);
+	static pink700: float4 = float4(0.7450980392156863, 0.09411764705882353, 0.36470588235294116, 1);
+	static pink800: float4 = float4(0.615686274509804, 0.09019607843137255, 0.30196078431372547, 1);
+	static pink900: float4 = float4(0.5137254901960784, 0.09411764705882353, 0.2627450980392157, 1);
+	static pink950: float4 = float4(0.3137254901960784, 0.027450980392156862, 0.1411764705882353, 1);
+	static rose50: float4 = float4(1, 0.9450980392156862, 0.9490196078431372, 1);
+	static rose100: float4 = float4(1, 0.8941176470588236, 0.9019607843137255, 1);
+	static rose200: float4 = float4(0.996078431372549, 0.803921568627451, 0.8274509803921568, 1);
+	static rose300: float4 = float4(0.9921568627450981, 0.6431372549019608, 0.6862745098039216, 1);
+	static rose400: float4 = float4(0.984313725490196, 0.44313725490196076, 0.5215686274509804, 1);
+	static rose500: float4 = float4(0.9568627450980393, 0.24705882352941178, 0.3686274509803922, 1);
+	static rose600: float4 = float4(0.8823529411764706, 0.11372549019607843, 0.2823529411764706, 1);
+	static rose700: float4 = float4(0.7450980392156863, 0.07058823529411765, 0.23529411764705882, 1);
+	static rose800: float4 = float4(0.6235294117647059, 0.07058823529411765, 0.2235294117647059, 1);
+	static rose900: float4 = float4(0.5333333333333333, 0.07450980392156863, 0.21568627450980393, 1);
+	static rose950: float4 = float4(0.2980392156862745, 0.0196078431372549, 0.09803921568627451, 1);
+
+}
+
+
+pub fn wrap2(value: float2, low: float, high: float) {
+    return (wrap(value.x, low, high), wrap(value.y, low, high));
+}
+
+pub fn wrap3(value: float3, low: float, high: float) {
+    return (wrap(value.x, low, high), wrap(value.y, low, high), wrap(value.z, low, high));
+}
+
+pub fn wrap4(value: float4, low: float, high: float) {
+    return (wrap(value.x, low, high), wrap(value.y, low, high), wrap(value.z, low, high), wrap(value.w, low, high));
+}

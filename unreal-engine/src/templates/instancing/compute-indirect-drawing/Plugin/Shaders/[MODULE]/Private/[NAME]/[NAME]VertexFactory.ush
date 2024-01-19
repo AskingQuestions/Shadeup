@@ -1,0 +1,232 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+// Adapted from the VirtualHeightfieldMesh plugin
+
+#include "/Engine/Private/VertexFactoryCommon.ush"
+#include "/Engine/Private/VirtualTextureCommon.ush"
+#include "${NAME}.ush"
+
+StructuredBuffer<QuadRenderInstance> InstanceBuffer;
+float3 LodViewOrigin;
+// float4 LodDistances;
+
+/** Per-vertex inputs. No vertex buffers are bound. */
+struct FVertexFactoryInput
+{
+	uint InstanceId : SV_InstanceID;
+	uint VertexId : SV_VertexID;
+};
+
+/** Cached intermediates that would otherwise have to be computed multiple times. Avoids relying on the compiler to optimize out redundant operations. */
+struct FVertexFactoryIntermediates
+{
+	float2 LocalUV;
+	float3 LocalPos;
+	float3 WorldNormal;
+	/** Cached primitive and instance data */
+	FSceneDataIntermediates SceneData; 
+};
+
+FPrimitiveSceneData GetPrimitiveData(FVertexFactoryIntermediates Intermediates)
+{
+	return Intermediates.SceneData.Primitive;
+}
+
+/** Attributes to interpolate from the vertex shader to the pixel shader. */
+struct FVertexFactoryInterpolantsVSToPS
+{
+#if NUM_TEX_COORD_INTERPOLATORS
+	float4 TexCoords[(NUM_TEX_COORD_INTERPOLATORS + 1) / 2] : TEXCOORD0;
+#endif
+#if INSTANCED_STEREO
+	nointerpolation uint EyeIndex : PACKED_EYE_INDEX;
+#endif
+};
+
+/** Compute the intermediates for a given vertex. */
+FVertexFactoryIntermediates GetVertexFactoryIntermediates(FVertexFactoryInput Input)
+{
+	FVertexFactoryIntermediates Intermediates;
+	Intermediates.SceneData = VF_GPUSCENE_GET_INTERMEDIATES(Input);
+
+	const QuadRenderInstance Item = InstanceBuffer[Input.InstanceId];
+	uint2 VertexCoord = uint2(Input.VertexId % 2, Input.VertexId / 2);
+	const uint2 Pos = VertexCoord * 1000.f;
+	const uint Level = 0; //UnpackLevel(Item);
+	
+	
+	const float3 LocalUVTransform = float3(0.0f, 0.0f, 0.0f);
+
+	float2 LocalUV = (float2)VertexCoord / (float)(2 - 1);
+
+	// Calculate vertex UV details before morphing
+	float2 XY = ((float2)Pos + LocalUV) * (float)(1u << Level);
+	float2 NormalizedPos = (XY * 1.f);
+	float SampleLevel = Level;
+
+	// Position in space of virtual texture volume
+	// Intermediates.VTPos = float3(0, 0, 0);
+
+	// Position in local space
+	Intermediates.LocalPos = float3(Pos, Input.InstanceId * 100.f);//mul(float4(Intermediates.VTPos, 1), VHM.VirtualHeightfieldToLocal).xyz;
+	Intermediates.LocalPos /= ((float) (Level + 1));
+	
+	Intermediates.LocalUV = NormalizedPos;
+
+	Intermediates.WorldNormal = float3(0, 0, 1);
+
+	return Intermediates;
+}
+
+/** Converts from vertex factory specific input to a FMaterialVertexParameters, which is used by vertex shader material inputs. */
+FMaterialVertexParameters GetMaterialVertexParameters(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates, float3 WorldPosition, half3x3 TangentToLocal)
+{
+	FMaterialVertexParameters Result = (FMaterialVertexParameters)0;
+
+	Result.SceneData = Intermediates.SceneData;
+	Result.WorldPosition = WorldPosition;
+
+	// needs fixing!
+	// Result.TangentToWorld = mul(TangentToLocal, (float3x3)VHM.VirtualHeightfieldToWorld);
+	Result.TangentToWorld[2] = Intermediates.WorldNormal;
+
+	Result.PreSkinnedPosition = WorldPosition;// Intermediates.WorldPosPreDisplacement.xyz;
+	Result.PreSkinnedNormal = float3(0, 0, 1);
+
+#if NUM_MATERIAL_TEXCOORDS_VERTEX
+	UNROLL
+	for (int CoordinateIndex = 0; CoordinateIndex < NUM_MATERIAL_TEXCOORDS_VERTEX; CoordinateIndex++)
+	{
+		Result.TexCoords[CoordinateIndex] = Intermediates.LocalUV;
+	}
+#endif  //NUM_MATERIAL_TEXCOORDS_VERTEX
+
+	return Result;
+}
+
+/** Get ID in GPU Scene. We don't implement support because we create/consume our own instancing buffer. */
+uint GetPrimitiveId(FVertexFactoryInterpolantsVSToPS Interpolants)
+{
+	return 0;
+}
+
+/** Get ID in the GPU Scene. */
+uint VertexFactoryGetPrimitiveId(FVertexFactoryInterpolantsVSToPS Interpolants)
+{
+	return GetPrimitiveId(Interpolants);
+}
+
+/** Computes the world space position of this vertex. */
+float4 VertexFactoryGetWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+	FLWCMatrix LocalToWorld = GetPrimitiveData(Intermediates).LocalToWorld;
+	FLWCVector3 WorldPosition = LWCMultiply(Intermediates.LocalPos, LocalToWorld);
+	float3 TranslatedWorldPosition = LWCToFloat(LWCAdd(WorldPosition, ResolvedView.PreViewTranslation));
+	return float4(TranslatedWorldPosition, 1.0f);
+}
+
+/** Computes the world space position of this vertex. */
+float4 VertexFactoryGetRasterizedWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates, float4 InWorldPosition)
+{
+	return InWorldPosition;
+}
+
+/** Computes the world space position used by vertex lighting for this vertex. */
+float3 VertexFactoryGetPositionForVertexLighting(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates, float3 TranslatedWorldPosition)
+{
+	return TranslatedWorldPosition;
+}
+
+/** Computes the world space position of this vertex last frame. */
+float4 VertexFactoryGetPreviousWorldPosition(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+	float4x4 PreviousLocalToWorldTranslated = LWCMultiplyTranslation(GetPrimitiveData(Intermediates).PreviousLocalToWorld, ResolvedView.PrevPreViewTranslation);
+	return mul(float4(Intermediates.LocalPos,1), PreviousLocalToWorldTranslated);
+}
+
+/** Computes the world space normal of this vertex. */
+float3 VertexFactoryGetWorldNormal(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+	return Intermediates.WorldNormal;
+}
+
+/** Get the 3x3 tangent basis vectors for this vertex factory. This vertex factory will calculate the binormal on-the-fly. */
+half3x3 VertexFactoryGetTangentToLocal(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates)
+{
+	return half3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+}
+
+/** Get the translated bounding sphere for this primitive. */
+float4 VertexFactoryGetTranslatedPrimitiveVolumeBounds(FVertexFactoryInterpolantsVSToPS Interpolants)
+{
+	FPrimitiveSceneData PrimitiveData = GetPrimitiveData(GetPrimitiveId(Interpolants));
+	return float4(LWCToFloat(LWCAdd(PrimitiveData.ObjectWorldPosition, ResolvedView.PreViewTranslation)), PrimitiveData.ObjectRadius);
+}
+
+#if NUM_TEX_COORD_INTERPOLATORS
+
+void SetUV(inout FVertexFactoryInterpolantsVSToPS Interpolants, uint UVIndex, float2 InValue)
+{
+	FLATTEN
+	if (UVIndex % 2)
+	{
+		Interpolants.TexCoords[UVIndex / 2].zw = InValue;
+	}
+	else
+	{
+		Interpolants.TexCoords[UVIndex / 2].xy = InValue;
+	}
+}
+
+float2 GetUV(FVertexFactoryInterpolantsVSToPS Interpolants, uint UVIndex)
+{
+	float4 UVVector = Interpolants.TexCoords[UVIndex / 2];
+	return UVIndex % 2 ? UVVector.zw : UVVector.xy;
+}
+
+#endif
+
+/** Constructs values that need to be interpolated from the vertex shader to the pixel shader. */
+FVertexFactoryInterpolantsVSToPS VertexFactoryGetInterpolantsVSToPS(FVertexFactoryInput Input, FVertexFactoryIntermediates Intermediates, FMaterialVertexParameters VertexParameters)
+{
+	FVertexFactoryInterpolantsVSToPS Interpolants;
+
+	// Initialize the whole struct to 0
+	// Really only the last two components of the packed UVs have the opportunity to be uninitialized
+	Interpolants = (FVertexFactoryInterpolantsVSToPS)0;
+
+#if NUM_TEX_COORD_INTERPOLATORS
+	float2 CustomizedUVs[NUM_TEX_COORD_INTERPOLATORS];
+	GetMaterialCustomizedUVs(VertexParameters, CustomizedUVs);
+	GetCustomInterpolators(VertexParameters, CustomizedUVs);
+
+	UNROLL
+	for (int CoordinateIndex = 0; CoordinateIndex < NUM_TEX_COORD_INTERPOLATORS; CoordinateIndex++)
+	{
+		SetUV(Interpolants, CoordinateIndex, CustomizedUVs[CoordinateIndex]);
+	}
+#endif
+
+	return Interpolants;
+}
+
+/** Converts from vertex factory specific interpolants to a FMaterialPixelParameters, which is used by material inputs. */
+FMaterialPixelParameters GetMaterialPixelParameters(FVertexFactoryInterpolantsVSToPS Interpolants, float4 SvPosition)
+{
+	// GetMaterialPixelParameters is responsible for fully initializing the result
+	FMaterialPixelParameters Result = MakeInitializedMaterialPixelParameters();
+
+#if NUM_TEX_COORD_INTERPOLATORS
+	UNROLL
+	for (uint CoordinateIndex = 0; CoordinateIndex < NUM_TEX_COORD_INTERPOLATORS; CoordinateIndex++)
+	{
+		Result.TexCoords[CoordinateIndex] = GetUV(Interpolants, CoordinateIndex);
+	}
+#endif	//NUM_MATERIAL_TEXCOORDS
+
+	Result.TwoSidedSign = 0;
+	Result.PrimitiveId = GetPrimitiveId(Interpolants);
+
+	return Result;
+}
+
+#include "/Engine/Private/VertexFactoryDefaultInterface.ush"

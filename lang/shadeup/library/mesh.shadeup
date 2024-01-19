@@ -1,0 +1,654 @@
+
+pub struct Mesh {
+	vertices: float3[];
+	triangles: int[];
+	normals: float3[];
+	tangents: float3[];
+	bitangents: float3[];
+	uvs: float2[];
+	colors: float4[];
+	pub symbol: any;
+}
+
+impl Mesh {
+	pub fn rect(self, size: float2) {
+		let index = self.vertices.len();
+
+		self.vertices.push((-size.x / 2, -size.y / 2, 0));
+		self.vertices.push((size.x / 2, -size.y / 2, 0));
+		self.vertices.push((size.x / 2, size.y / 2, 0));
+		self.vertices.push((-size.x / 2, size.y / 2, 0));
+
+		self.triangles.push(index + 2);
+		self.triangles.push(index + 1);
+		self.triangles.push(index + 0);
+
+		self.triangles.push(index + 0);
+		self.triangles.push(index + 3);
+		self.triangles.push(index + 2);
+
+		self.normals.push((0, 0, 1));
+		self.normals.push((0, 0, 1));
+		self.normals.push((0, 0, 1));
+		self.normals.push((0, 0, 1));
+
+		self.tangents.push((1, 0, 0));
+		self.tangents.push((1, 0, 0));
+		self.tangents.push((1, 0, 0));
+		self.tangents.push((1, 0, 0));
+
+		self.bitangents.push((0, 1, 0));
+		self.bitangents.push((0, 1, 0));
+		self.bitangents.push((0, 1, 0));
+		self.bitangents.push((0, 1, 0));
+
+		self.uvs.push((0, 0));
+		self.uvs.push((1, 0));
+		self.uvs.push((0, 1));
+		self.uvs.push((1, 1));
+	}
+
+	pub fn quad(self, position: float3, direction: float3, right: float3, size: float2) {
+		let up = normalize(cross(right, direction));
+
+		let halfSize = size / 2.0;
+
+		let index = self.vertices.len();
+		
+		self.vertices.push(position + right * -halfSize.x + up * halfSize.y);
+		self.vertices.push(position + right * halfSize.x + up * halfSize.y);
+		self.vertices.push(position + right * halfSize.x + up * -halfSize.y);
+		self.vertices.push(position + right * -halfSize.x + up * -halfSize.y);
+
+		self.triangles.push(index + 0);
+		self.triangles.push(index + 1);
+		self.triangles.push(index + 2);
+
+		self.triangles.push(index + 2);
+		self.triangles.push(index + 3);
+		self.triangles.push(index + 0);
+
+		self.normals.push(direction);
+		self.normals.push(direction);
+		self.normals.push(direction);
+		self.normals.push(direction);
+
+		self.tangents.push(right);
+		self.tangents.push(right);
+		self.tangents.push(right);
+		self.tangents.push(right);
+
+		self.bitangents.push(up);
+		self.bitangents.push(up);
+		self.bitangents.push(up);
+		self.bitangents.push(up);
+
+		self.uvs.push((1, 0));
+		self.uvs.push((0, 0));
+		self.uvs.push((0, 1));
+		self.uvs.push((1, 1));
+	}
+
+	pub fn box(self, size: float3) {
+		let halfSize = size / 2.0;
+
+		const UP = (0, 1.0, 0);
+		const DOWN = (0, -1.0, 0);
+		const LEFT = (-1.0, 0, 0);
+		const RIGHT = (1.0, 0, 0);
+		const FORWARD = (0, 0, 1.0);
+		const BACK = (0, 0, -1.0);
+
+		// Up
+		self.quad(UP * halfSize.y, UP, LEFT, (size.x, size.z));
+
+		// Down
+		self.quad(DOWN * halfSize.y, DOWN, RIGHT, (size.x, size.z));
+
+		// Left
+		self.quad(LEFT * halfSize.x, LEFT, BACK, (size.z, size.y));
+
+		// Right
+		self.quad(RIGHT * halfSize.x, RIGHT, FORWARD, (size.z, size.y));
+
+		// Forward
+		self.quad(FORWARD * halfSize.z, FORWARD, LEFT, (size.x, size.y));
+
+		// Back
+		self.quad(BACK * halfSize.z, BACK, RIGHT, (size.x, size.y));
+	}
+
+	pub fn rectAt(self, minPos: float2, maxPos: float2) {
+		self.rect(maxPos - minPos);
+		self.translate((minPos, 0));
+	}
+
+	pub fn circle(self, pos: float2, radius: float, vertices: int = 32) {
+
+	}
+
+	pub fn uvSphere(self, pos: float3, radius: float, vertices: int = 32, rings: int = 16) {
+		let index = self.vertices.len();
+
+		let verticesPerRing = vertices + 1;
+
+		for (let i = 0; i <= rings; i++) {
+			let y = i / float(rings);
+			let angleY = y * PI;
+
+			let posY = cos(angleY);
+			let radiusY = sin(angleY);
+
+			for (let j = 0; j <= vertices; j++) {
+				let x = j / float(vertices);
+				let angleX = x * PI * 2;
+
+				let posX = cos(angleX);
+				let posZ = sin(angleX);
+
+				self.vertices.push((posX * radiusY * radius, posY * radius, posZ * radiusY * radius));
+				self.normals.push(normalize((posX * radiusY, posY, posZ * radiusY)));
+				
+				let tangent = normalize((posZ, 0, -posX));
+				let bitangent = normalize(cross(self.normals[self.normals.len() - 1], tangent));
+
+				self.tangents.push(tangent);
+				self.bitangents.push(bitangent);
+				self.uvs.push((x, y));
+			}
+		}
+
+		for (let i = 0; i < rings; i++) {
+			for (let j = 0; j < vertices; j++) {
+				let i0 = i * verticesPerRing + j;
+				let i1 = i0 + 1;
+				let i2 = i0 + verticesPerRing;
+				let i3 = i2 + 1;
+
+				self.triangles.push(index + i0);
+				self.triangles.push(index + i1);
+				self.triangles.push(index + i2);
+
+				self.triangles.push(index + i2);
+				self.triangles.push(index + i1);
+				self.triangles.push(index + i3);
+			}
+		}
+
+		self.translate(pos);
+	}
+
+	pub fn icoSphere(self, pos: float3, radius: float, subdivisions: int = 1) {
+		let index = self.vertices.len();
+
+		let t = (1.0 + sqrt(5.0)) / 2.0;
+
+		let vertices: float3[] = [
+			(-1, t, 0),
+			(1, t, 0),
+			(-1, -t, 0),
+			(1, -t, 0),
+			(0, -1, t),
+			(0, 1, t),
+			(0, -1, -t),
+			(0, 1, -t),
+			(t, 0, -1),
+			(t, 0, 1),
+			(-t, 0, -1),
+			(-t, 0, 1),
+		];
+
+		let triangles: int3[] = [
+			(0, 11, 5),
+			(0, 5, 1),
+			(0, 1, 7),
+			(0, 7, 10),
+			(0, 10, 11),
+			(1, 5, 9),
+			(5, 11, 4),
+			(11, 10, 2),
+			(10, 7, 6),
+			(7, 1, 8),
+			(3, 9, 4),
+			(3, 4, 2),
+			(3, 2, 6),
+			(3, 6, 8),
+			(3, 8, 9),
+			(4, 9, 5),
+			(2, 4, 11),
+			(6, 2, 10),
+			(8, 6, 7),
+			(9, 8, 1),
+		];
+
+		for (let i = 0; i < vertices.len(); i++) {
+			self.vertices.push(normalize(vertices[i]) * radius);
+		}
+
+		for (let i = 0; i < triangles.len(); i++) {
+			self.triangles.push(index + triangles[i].x);
+			self.triangles.push(index + triangles[i].y);
+			self.triangles.push(index + triangles[i].z);
+		}
+
+		for (let i = 0; i < subdivisions; i++) {
+			let newTriangles: int = [];
+
+			for (let j = 0; j < self.triangles.len(); j += 3) {
+				let i0 = self.triangles[j + 0];
+				let i1 = self.triangles[j + 1];
+				let i2 = self.triangles[j + 2];
+
+				let v0 = self.vertices[i0];
+				let v1 = self.vertices[i1];
+				let v2 = self.vertices[i2];
+
+				let v3 = normalize((v0 + v1) / 2.0);
+				let v4 = normalize((v1 + v2) / 2.0);
+				let v5 = normalize((v2 + v0) / 2.0);
+
+				let i3 = self.vertices.len();
+				let i4 = i3 + 1;
+				let i5 = i3 + 2;
+
+				self.vertices.push(v3 * radius);
+				self.vertices.push(v4 * radius);
+				self.vertices.push(v5 * radius);
+
+				newTriangles.push(i0, i3, i5);
+				newTriangles.push(i3, i1, i4);
+				newTriangles.push(i3, i4, i5);
+				newTriangles.push(i5, i4, i2);
+			}
+
+			self.triangles = newTriangles;
+		}
+
+		for (let i = 0; i < self.vertices.len(); i++) {
+			let normal = normalize(self.vertices[i]);
+			let tangent = normalize((normal.z, 0, -normal.x));
+			let bitangent = normalize(cross(normal, tangent));
+			self.normals.push(normal);
+			self.tangents.push(tangent);
+			self.bitangents.push(bitangent);
+		}
+
+		for (let i = 0; i < self.triangles.len(); i += 3) {
+			let i0 = self.triangles[i + 0];
+			let i1 = self.triangles[i + 1];
+			let i2 = self.triangles[i + 2];
+
+			let v0 = self.vertices[i0];
+			let v1 = self.vertices[i1];
+			let v2 = self.vertices[i2];
+
+			let uv0 = float2(atan2(v0.z, v0.x) / PI / 2.0 + 0.5, asin(v0.y) / PI + 0.5);
+			let uv1 = float2(atan2(v1.z, v1.x) / PI / 2.0 + 0.5, asin(v1.y) / PI + 0.5);
+			let uv2 = float2(atan2(v2.z, v2.x) / PI / 2.0 + 0.5, asin(v2.y) / PI + 0.5);
+
+			self.uvs.push(uv0);
+			self.uvs.push(uv1);
+			self.uvs.push(uv2);
+		}
+
+		self.translate(pos);
+	}
+
+	pub fn cylinder(self, pos: float3, radius: float, height: float, vertices: int = 32) {
+		
+
+		self.translate(pos);
+
+	}
+
+	pub fn capsule(self, pos: float3, radius: float, height: float, vertices: int = 32) {
+		
+
+		self.translate(pos);
+	}
+
+	pub fn cone(self, pos: float3, radius: float, height: float, vertices: int = 32) {
+		let index = self.vertices.len();
+
+
+		self.translate(pos);
+	}
+
+	pub fn plane(self, pos: float3, size: float2, subdivisions: int2 = 1) {
+		let index = self.vertices.len();
+
+		let halfSize = size / 2.0;
+
+		for (let i = 0; i <= subdivisions.x; i++) {
+			let x = i / float(subdivisions.x);
+			let posX = x * size.x - halfSize.x;
+
+			for (let j = 0; j <= subdivisions.y; j++) {
+				let y = j / float(subdivisions.y);
+				let posY = y * size.y - halfSize.y;
+
+				self.vertices.push((posX, 0, posY));
+				self.normals.push((0, 1, 0));
+				self.tangents.push((1, 0, 0));
+				self.bitangents.push((0, 0, 1));
+				self.uvs.push((x, y));
+			}
+		}
+
+		for (let i = 0; i < subdivisions.x; i++) {
+			for (let j = 0; j < subdivisions.y; j++) {
+				let i0 = i * (subdivisions.y + 1) + j;
+				let i1 = i0 + 1;
+				let i2 = i0 + subdivisions.y + 1;
+				let i3 = i2 + 1;
+
+				self.triangles.push(index + i0);
+				self.triangles.push(index + i1);
+				self.triangles.push(index + i2);
+
+				self.triangles.push(index + i2);
+				self.triangles.push(index + i1);
+				self.triangles.push(index + i3);
+			}
+		}
+
+		self.translate(pos);
+	}
+
+	pub fn translate(self, pos: float3): Mesh {
+		for (let i = 0; i < self.vertices.len(); i++) {
+			self.vertices[i] += pos;
+		}
+
+		return self;
+	}
+
+	pub fn rotate(self, quaternion: float4): Mesh {
+		for (let i = 0; i < self.vertices.len(); i++) {
+			self.vertices[i] = quat::rotate(quaternion, self.vertices[i]);
+		}
+
+		for (let i = 0; i < self.normals.len(); i++) {
+			self.normals[i] = quat::rotate(quaternion, self.normals[i]);
+		}
+
+		return self;
+	}
+
+	pub fn transform(self, matrix: float4x4): Mesh {
+		for (let i = 0; i < self.vertices.len(); i++) {
+			self.vertices[i] = ((self.vertices[i], 1) * matrix).xyz;
+		}
+
+		for (let i = 0; i < self.normals.len(); i++) {
+			self.normals[i] = ((self.normals[i], 1) * matrix).xyz;
+		}
+
+		return self;
+	}
+
+	pub fn scale(self, scale: float3): Mesh {
+		for (let i = 0; i < self.vertices.len(); i++) {
+			self.vertices[i] *= scale;
+		}
+
+		return self;
+	}
+
+	pub fn bounds(self): float3 {
+		let mn = 0.0.xyz;
+		let mx = 0.0.xyz;
+
+		for (let i = 0; i < self.vertices.len(); i++) {
+			mn = min(mn, self.vertices[i]);
+			mx = max(mx, self.vertices[i]);
+		}
+
+		return mx - mn;
+	}
+
+	pub fn center(self): float3 {
+		let bounds = self.bounds();
+		return bounds / 2.0;
+	}
+
+	pub fn new() {
+		return Mesh {
+			vertices: [],
+			triangles: [],
+			tangents: [],
+			bitangents: [],
+			normals: [],
+			uvs: [],
+			colors: [],
+		}
+	}
+
+	pub fn append(self, other: Mesh) {
+		let oldVertices = self.vertices.len();
+		let oldTriangles = self.triangles.len();
+
+		self.vertices.append(other.vertices);
+		self.triangles.append(other.triangles);
+		self.normals.append(other.normals);
+		self.tangents.append(other.tangents);
+		self.bitangents.append(other.bitangents);
+		self.uvs.append(other.uvs);
+		self.colors.append(other.colors);
+
+		for (let i = oldTriangles; i < self.triangles.len(); i++) {
+			self.triangles[i] += oldVertices;
+		}
+	}
+
+	pub fn getVertices(self) {
+		return self.vertices;
+	}
+
+	pub fn getTriangles(self) {
+		return self.triangles;
+	}
+
+	pub fn getNormals(self) {
+		return self.normals;
+	}
+
+	pub fn getTangents(self) {
+		return self.tangents;
+	}
+
+	pub fn getBitangents(self) {
+		return self.bitangents;
+	}
+
+	pub fn getUVs(self) {
+		return self.uvs;
+	}
+
+	pub fn getColors(self) {
+		return self.colors;
+	}
+
+	pub fn setVertices(self, vertices: float3[]) {
+		self.vertices = vertices;
+	}
+
+	pub fn setTriangles(self, triangles: int[]) {
+		self.triangles = triangles;
+	}
+
+	pub fn setNormals(self, normals: float3[]) {
+		self.normals = normals;
+	}
+
+	pub fn setTangents(self, tangents: float3[]) {
+		self.tangents = tangents;
+	}
+
+	pub fn setBitangents(self, bitangents: float3[]) {
+		self.bitangents = bitangents;
+	}
+
+	pub fn setUVs(self, uvs: float2[]) {
+		self.uvs = uvs;
+	}
+
+	pub fn setColors(self, colors: float4[]) {
+		self.colors = colors;
+	}
+}
+
+pub struct mesh {}
+
+impl mesh {
+	pub fn rect(pos: float2, size: float2) -> Mesh {
+		let g = Mesh::new();
+		g.rectAt(pos, pos + size);
+
+		return g;
+	}
+
+	pub fn box(pos: float3, size: float3) -> Mesh {
+		let g = Mesh::new();
+		g.box(size);
+		g.translate(pos);
+
+		return g;
+	}
+
+	pub fn uvSphere(pos: float3, radius: float, vertices: int = 32, rings: int = 16) -> Mesh {
+		let g = Mesh::new();
+		g.uvSphere(pos, radius, vertices, rings);
+
+		return g;
+	}
+
+	pub fn icoSphere(pos: float3, radius: float, subdivisions: int = 1) -> Mesh {
+		let g = Mesh::new();
+		g.icoSphere(pos, radius, subdivisions);
+
+		return g;
+	}
+
+	pub fn plane(pos: float3, size: float2, subdivisions: int2 = 1) -> Mesh {
+		let g = Mesh::new();
+		g.plane(pos, size, subdivisions);
+
+		return g;
+	}
+
+	/**
+	* Returns a [-1, 1] position for a given index.
+	*/
+	pub fn triangleFromIndex(index: int): float2 {
+		if (index == 0) {
+			return float2(-1, 1);
+		} else if (index == 1) {
+			return float2(1, 1);
+		} else if (index == 2) {
+			return float2(0, -1);
+		} else {
+			return float2(0, 0);
+		}
+	}
+
+	pub fn circleFromIndex(vertexIndex: int, vertices: int): float2 {
+		vertexIndex = vertices - vertexIndex;
+		let numSlices = vertices / 3;
+		let sliceIndex = floor(float(vertexIndex) / float(vertices) * float(numSlices));
+		
+		let incAngle = PI * 2.0 / float(numSlices);
+		let baseAngle = incAngle * float(sliceIndex);
+
+		if (vertexIndex % 3 == 0) {
+			return float2(0, 0);
+		} else if (vertexIndex % 3 == 1) {
+			return float2(cos(baseAngle), sin(baseAngle));
+		} else {
+			return float2(cos(baseAngle + incAngle), sin(baseAngle + incAngle));
+		}
+	}
+
+	pub fn rectFromIndex(index: int, vertices: int): float2 {
+		let x = index % vertices;
+		let y = index / vertices;
+
+		return float2(x, y) / float(vertices) * 2.0 - 1.0;
+	}
+
+	pub fn empty(numVerts: int = 0) -> Mesh {
+		let g = Mesh::new();
+		if (numVerts > 0) {
+			g.setVertices(array<float3>(numVerts, 0.xyz));
+			g.setNormals(array<float3>(numVerts, 0.xyz));
+			g.setTangents(array<float3>(numVerts, 0.xyz));
+			g.setBitangents(array<float3>(numVerts, 0.xyz));
+			g.setUVs(array<float2>(numVerts, 0.xy));
+			g.setColors(array<float4>(numVerts, 0.xyzw));
+			let tris = array<int>(numVerts, 0);
+			for (let i = 0; i < numVerts; i++) {
+				tris[i] = i;
+			}
+			g.setTriangles(tris);
+		}
+
+		return g;
+	}
+
+	pub fn join(mesh1: Mesh, mesh2: Mesh) {
+		let g = Mesh::new();
+		g.append(mesh1);
+		g.append(mesh2);
+
+		return g;
+	}
+
+	// pub fn cylinder(pos: float3, radius: float, height: float, vertices: int = 32) -> Mesh {
+	// 	let g = Mesh::new();
+	// 	g.cylinder(pos, radius, height, vertices);
+
+	// 	return g;
+	// }
+
+	// pub fn capsule(pos: float3, radius: float, height: float, vertices: int = 32) -> Mesh {
+	// 	let g = Mesh::new();
+	// 	g.capsule(pos, radius, height, vertices);
+
+	// 	return g;
+	// }
+
+	// pub fn cone(pos: float3, radius: float, height: float, vertices: int = 32) -> Mesh {
+	// 	let g = Mesh::new();
+	// 	g.cone(pos, radius, height, vertices);
+
+	// 	return g;
+	// }
+}
+
+pub struct Material {
+	pub baseColor: float4,
+	pub color: texture2d<float4>,
+	
+	pub normal: texture2d<float4>,
+	pub normalScale: float2,
+	pub roughness: texture2d<float4>,
+	pub emissive: texture2d<float4>,
+	
+	
+	pub metallic: texture2d<float4>,
+}
+
+pub struct ModelPart {
+	pub mesh: Mesh,
+	pub material: Material,
+	pub transform: float4x4,
+}
+
+pub struct Model {
+	pub parts: ModelPart[],
+}
+
+window.SHD_Mesh = Mesh;
+window.SHD_Model = Model;
+window.SHD_ModelPart = ModelPart;
+window.SHD_Material = Material;

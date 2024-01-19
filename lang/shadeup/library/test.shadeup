@@ -1,0 +1,46 @@
+
+// Option 1
+let idx = buffer<uint>::new();
+let buf = buffer<float4>::new();
+let otherBuf = buffer<float4>::new();
+
+drawIndexed(idx, shader {
+	let pos = buf[in.index].xyz;
+	out.position = pos;
+	out.custom<float>("test", pos.x);
+}, shader {
+	let px = in.custom<float>("test");
+	let c = otherBuf[round(px)];
+	out.color = c.xyzw;
+});
+
+// Option 2
+let idx = buffer<uint>::new();
+let buf = buffer<float4>::new();
+let otherBuf = buffer<float4>::new();
+
+drawIndexed(idx, shader -> ({test: float}) {
+	let pos = buf[in.index].xyz;
+	out.position = pos;
+	out.test = pos.x;
+}, shader <- ({test: float}) {
+	let px = in.test;
+	let c = otherBuf[round(px)];
+	out.color = c.xyzw;
+});
+
+// Option 3
+
+let idx = buffer<uint>::new();
+let buf = buffer<float4>::new();
+let otherBuf = buffer<float4>::new();
+
+drawIndexed(idx, shader<{}, {test: float}> {
+	let pos = buf[in.index].xyz;
+	out.position = pos;
+	out.test = pos.x;
+}, shader<{test: float}, {}> {
+	let px = in.test;
+	let c = otherBuf[round(px)];
+	out.color = c.xyzw;
+});

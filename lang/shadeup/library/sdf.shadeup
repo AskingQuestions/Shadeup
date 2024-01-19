@@ -1,0 +1,563 @@
+/**
+* Heplful utility for working with signed distance fields.
+* Most of the implementation was taken from https://iquilezles.org/articles/distfunctions/
+*/
+
+pub struct sdf {}
+
+fn dot2( v: float2 ) -> float { return dot(v,v); }
+fn dot3( v: float3 ) -> float { return dot(v,v); }
+fn ndot( a: float2, b: float2 ) -> float { return a.x*b.x - a.y*b.y; }
+
+impl sdf {
+	pub fn sphere(samplePosition: float3, sphereCenter: float3, radius: float) -> float {
+		let p = samplePosition - sphereCenter;
+		let r = radius;
+		return length(p) - r;
+	}
+
+	pub fn box(samplePosition: float3, boxCenter: float3, boxSize: float3) -> float {
+		let p = samplePosition - boxCenter;
+		let s = boxSize;
+		let q = abs(p) - s;
+		return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
+	}
+
+	pub fn roundBox(samplePosition: float3, boxCenter: float3, boxSize: float3, cornerRadius: float) -> float {
+		let p = samplePosition - boxCenter;
+		let s = boxSize;
+		let r = cornerRadius;
+		let q = abs(p) - s;
+		return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0) - r;
+	}
+
+	pub fn boxFrame(samplePosition: float3, boxCenter: float3, boxSize: float3, frameThickness: float) -> float {
+		let p = samplePosition - boxCenter;
+		let b = boxSize;
+		let e = frameThickness;
+		p = abs(p  )-b;
+		let q = abs(p+e)-e;
+		return min(min(
+				length(max(float3(p.x,q.y,q.z),0.0))+min(max(p.x,max(q.y,q.z)),0.0),
+				length(max(float3(q.x,p.y,q.z),0.0))+min(max(q.x,max(p.y,q.z)),0.0)),
+				length(max(float3(q.x,q.y,p.z),0.0))+min(max(q.x,max(q.y,p.z)),0.0));
+	}
+
+	pub fn torus( samplePosition: float3, torusCenter: float3, torusSize: float2 ) -> float
+	{
+		let p = samplePosition - torusCenter;
+		let t = torusSize;
+		let q = float2(length(p.xz)-t.x,p.y);
+		return length(q)-t.y;
+	}
+
+	pub fn cappedTorus( samplePosition: float3, torusCenter: float3, torusSize: float2, ra: float, rb: float) -> float
+	{
+		
+		let p1 = samplePosition - torusCenter;
+		let p = (abs(p1.x), p1.yz);
+		let sc = torusSize;
+		let k = (sc.y*p.x>sc.x*p.y) ? dot(p.xy,sc) : length(p.xy);
+		return sqrt( dot(p,p) + ra*ra - 2.0*ra*k ) - rb;
+	}
+
+	pub fn link( samplePosition: float3, linkCenter: float3, linkLength: float, r1: float, r2: float ) -> float
+	{
+		let p = samplePosition - linkCenter;
+		let le = linkLength;
+		let q = float3( p.x, max(abs(p.y)-le,0.0), p.z );
+		return length(float2(length(q.xy)-r1,q.z)) - r2;
+	}
+
+	pub fn infinteCylinder( samplePosition: float3, cylinderCenter: float3, cylinderSize: float3) -> float
+	{
+		let p = samplePosition - cylinderCenter;
+		let c = cylinderSize;
+		return length(p.xz-c.xy)-c.z;
+	}
+
+	pub fn cone( samplePosition: float3,  coneCenter: float3, c: float2, coneHeight: float ) -> float
+	{
+		let p = samplePosition - coneCenter;
+		let h = coneHeight;
+		// c is the sin/cos of the angle, h is height
+		// Alternatively pass q instead of (c,h),
+		// which is the point at the base in 2D
+		let q = h*float2(c.x/c.y,-1.0);
+			
+		let w = float2( length(p.xz), p.y );
+		let a = w - q*clamp( dot(w,q)/dot(q,q), 0.0, 1.0 );
+		let b = w - q*float2( clamp( w.x/q.x, 0.0, 1.0 ), 1.0 );
+		let k = sign( q.y );
+		let d = min(dot( a, a ),dot(b, b));
+		let s = max( k*(w.x*q.y-w.y*q.x),k*(w.y-q.y)  );
+		return sqrt(d)*sign(s);
+	}
+
+	pub fn plane( samplePosition: float3, planeCenter: float3, planeNormal: float3, planeHeight: float ) -> float
+	{
+		let p = samplePosition - planeCenter;
+		let n = planeNormal;
+		let h = planeHeight;
+		
+		// n must be normalized
+		return dot(p,n) + h;
+	}
+
+	pub fn hexPrism( samplePosition: float3, hexCenter: float3, hexSize: float2 ) -> float
+	{
+		let p = samplePosition - hexCenter;
+		let h = hexSize;
+
+		let k = float3(-0.8660254, 0.5, 0.57735);
+		p = abs(p);
+		let dddd = min(dot(k.xy, p.xy), 0.0) * 2.0;
+
+		p = p - float3(dddd * k.xy, 0.0);
+		let d = float2(
+					length(p.xy-float2(clamp(p.x,-k.z*h.x,k.z*h.x), h.x))*sign(p.y-h.x),
+					p.z-h.y );
+		return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+	}
+
+	pub fn triPrism( samplePosition: float3, triCenter: float3, triSize: float2 ) -> float
+	{
+		let p = samplePosition - triCenter;
+		let h = triSize;
+		let q = abs(p);
+		return max(q.z-h.y,max(q.x*0.866025+p.y*0.5,-p.y)-h.x*0.5);
+	}
+
+	pub fn capsuleLine( samplePosition: float3, lineStart: float3, lineEnd: float3, capsuleRadius: float ) -> float
+	{
+		let p = samplePosition;
+		let a = lineStart;
+		let b = lineEnd;
+		let r = capsuleRadius;
+		let pa = p - a;
+		let ba = b - a;
+		let h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
+		return length( pa - ba*h ) - r;
+	}
+
+	pub fn capsule( samplePosition: float3, capsuleCenter: float3, height: float, radius: float ) -> float
+	{
+		let p1 = samplePosition - capsuleCenter;
+		let h = height;
+		let r = radius;
+		let p = (p1.x, p1.y - clamp( p1.y, 0.0, h ), p1.z);
+		return length( p ) - r;
+	}
+
+	pub fn cylinder( samplePosition: float3, cylinderCenter: float3, height: float, radius: float ) -> float
+	{
+		let p = samplePosition - cylinderCenter;
+		let h = height;
+		let r = radius;
+		let d = abs(float2(length(p.xz),p.y)) - float2(r,h);
+		return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+	}
+
+	pub fn cylinderLine( samplePosition: float3, lineStart: float3, lineEnd: float3, radius: float) -> float
+	{
+		let p = samplePosition;
+		let a = lineStart;
+		let b = lineEnd;
+		let r = radius;
+
+		let ba = b - a;
+		let pa = p - a;
+		let baba = dot(ba,ba);
+		let paba = dot(pa,ba);
+		let x = length(pa*baba-ba*paba) - r*baba;
+		let y = abs(paba-baba*0.5) - baba*0.5;
+		let x2 = x*x;
+		let y2 = y*y*baba;
+		let mxxy = max(x,y);
+		let d = (mxxy<0.0)?-min(x2,y2):(((x>0.0)?x2:0.0)+((y>0.0)?y2:0.0));
+		return sign(d)*sqrt(abs(d))/baba;
+	}
+
+	pub fn roundedCylinder( samplePosition: float3, cylinderCenter: float, cylinderRadius: float, cornerRadius: float, height: float ) -> float
+	{
+		let p = samplePosition - cylinderCenter;
+		let h = height;
+		let ra = cylinderRadius;
+		let rb = cornerRadius;
+		let d = float2( length(p.xz)-2.0*ra+rb, abs(p.y) - h );
+		return min(max(d.x,d.y),0.0) + length(max(d,0.0)) - rb;
+	}
+
+	pub fn cappedCone( samplePosition: float3, coneCenter: float3, height: float, r1: float, r2: float ) -> float
+	{
+		let p = samplePosition - coneCenter;
+		let h = height;
+
+		let q = float2( length(p.xz), p.y );
+		let k1 = float2(r2,h);
+		let k2 = float2(r2-r1,2.0*h);
+		let ca = float2(q.x-min(q.x,(q.y<0.0)?r1:r2), abs(q.y)-h);
+		let cb = q - k1 + k2*clamp( dot(k1-q,k2)/dot2(k2), 0.0, 1.0 );
+		let s = (cb.x<0.0 && ca.y<0.0) ? -1.0 : 1.0;
+		return s*sqrt( min(dot2(ca),dot2(cb)) );
+	}
+
+	pub fn solidAngle( samplePosition: float3, solidCenter: float3, size: float2, radius: float) -> float
+	{
+		let p = samplePosition - solidCenter;
+		let c = size;
+		let ra = radius;
+		// c is the sin/cos of the angle
+		let q = float2( length(p.xz), p.y );
+		let l = length(q) - ra;
+		let m = length(q - c*clamp(dot(q,c),0.0,ra) );
+		return max(l,m*sign(c.y*q.x-c.x*q.y));
+	}
+
+	pub fn cutSphere( samplePosition: float3, sphereCenter: float3, radius: float, height: float ) -> float
+	{
+		let p = samplePosition - sphereCenter;
+		let h = height;
+		let r = radius;
+
+		// sampling independent computations (only depend on shape)
+		let w = sqrt(r*r-h*h);
+
+		// sampling dependant computations
+		let q = float2( length(p.xz), p.y );
+		let s = max( (h-r)*q.x*q.x+w*w*(h+r-2.0*q.y), h*q.x-w*q.y );
+		return (s<0.0) ? length(q)-r :
+					(q.x<w) ? h - q.y     :
+										length(q-float2(w,h));
+	}
+
+	pub fn cutHollowSphere( samplePosition: float3, sphereCenter: float3, radius: float, height: float, thickness: float ) -> float
+	{
+		let p = samplePosition - sphereCenter;
+		let r = radius;
+		let h = height;
+		let t = thickness;
+
+		// sampling independent computations (only depend on shape)
+		let w = sqrt(r*r-h*h);
+
+		// sampling dependant computations
+		let q = float2( length(p.xz), p.y );
+		return ((h*q.x<w*q.y) ? length(q-float2(w,h)) : 
+														abs(length(q)-r) ) - t;
+	}
+
+	pub fn roundCone( samplePosition: float3, coneCenter: float3, coneRadius: float, cornerRadius: float, height: float ) -> float
+	{
+		let p = samplePosition - coneCenter;
+		let h = height;
+		let r1 = coneRadius;
+		let r2 = cornerRadius;
+
+		// sampling independent computations (only depend on shape)
+		let b = (r1-r2)/h;
+		let a = sqrt(1.0-b*b);
+
+		// sampling dependant computations
+		let q = float2( length(p.xz), p.y );
+		let k = dot(q,float2(-b,a));
+		if( k<0.0 ) return length(q) - r1;
+		if( k>a*h ) return length(q-float2(0.0,h)) - r2;
+		return dot(q, float2(a,b) ) - r1;
+	}
+
+	pub fn ellipsoid( samplePosition: float3, center: float3,  radius: float3 ) -> float
+	{	
+		let p = samplePosition - center;
+		let r = radius;
+		let k0 = length(p/r);
+		let k1 = length(p/(r*r));
+		return k0*(k0-1.0)/k1;
+	}
+
+	pub fn rhombus( samplePosition: float3, rhombusCenter: float3, la: float, lb: float, height: float, ra: float) -> float
+	{
+		let p = samplePosition - rhombusCenter;
+		let h = height;
+
+		p = abs(p);
+		let b = float2(la,lb);
+		let f = clamp( (ndot(b,b-2.0*p.xz))/dot(b,b), -1.0, 1.0 );
+		let q = float2(length(p.xz-0.5*b*float2(1.0-f,1.0+f))*sign(p.x*b.y+p.z*b.x-b.x*b.y)-ra, p.y-h);
+		return min(max(q.x,q.y),0.0) + length(max(q,0.0));
+	}
+
+	pub fn octahedron( samplePosition: float3, center: float3, size: float) -> float
+	{
+		let p = samplePosition - center;
+		let s = size;
+		p = abs(p);
+		let m = p.x+p.y+p.z-s;
+		let q = 0.0.xyz;
+					if( 3.0*p.x < m ) q = p.xyz;
+		else if( 3.0*p.y < m ) q = p.yzx;
+		else if( 3.0*p.z < m ) q = p.zxy;
+		else return m*0.57735027;
+			
+		let k = clamp(0.5*(q.z-q.y+s),0.0,s); 
+		return length(float3(q.x,q.y-s+k,q.z-k)); 
+	}
+
+	pub fn pyramid( samplePosition: float3, pyramidCenter: float3, height: float) -> float
+	{
+		let p1 = samplePosition - pyramidCenter;
+		let h = height;
+
+		let m2 = h*h + 0.25;
+		
+		let p2 = (abs(p1.x), p1.y, abs(p1.z));
+		if (p1.z > p1.x) {
+			p2 = (p2.z, p2.y, p2.x);
+		}
+		p2 = (p2.x - 0.5, p2.y, p2.z - 0.5);
+		let p = p2;
+
+		let q = float3( p.z, h*p.y - 0.5*p.x, h*p.x + 0.5*p.y);
+			
+		let s = max(-q.x,0.0);
+		let t = clamp( (q.y-0.5*p.z)/(m2+0.25), 0.0, 1.0 );
+			
+		let a = m2*(q.x+s)*(q.x+s) + q.y*q.y;
+		let b = m2*(q.x+0.5*t)*(q.x+0.5*t) + (q.y-m2*t)*(q.y-m2*t);
+			
+		let d2 = min(q.y,-q.x*m2-q.y*0.5) > 0.0 ? 0.0 : min(a,b);
+			
+		return sqrt( (d2+q.z*q.z)/m2 ) * sign(max(q.z,-p.y));
+	}
+
+	pub fn udTriangle(  samplePosition: float3, a: float3, b: float3, c: float3 ) -> float
+	{
+		let p = samplePosition;
+		let ba = b - a;
+		let pa = p - a;
+		let cb = c - b;
+		let pb = p - b;
+		let ac = a - c;
+		let pc = p - c;
+		let nor = cross( ba, ac );
+
+		return sqrt(
+			(sign(dot(cross(ba,nor),pa)) +
+				sign(dot(cross(cb,nor),pb)) +
+				sign(dot(cross(ac,nor),pc))<2.0)
+				?
+				min( min(
+				dot3(ba*clamp(dot(ba,pa)/dot3(ba),0.0,1.0) - pa),
+				dot3(cb*clamp(dot(cb,pb)/dot3(cb),0.0,1.0) - pb) ),
+				dot3(ac*clamp(dot(ac,pc)/dot3(ac),0.0,1.0) - pc) )
+				:
+				dot(nor,pa)*dot(nor,pa)/dot3(nor) );
+	}
+
+	pub fn udQuad(  samplePosition: float3, a: float3, b: float3, c: float3, d: float3 ) -> float
+	{
+		let p = samplePosition;
+		let ba = b - a; let pa = p - a;
+		let cb = c - b; let pb = p - b;
+		let dc = d - c; let pc = p - c;
+		let ad = a - d; let pd = p - d;
+		let nor = cross( ba, ad );
+
+		return sqrt(
+			(sign(dot(cross(ba,nor),pa)) +
+				sign(dot(cross(cb,nor),pb)) +
+				sign(dot(cross(dc,nor),pc)) +
+				sign(dot(cross(ad,nor),pd))<3.0)
+				?
+				min( min( min(
+				dot3(ba*clamp(dot(ba,pa)/dot3(ba),0.0,1.0)-pa),
+				dot3(cb*clamp(dot(cb,pb)/dot3(cb),0.0,1.0)-pb) ),
+				dot3(dc*clamp(dot(dc,pc)/dot3(dc),0.0,1.0)-pc) ),
+				dot3(ad*clamp(dot(ad,pd)/dot3(ad),0.0,1.0)-pd) )
+				:
+				dot(nor,pa)*dot(nor,pa)/dot3(nor) );
+	}
+
+
+	/**
+	* Returns the intersection of two SDFs
+	* = max(a, b)
+	*/
+	pub fn intersect(a: float, b: float) -> float {
+		return max(a, b);
+	}
+
+	/**
+	* Returns the union of two SDFs
+	* = min(a, b)
+	*/
+	pub fn union(a: float, b: float) -> float {
+		return min(a, b);
+	}
+
+	pub fn subtract(a: float, b: float) -> float {
+		return max(-a, b);
+	}
+
+	pub fn smoothIntersect(a: float, b: float, k: float) -> float {
+		let h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+		return lerp(b, a, h) - k * h * (1.0 - h);
+	}
+
+	/**
+	* Smoothly joins two SDFs using blending distance k
+	*/
+	pub fn smoothUnion(a: float, b: float, k: float) -> float {
+		let d1 = a;
+		let d2 = b;
+		let h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return lerp( d2, d1, h ) - k*h*(1.0-h);
+	}
+
+	pub fn smoothSubtract(a: float, b: float, k: float) -> float {
+		let d1 = a;
+		let d2 = b;
+		let h = clamp( 0.5 - 0.5*(d2+d1)/k, 0.0, 1.0 );
+    return lerp( d2, -d1, h ) + k*h*(1.0-h); 
+	}
+
+	/**
+	* Blends between two SDFs using interpolation
+	*/
+	pub fn blend(a: float, b: float, t: float) -> float {
+		return t * a + (1 - t) * b;
+	}
+
+	pub fn round(a: float, r: float) -> float {
+		return a - r;
+	}
+
+	/**
+	* Carve out the interior of an SDF
+	*/
+	pub fn onion(a: float, thickness: float) -> float {
+		return abs(a) - thickness;
+	}
+
+
+	pub fn grad(p:float3, sampler: (pos: float3) -> float) {
+		const DELTA = 0.0001;
+		return float3(sampler(p + float3(DELTA, 0.0, 0.0)) - sampler(p - float3(DELTA, 0.0, 0.0)),
+								sampler(p + float3(0.0, DELTA, 0.0)) - sampler(p - float3(0.0, DELTA, 0.0)),
+								sampler(p + float3(0.0, 0.0, DELTA)) - sampler(p - float3(0.0, 0.0, DELTA))) / (2.0 * DELTA);
+	}
+
+	/**
+	* Poorly returns the closest point on the surface of an SDF
+	* This is an inaccurate method
+	*/
+	pub fn closest(position: float3, sampler: (pos: float3) -> float) -> float3 {
+		let sep = 0.0001;
+		let zero = min(env.frame, 0);
+		let closest = position;
+		let initialDist = sampler(position);
+		let seed = 0;
+		for (let j: int = 0; j < 200; j++) {
+			let n = 0.0.xyz;
+			let distSum = 0.0;
+			for (let i: int = zero; i < 4; i++) {
+				let e = 0.5773*(2.0*float3((((i+3)>>1)&1),((i>>1)&1),(i&1))-1.0);
+				let d = sampler(closest+e*sep);
+				distSum += d;
+				n += e*d;
+			}
+			closest = normalize(n) * distSum * -1 / 4.0 + closest;
+			if (distSum < 0.0001) {
+				break;
+			}
+		}
+
+		return closest;
+	}
+
+	pub fn normal(position: float3, sampler: (pos: float3) -> float) -> float3 {
+		const h = 0.1;
+    let zero = min(env.frame, 0);
+    let n = 0.0.xyz;
+		let distSum = 0.0;
+		
+    for (let i: int = zero; i < 4; i++) {
+			let e = 0.5773*(2.0*float3((((i+3)>>1)&1),((i>>1)&1),(i&1))-1.0);
+			let d = sampler(position+e*h);
+			distSum += d;
+			n += e*d;
+    }
+    return normalize(n);
+	}
+
+	pub fn vizRings(d: float) -> float4 {
+		if (false) {
+			let color = 1.0 - sign(d) * float3(0.1, 0.4, 0.7);
+			color *= 1.0 - exp(-4.0 * abs(d));
+			color *= 0.8 + 0.2 * cos(140.0 * d);
+			color = lerp(color, 1.0.xyz, 1.0 - smoothstep(0.0, 0.015, abs(d)));
+			return (color, 1.0);
+		}else{
+
+		let size = 2;
+		let fadeDist = 100;
+		let v = 1-clamp(d/ fadeDist, 0, 1);
+		let color = (0.4 * v, 0.6* v, 1, 1);
+		let s = sin(d / size);
+		if (abs(d) < 1) {
+			return float4(1.xyzw);
+		}else{
+			return d > 0 ? color * ceil(1-s) : color * ceil(s);
+		}
+		}
+	}
+
+	pub fn march(position: float3, direction: float3, sampler: (pos: float3) -> float) -> float {
+		let maxDist = 100000.0;
+		let minDist = 1.0;
+		let dist = minDist;
+
+		for (let i = 0; i < 256 && dist < maxDist; i++) {
+			let samp = sampler(position + direction * dist);
+			dist += samp;
+			if (abs(samp) < (0.00005 * dist)) {
+				break;
+			}
+		}
+		if (dist > maxDist) {
+			dist = -1.0;
+		}
+		return dist;
+	}
+
+	/**
+	* See: https://iquilezles.org/articles/distfunctions/
+	* Infinitely repeats an SDF with space in between. This returns an updated position
+	*
+	* Example:
+	* ```shadeup
+	*	sdf::sphere(sdf::repeat(p, 100.xyz), 0.xyz, 50.0);
+	* ```
+	*/
+	pub fn repeat(position: float3, space: float3) -> float3 {
+		let p = position;
+		let s = space;
+		return p - s*round(p/s);
+	}
+
+	/**
+	* See: https://iquilezles.org/articles/distfunctions/
+	* Repeats an SDF with space in between upto the limit. This returns an updated position
+	*
+	* Example:
+	* ```shadeup
+	*	sdf::sphere(sdf::repeatLimited(p, 100, 10.xyz), 0.xyz, 50.0);
+	* ```
+	*/
+	pub fn repeatLimited(position: float3, space: float, limit: float3) -> float3 {
+		let p = position;
+		let s = space;
+		return p - s*clamp(round(p/s),-limit,limit);
+	}
+	
+}

@@ -1,0 +1,125 @@
+struct LinkedListElement {
+  pub color: float4,
+  pub depth: float,
+  pub next: uint
+};
+
+let maxScreenSize = env.screenSize;
+
+let numPixels = int(maxScreenSize.x * maxScreenSize.y);
+
+let numFragments = buffer<atomic<uint>>(1);
+
+let heads = buffer<atomic<uint>>(numPixels);
+let headsInit = buffer<atomic<uint>>(numPixels);
+for (let i = 0; i < numPixels; i++) { headsInit[i] = atomic<uint>(0xffffffu); }
+headsInit.upload();
+
+
+let linkedItems = buffer<LinkedListElement>(numPixels * 4);
+
+
+/*linkedItems[0] = LinkedListElement {
+	color: 0.xyzw,
+	depth: 1.0,
+	next: 2u
+};*/
+
+//linkedItems.upload();
+
+
+
+fn main() {
+	statGraph("dt", env.deltaTime * 1000.0);
+	heads.write(headsInit);
+	numFragments[0] = atomic<uint>(0u);
+	
+	const colors = [
+		(1.0, 0.0, 0.0),
+		(0.0, 1.0, 0.0),
+		(0.0, 0.0, 1.0),
+		(1.0, 0.0, 1.0),
+		(1.0, 1.0, 0.0),
+		(0.0, 1.0, 1.0),
+	];
+
+
+
+
+	let mat = env.camera.getTransformToViewMatrix(0.xyz, 1.xyz, 0.xyzw);
+	for (let (x, y) of 4.xy) {
+		let instance = uint(y * 4 + x);
+		draw(
+			mesh::box((x, 0, y) * 100.0 - (200, 0, 200), 90.xyz),
+			shader {
+				out.position = mat * (in.position, 1);
+			},
+			shader {
+				let pixel = in.screen;
+				if (pixel.x < maxScreenSize.x && pixel.y < maxScreenSize.y) {
+					let headIndex = int(pixel.y * maxScreenSize.x + pixel.x);
+					let fragIndex = numFragments[0].add(1u);
+					if (int(fragIndex) < numPixels * 4) {
+						let lastHead = heads[headIndex].exchange(fragIndex);
+						linkedItems[int(fragIndex)] = LinkedListElement {
+							depth: in.clipPosition.z,
+							next: lastHead,
+							color: float4(colors[int(instance % 6u)], 0.3)
+						};
+						linkedItems[int(fragIndex)].depth = in.clipPosition.z;
+						linkedItems[int(fragIndex)].next = lastHead;
+						linkedItems[int(fragIndex)].color = float4(colors[int(instance % 6u)], 0.3);
+					}
+				}
+			}
+		);
+	}
+
+	draw(shader {
+		let pixel = in.screen;
+		if (pixel.x < maxScreenSize.x && pixel.y < maxScreenSize.y) {
+			let headsIndex = uint(pixel.y * maxScreenSize.x + pixel.x);
+
+			// The maximum layers we can process for any pixel
+			const maxLayers = 24u;
+
+			let layers: LinkedListElement[24];
+
+			let numLayers = 0u;
+			let elementIndex = heads[headsIndex].load();
+			// copy the list elements into an array up to the maximum amount of layers
+			while (elementIndex < 0xffffffu && numLayers < maxLayers) {
+				layers[numLayers] = linkedItems[elementIndex];
+				numLayers++;
+				elementIndex = linkedItems[elementIndex].next;
+			}
+			
+			if (numLayers == 0u) {
+			}else{		
+				// sort the fragments by depth
+				for (let i = 1u; i < numLayers; i++) {
+					let toInsert = layers[i];
+					let j = i;
+
+					while (j > 0u && toInsert.depth > layers[j - 1u].depth) {
+						layers[j] = layers[j - 1u];
+						j--;
+					}
+
+					layers[j] = toInsert;
+				}
+
+				// pre-multiply alpha for the first layer
+				let color = float4(layers[0].color.a * layers[0].color.rgb, layers[0].color.a);
+
+				// blend the remaining layers
+				for (let i = 1u; i < numLayers; i++) {
+					let mixed = lerp(color.rgb, layers[i].color.rgb, layers[i].color.a);
+					color = float4(mixed, color.a);
+				}
+
+				out.color = color;
+			}
+		}
+	});
+}

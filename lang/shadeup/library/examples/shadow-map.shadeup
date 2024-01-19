@@ -1,0 +1,71 @@
+const shadowMapSize = 4096;
+
+let albedo = texture2d<float4>(env.screenSize, "16bit");
+let normal = texture2d<float4>(env.screenSize, "16bit");
+let shadow = texture2d<float>(shadowMapSize.xy, "depth-32");
+
+fn main() {
+	let sun = (sin(env.time / 1000.0), 1, 0.5) * 600.0;
+	env.camera.near = 20.0;
+	env.camera.far = 20000.0;
+	
+	let sunProjectionMatrix = matrix::perspective(90.0, 1.0, env.camera.near, env.camera.far);
+	let sunViewMatrix = matrix::lookAt(sun, 0.xyz, (0, 1.0, 0));
+	let sunViewProjMatrix = sunProjectionMatrix * sunViewMatrix;
+	
+	let viewProjMatrix = env.camera.getPerspectiveMatrix() * env.camera.getWorldToViewMatrix();
+
+	let t = env.time / 1000.0;
+	let cube = mesh::box((sin(t * 2) * 100.0, 0.0, cos(t * 2) * 100.0), 100.xyz);
+	let ground = mesh::box((0, -50.1, 0), (1000, 0.1, 1000));
+	
+	let meshes = [cube, ground];
+	
+	for (let m of meshes)
+	drawAdvanced({
+		mesh: m,
+		depth: shadow,
+		depthOnly: true,
+		vertex: shader {
+			out.position = sunViewProjMatrix * (in.position, 1);
+		},
+		fragment: shader {}
+	});
+
+	for (let m of meshes)
+	draw(m,
+		shader {
+			out.position = viewProjMatrix * (in.position, 1);
+		},
+		shader {
+			let posFromLight = sunViewProjMatrix * (in.position, 1.0);
+			posFromLight /= posFromLight.w;
+			
+			let shadowPos = (posFromLight.xy * (0.5, -0.5) + 0.5.xy, posFromLight.z);
+
+
+			let visibility = 0.0;
+			for (let y = -1; y <= 1; y++) {
+				for (let x = -1; x <= 1; x++) {
+					let offset = float2(x, y) * (1.0 / shadowMapSize);
+
+					let sampVal = shadow.sample(shadowPos.xy + offset).x;
+					let compVal = shadowPos.z - 0.00007;
+					
+					visibility += compVal < sampVal ? 1 : 0;
+				}
+			}
+
+			visibility /= 9.0;
+
+			let lambertFactor = max(dot(normalize(sun - in.position), in.normal), 0.0);
+			let lightingFactor = min(0.2 + visibility * lambertFactor, 1.0);
+
+			out.color = float4(lightingFactor * 0.8.xyz, 1.0);
+		}
+	);
+
+	albedo.clear();
+	normal.clear();
+	shadow.clear();
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Shadeup sandbox</title>
+		<script>
+			function __shadeup_get_struct(name) {
+				if (!window.__shadeup_structs) window.__shadeup_structs = {};
+				return window.__shadeup_structs[name];
+			}
+
+			function __shadeup_register_struct(name, fields) {
+				if (!window.__shadeup_structs) window.__shadeup_structs = {};
+				window.__shadeup_structs[name] = fields;
+			}
+
+			window.addEventListener('message', async function (e) {
+				var mainWindow = e.source;
+				var result = '';
+				try {
+					const postMessage = (v) => mainWindow.postMessage(v, e.origin);
+					eval(e.data);
+					result = await main__shadeup_main();
+				} catch (e) {
+					console.error(e);
+					result = 'eval() threw an exception.';
+				}
+				mainWindow.postMessage({ gid: LONG_GID, data: result }, e.origin);
+			});
+		</script>
+	</head>
+</html>

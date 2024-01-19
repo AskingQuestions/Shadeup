@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	html {
+		@apply text-white;
+	}
+}
+
+.floating-panel {
+	> .control-button:first-child,
+	> .control-combo:first-child,
+	> .control-input:first-child,
+	> .control-label:first-child,
+	> .control-select:first-child,
+	> .control-text:first-child {
+		@apply mt-2;
+	}
+
+	> .control-button:last-child,
+	> .control-combo:last-child,
+	> .control-input:last-child,
+	> .control-label:last-child,
+	> .control-select:last-child,
+	> .control-text:last-child {
+		@apply mb-1;
+	}
+}

@@ -1,0 +1,30 @@
+// More expressive
+
+import { Cube } from "geometry";
+
+// Geometry is pretty simple
+struct Geometry {
+	vertices: vec<float3>;
+	indices: vec<uint>;
+	normals: vec<float3>;
+}
+
+impl Geometry {
+	fn translate(float3 Translation) -> Geometry {
+		return Geometry {
+			vertices: vertices.map(v => v + Translation),
+			indices,
+			normals
+		};
+	}
+
+	fn operator+(float3 Translation) {
+	}
+}
+
+main {
+
+	draw(Cube);
+
+	draw(Cube + float3(1, 0, 0) * 2);
+}
