@@ -12,6 +12,7 @@ import { program } from "commander";
 
 import { parse } from "./src/parse.js";
 import * as url from "url";
+import { makeCompiler } from "./compiler-dist/compiler.js";
 
 if (typeof __dirname == "undefined") {
 	global["__filename"] = url.fileURLToPath(import.meta.url);
@@ -330,46 +331,34 @@ program
 	.description("Build files")
 	.option("-o, --output <path>", "Output path", "")
 	.argument("<files...>", "List of files to watch")
-	.action((files, options) => {
+	.action(async (files, options) => {
 		console.log(
 			`Building ${files.length} file${files.length > 1 ? "s" : ""}`
 		);
+		let compile = await makeCompiler();
+		let outputs = [];
 		for (let file of files) {
-			try {
-				let parsed = parse(file);
+			let data = fs.readFileSync(file, "utf8");
+			let filename = path.basename(file).replace(".shadeup", "");
+			outputs.push(
+				compile({
+					files: [{ name: filename, body: data }],
+				})
+			);
+		}
+		let outs = await Promise.all(outputs);
+		for (let i = 0; i < outs.length; i++) {
+			let out = outs[i];
+			let file = files[i];
+			let outPath = options.output || file.replace(".shadeup", ".js");
+			console.log(`Writing ${outPath}`);
+			fs.writeFileSync(outPath, out.output);
 
-				if (parsed) {
-					if (!options.path) {
-						let pluginData = FindPluginData(path.dirname(file));
-						if (pluginData) {
-							parsed.outputDir = pluginData.dir;
-						} else {
-							console.error(
-								`Could not find the parent plugin for ${file}. Make sure that this file is placed under a uplugin.`
-							);
-						}
-					} else {
-						parsed.outputDir = options.path;
-					}
-
-					let realPluginData = FindPluginData(parsed.outputDir);
-
-					if (realPluginData) {
-						parsed.plugin = realPluginData.name;
-					} else {
-						console.error(
-							`Output dir is not a .uplugin directory. Please point to a directory containing a .uplugin file.`
-						);
-					}
-
-					parsed.generate();
-				}
-			} catch (e) {
-				if (e.message == "Exiting") {
-					console.log("Failed to build " + file);
-				} else {
-					console.error(e);
-				}
+			if (out.dts) {
+				let dtsPath =
+					options.output || file.replace(".shadeup", ".d.ts");
+				console.log(`Writing ${dtsPath}`);
+				fs.writeFileSync(dtsPath, out.dts);
 			}
 		}
 	});

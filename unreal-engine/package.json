@@ -20,11 +20,15 @@
 	"author": "AskingQuestions <npm@jrmy.dev>",
 	"license": "MIT",
 	"dependencies": {
+		"@typescript/vfs": "^1.5.0",
 		"boxen": "^7.0.0",
 		"colors": "^1.4.0",
 		"commander": "^9.2.0",
 		"inquirer": "^8.2.4",
-		"nearley": "^2.20.1"
+		"nearley": "^2.20.1",
+		"typescript": "^5.3.3",
+		"uglify-js": "^3.17.4",
+		"web-tree-sitter": "^0.20.8"
 	},
 	"devDependencies": {
 		"archiver": "^5.3.1"

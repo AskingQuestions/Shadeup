@@ -1,0 +1,3 @@
+pub fn drawer() {
+	return shader { out.color = 1.xxxx; };
+}
