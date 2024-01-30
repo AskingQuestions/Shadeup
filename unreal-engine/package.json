@@ -1,5 +1,5 @@
 {
-	"name": "shadeup",
+	"name": "@shadeup/unreal",
 	"version": "1.2.1",
 	"description": "",
 	"main": "index.js",
@@ -11,7 +11,7 @@
 		"cli": "node cli.js"
 	},
 	"bin": {
-		"shadeup": "./cli.js"
+		"shadeup-unreal": "./cli.js"
 	},
 	"repository": {
 		"type": "git",

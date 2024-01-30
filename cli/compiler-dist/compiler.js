@@ -1,0 +1,234 @@
+import { makeSimpleShadeupEnvironment } from "./shadeup-compiler.js";
+import Parser from "web-tree-sitter";
+import minify from "uglify-js";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(new URL(import.meta.url));
+
+export async function makeCompiler() {
+  await Parser.init();
+  const parser = new Parser();
+  const Lang = await Parser.Language.load(
+    path.resolve(path.dirname(__filename), "tree-sitter-shadeup.wasm")
+  );
+  parser.setLanguage(Lang);
+
+  global.shadeupParser = () => {
+    return parser;
+  };
+
+  let envPool = [];
+
+  for (let i = 0; i < 1; i++) {
+    envPool.push(await makeSimpleShadeupEnvironment(true));
+  }
+
+  let queue = [];
+
+  async function consumeQueue() {
+    if (queue.length == 0) return;
+    if (envPool.length == 0) return;
+    let env = envPool.shift();
+    let item = queue.shift();
+    if (!item) return;
+    try {
+      let start = performance.now();
+      env.reset();
+      for (let i = 0; i < item.files.length; i++) {
+        const file = item.files[i];
+        if (i == item.files.length - 1) {
+          await env.writeFile("/" + file.name + ".ts", file.body);
+        } else {
+          env.writeFile("/" + file.name + ".ts", file.body);
+        }
+      }
+      // for (let file of item.files) {
+      //   if (file.name == "main")
+      //     await env.writeFile("/" + file.name + ".ts", file.body);
+      // }
+
+      let output = await env.regenerate();
+      let finalOutput = "";
+      let dts = "";
+
+      for (let o of output) {
+        if (
+          !item.files.find(
+            (f) =>
+              f.name ==
+              o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", "")
+          ) &&
+          !(item.files.length == 1 && item.files[0].name == "__lib")
+        )
+          continue;
+
+        if (o.path.endsWith(".d.ts")) {
+          dts += o.contents;
+        } else {
+          if (item.files.length == 1 && item.files[0].name == "__lib") {
+            finalOutput += `
+((defineFunc) => {
+	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
+	${o.contents}
+})(define);
+`;
+          } else {
+            finalOutput += `
+import { bindShadeupEngine } from "shadeup";
+
+export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
+	const __shadeup_gen_shader =
+		localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+	const __shadeup_make_shader_inst =
+		localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+	const __shadeup_register_struct =
+		localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+	const env = localEngineContext.env;
+
+((defineFunc) => {
+	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
+	${o.contents}
+})(define);
+
+});
+`;
+          }
+        }
+      }
+
+      let final = finalOutput;
+      let doMinify = false;
+
+      if (doMinify) {
+        final = minify.minify(final);
+        // console.log(final);
+      }
+      console.log("Generated in " + (performance.now() - start) + "ms");
+
+      item.callback({
+        output: final,
+        dts,
+      });
+
+      envPool.push(env);
+      consumeQueue();
+    } catch (e) {
+      console.error(e);
+
+      envPool.push(await makeSimpleShadeupEnvironment());
+      item.callback({
+        error: "Fatal error while compiling.",
+      });
+      consumeQueue();
+    }
+  }
+
+  return async function compile(data) {
+    return new Promise((resolve, reject) => {
+      queue.push({ ...data, callback: resolve });
+      consumeQueue();
+    });
+  };
+}
+
+export async function makeIncrementalCompiler() {
+  await Parser.init();
+  const parser = new Parser();
+  const Lang = await Parser.Language.load(
+    path.resolve(path.dirname(__filename), "tree-sitter-shadeup.wasm")
+  );
+  parser.setLanguage(Lang);
+
+  global.shadeupParser = () => {
+    return parser;
+  };
+
+  const env = await makeSimpleShadeupEnvironment(true);
+
+  return async function compile(item) {
+    try {
+      let start = performance.now();
+      for (let i = 0; i < item.files.length; i++) {
+        const file = item.files[i];
+        if (i == item.files.length - 1) {
+          await env.writeFile("/" + file.name + ".ts", file.body);
+        } else {
+          env.writeFile("/" + file.name + ".ts", file.body);
+        }
+      }
+
+      let output = await env.regenerate();
+      let finalOutput = "";
+      let dts = "";
+
+      for (let o of output) {
+        if (
+          !item.files.find(
+            (f) =>
+              f.name ==
+              o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", "")
+          ) &&
+          !(item.files.length == 1 && item.files[0].name == "__lib")
+        )
+          continue;
+
+        if (o.path.endsWith(".d.ts")) {
+          dts += o.contents;
+        } else {
+          if (item.files.length == 1 && item.files[0].name == "__lib") {
+            finalOutput += `
+((defineFunc) => {
+	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
+	${o.contents}
+})(define);
+`;
+          } else {
+            finalOutput += `
+import { bindShadeupEngine } from "shadeup";
+
+export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
+	const __shadeup_gen_shader =
+		localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+	const __shadeup_make_shader_inst =
+		localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+	const __shadeup_register_struct =
+		localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+	const env = localEngineContext.env;
+
+((defineFunc) => {
+	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
+	${o.contents}
+})(define);
+
+});
+`;
+          }
+        }
+      }
+
+      let final = finalOutput;
+
+      console.log("Generated in " + (performance.now() - start) + "ms");
+      return final;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+}
+
+export async function makeLSPCompiler() {
+  await Parser.init();
+  const parser = new Parser();
+  const Lang = await Parser.Language.load(
+    path.resolve(path.dirname(__filename), "tree-sitter-shadeup.wasm")
+  );
+  parser.setLanguage(Lang);
+
+  global.shadeupParser = () => {
+    return parser;
+  };
+
+  const env = await makeSimpleShadeupEnvironment(true);
+
+  return env;
+}

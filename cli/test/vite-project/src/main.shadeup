@@ -1,0 +1,7 @@
+fn main() {
+	let xavx = 123;
+
+	let test = xavx;
+
+	print(x);
+}

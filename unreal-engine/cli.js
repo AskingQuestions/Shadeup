@@ -10,9 +10,7 @@ import templates from "./src/types/template.js";
 
 import { program } from "commander";
 
-import { parse } from "./src/parse.js";
 import * as url from "url";
-import { makeCompiler } from "./compiler-dist/compiler.js";
 
 if (typeof __dirname == "undefined") {
 	global["__filename"] = url.fileURLToPath(import.meta.url);
@@ -323,43 +321,6 @@ program
 			);
 		} catch (e) {
 			console.error(e);
-		}
-	});
-
-program
-	.command("build")
-	.description("Build files")
-	.option("-o, --output <path>", "Output path", "")
-	.argument("<files...>", "List of files to watch")
-	.action(async (files, options) => {
-		console.log(
-			`Building ${files.length} file${files.length > 1 ? "s" : ""}`
-		);
-		let compile = await makeCompiler();
-		let outputs = [];
-		for (let file of files) {
-			let data = fs.readFileSync(file, "utf8");
-			let filename = path.basename(file).replace(".shadeup", "");
-			outputs.push(
-				compile({
-					files: [{ name: filename, body: data }],
-				})
-			);
-		}
-		let outs = await Promise.all(outputs);
-		for (let i = 0; i < outs.length; i++) {
-			let out = outs[i];
-			let file = files[i];
-			let outPath = options.output || file.replace(".shadeup", ".js");
-			console.log(`Writing ${outPath}`);
-			fs.writeFileSync(outPath, out.output);
-
-			if (out.dts) {
-				let dtsPath =
-					options.output || file.replace(".shadeup", ".d.ts");
-				console.log(`Writing ${dtsPath}`);
-				fs.writeFileSync(dtsPath, out.dts);
-			}
 		}
 	});
 

@@ -1,9 +1,0 @@
-import drawer from "other.shadeup"
-
-fn main() {
-	draw(shader { out.color = 1.xxxx; });
-}
-
-pub fn giveFloat() -> float {
-	return 1.0;
-}
