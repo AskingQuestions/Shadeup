@@ -11,7 +11,7 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}/extension/vscode/shadeup",
-        "${workspaceFolder}/cli/test/vite-project/src/main.shadeup"
+        "${workspaceFolder}/cli/test/vite-project/src/"
       ]
     }
   ]

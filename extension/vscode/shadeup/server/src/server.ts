@@ -127,7 +127,7 @@ function tsDiagnosticToShadeupDiagnostic(diag: {
   error: ts.Diagnostic;
   file: string;
   message: string;
-}): ShadeupDiagnostic | null {
+}): Diagnostic | null {
   let path = diag.error.file?.fileName ?? "";
   let file = findFile(path);
   if (!file) return null;
@@ -146,14 +146,28 @@ function tsDiagnosticToShadeupDiagnostic(diag: {
     let end = indexToRowColumn(fileSource, to.end);
 
     return {
-      path: diag.file,
-      level: "error",
-      fullMessage: diag.message ?? "",
-      startLine: start.row + 1,
-      startColumn: start.column + 1,
-      endLine: end.row + 1,
-      endColumn: end.column + 1,
+      severity: DiagnosticSeverity.Error,
+      /**
+       * A human-readable string describing the source of this
+       * diagnostic, e.g. 'typescript' or 'super lint'. It usually
+       * appears in the user interface.
+       */
+      source: "shadeup",
+      /**
+       * The diagnostic's message. It usually appears in the user interface
+       */
       message: ts.flattenDiagnosticMessageText(diag.error.messageText, "\n"),
+
+      range: {
+        start: {
+          character: start.column,
+          line: start.row,
+        },
+        end: {
+          character: end.column,
+          line: end.row,
+        },
+      },
     };
   }
 
@@ -163,7 +177,7 @@ function tsDiagnosticToShadeupDiagnostic(diag: {
 function genericDiagnosticToShadeupDiagnostic(
   path: string,
   diag: ShadeupGenericDiagnostic
-): ShadeupDiagnostic | null {
+): Diagnostic | null {
   let file = findFile(path);
   if (!file) return null;
   let mapping = file.mapping;
@@ -175,14 +189,18 @@ function genericDiagnosticToShadeupDiagnostic(
     let end = indexToRowColumn(fileSource, diag.endIndex);
 
     return {
-      path,
-      level: "error",
-      fullMessage: diag.message ?? "",
-      startLine: start.row + 1,
-      startColumn: start.column + 1,
-      endLine: end.row + 1,
-      endColumn: end.column + 1,
-      message: diag.message,
+      source: "shadeup",
+      message: diag.message ?? "",
+      range: {
+        start: {
+          character: start.column,
+          line: start.row,
+        },
+        end: {
+          character: end.column,
+          line: end.row,
+        },
+      },
     };
   }
 
@@ -215,11 +233,11 @@ const TOKEN_MAP = {
   function: "function",
   functionElement: "function",
   keyword: "keyword",
-  let: "keyword",
+  let: "variable",
   alias: "keyword",
-  const: "keyword",
-  constElement: "keyword",
-  letElement: "keyword",
+  const: "variable",
+  constElement: "variable",
+  letElement: "variable",
   number: "number",
   operator: "operator",
   parameter: "parameter",
@@ -327,15 +345,14 @@ function getTokenBuilder(document: TextDocument): SemanticTokensBuilder {
 
 connection.languages.semanticTokens.on(async (params) => {
   let path = cleanPath(params.textDocument.uri);
-  console.log("Received semantic tokens", path);
+
   const document = documents.get(params.textDocument.uri);
   let file = findFile(path);
-  console.log("File", file, document);
   if (!file) return { data: [] };
   if (document === undefined) {
     return { data: [] };
   }
-  const builder = getTokenBuilder(document);
+  const builder = new SemanticTokensBuilder();
   let toks = env.classifications(path);
   toks.ranges.sort((a: any, b: any) => a[0] - b[0]);
   for (let tok of toks.ranges) {
@@ -348,15 +365,6 @@ connection.languages.semanticTokens.on(async (params) => {
     // let end = indexToRowColumn(fileSource, e);
     let start = document.positionAt(s);
     let length = e - s;
-    console.log(
-      "Adding token",
-      start.line,
-      start.character,
-      length,
-      TOKEN_TYPES.indexOf(type),
-      type,
-      tok[2]
-    );
 
     builder.push(
       start.line,
@@ -376,11 +384,9 @@ documents.onDidChangeContent(async (change) => {
   const contents = change.document.getText();
   let path = cleanPath(change.document.uri);
 
-  const ignoreErrors = true;
-  console.log("Received writefile", change.document.uri);
+  const ignoreErrors = false;
+
   await env.writeFile(path, contents, ignoreErrors);
-  console.log("Wrote file", change.document.uri);
-  console.log(env.files.map((f: any) => f.path));
   // let filesToGenerate = [e.data.message.path];
   // for (let dirty of dirtyFiles) {
   // 	if (dirty !== e.data.message.path) filesToGenerate.push(dirty);
@@ -392,7 +398,7 @@ documents.onDidChangeContent(async (change) => {
   }[] = [];
   // if (e.data.message.emit) output = await env.regenerate(filesToGenerate);
 
-  // await env.regenerate();
+  await env.regenerate();
   let errors: {
     error: ts.Diagnostic;
     file: string;
@@ -405,14 +411,18 @@ documents.onDidChangeContent(async (change) => {
 
   let file = findFile(path);
 
-  let diags: ShadeupDiagnostic[] = [];
+  let diags: Diagnostic[] = [];
 
   for (let parseError of file?.parseDiagnostics ?? []) {
+    if (parseError.path !== path) continue;
     let diag = genericDiagnosticToShadeupDiagnostic(path, parseError);
     if (diag) diags.push(diag);
   }
 
+  console.log("Errors", errors, file?.parseDiagnostics);
+
   for (let error of errors) {
+    if (error.file !== path) continue;
     let diag = tsDiagnosticToShadeupDiagnostic(error);
     if (diag) diags.push(diag);
   }
@@ -427,6 +437,12 @@ documents.onDidChangeContent(async (change) => {
     // console.log('Errors', e.data.message.path, errors);
   }
   // connection.console.log(JSON.stringify(env.classifications(path)));
+
+  const diagnostics: Diagnostic[] = diags.map((d) => d);
+
+  // Send the computed diagnostics to VSCode.
+  connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
+  console.log(env.files.map((f: any) => f.path));
 
   // console.log('Sending writefile nonce', e.data.nonce);
   // postMessage({

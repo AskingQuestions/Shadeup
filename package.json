@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "plist": "^3.1.0",
+    "tmlanguage-generator": "^0.5.2"
+  }
+}

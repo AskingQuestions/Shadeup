@@ -21,10 +21,20 @@
         "extensions": [
           ".shadeup"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
       }
     ],
-    "grammars": []
+    "grammars": [
+      {
+        "language": "shadeup",
+        "scopeName": "source.shadeup",
+        "path": "./shadeup.tmlanguage.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

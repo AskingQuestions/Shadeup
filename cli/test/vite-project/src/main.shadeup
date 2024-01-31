@@ -1,7 +1,414 @@
+import logoPath, logoPath2 from "./logoPath";
+
+const logoBuf = buffer<float2>(logoPath.len());
+const logoBuf2 = buffer<float2>(logoPath2.len());
+let xy = "abc";
+
+const deathNear = 6.9;
+
+for (let i = 0; i < logoBuf.len(); i++) {
+	logoBuf[i] = logoPath[i];
+}
+
+for (let i = 0; i < logoBuf2.len(); i++) {
+	logoBuf2[i] = logoPath2[i];
+}
+
+logoBuf.upload();
+const numLogoPoints = logoBuf.len();
+
+logoBuf2.upload();
+const numLogoPoints2 = logoBuf2.len();
+
+struct Particle {
+	pub position: float2,
+	pub angle: float,
+	pub velocity: float,
+	pub age: float,
+	pub alive: int,
+	pub goal: float,
+	pub timeline: float,
+}
+
+let tex = texture2d<float4>(env.screenSize);
+let tex2 = texture2d<float4>(env.screenSize);
+
+
+const particles = buffer<Particle>(1024 * 32);
+const deadCounter = buffer<atomic<int>>(1);
+const deadReader = buffer<int>(1);
+const dead = buffer<uint>(particles.len());
+
+fn checkTex() {
+	if (tex.size.x != env.screenSize.x || tex.size.y != env.screenSize.y) {
+		let newTex = texture2d<float4>(env.screenSize);
+		let newTex2 = texture2d<float4>(env.screenSize);
+
+		newTex.draw(shader {
+			if (in.screen.x < tex.size.x && in.screen.y < tex.size.y) {
+				out.color = tex[in.screen];
+			}
+		});
+
+		newTex2.draw(shader {
+			if (in.screen.x < tex.size.x && in.screen.y < tex.size.y) {
+				out.color = tex2[in.screen];
+			}
+		});
+
+		tex.destroy();
+		tex = newTex;
+
+		tex2.destroy();
+		tex2 = newTex2;
+	}
+}
+
+compute((particles.len() / 32, 1, 1), shader <32, 1, 1> {
+	dead[in.globalId.x] = uint(in.globalId.x);
+});
+
+deadCounter[0].store(particles.len() - 1);
+deadCounter.upload();
+
+fn spawnParticle(p: Particle) {
+	let idx = deadCounter[0].add(-1);
+	deadCounter[0].max(0);
+	if (idx < 0) {
+		return;
+	}
+	let realIndex = dead[idx];
+	dead[idx] = 0u;
+	p.alive = 1;
+	p.age = 0;
+	p.goal = 0;
+	p.timeline = -1;
+	particles[realIndex] = p;
+}
+
+fn lerpAngle(a: float, b: float, t: float) {
+	let av = (cos(a), sin(a));
+	let bv = (cos(b), sin(b));
+	let cv = normalize(lerp(av, bv, t));
+	return atan2(cv.y, cv.x);
+}
+
+let totalToSpawn = 0.0;
+let lastScroll = 0.0;
+
+const targetsBuf = buffer<float2>(100);
+
 fn main() {
-	let xavx = 123;
+	const deltaTime = env.deltaTime;
+	if (deltaTime > (1/60)) {
+		deltaTime = 1/60;
+	}
+	
+	checkTex();
 
-	let test = xavx;
+	const mouse = env.input("mouse", env.mouse.screen);
+	const scroll = env.input("scroll", 0.0);
+	const targets = env.input<float2[]>("targets", []);
+	const emitter = (0.0, env.screenSize.y);
 
-	print(x);
+	const overrideColor = env.input<float4>("color", (0,0,0,0));
+
+	const numTargets = targets.len();
+	if (numTargets > 0) {
+		for (let i = 0; i < numTargets; i++) {
+			targetsBuf[i] = targets[i];
+		}
+	}
+	
+	totalToSpawn += 4 * 144 * deltaTime;
+	let thisFrame = floor(totalToSpawn);
+	compute((2, 1, 1), shader <16, 1, 1> {
+		spawnParticle(Particle {
+			position: emitter + (0, rand2((in.globalId.x / 103.0, env.frame)) * 20.0 - 30.0),
+			velocity: 1250 + rand2((in.globalId.x / 1452.0, env.time / 4512)) * 200,
+			angle: 0 * rand2((in.globalId.x / 1452.0, env.time)) * PI / 14,
+		});
+	});
+	totalToSpawn -= thisFrame;
+
+	compute(1.xxx, shader <1, 1, 1> {
+		deadReader[0] = deadCounter[0].load();
+	});
+
+	//deadReader.download();
+	//stat("pool", deadReader[0]);
+
+	const mat2 = env.camera.getCombinedMatrix();
+
+	compute((particles.len() / 32, 1, 1), shader <32, 1, 1> {
+		const p = particles[in.globalId.x];
+
+		if (p.alive == 0) {
+			return;
+		}
+		if (numTargets > 0) {
+			p.goal += 0.5;
+		}
+
+		fn trans(p: float2)	{
+			let tt = scroll / 500.0;
+			let mat3 = float2x2(
+				cos(tt), -sin(tt),
+				sin(tt), cos(tt)
+			);
+
+			return (p - 0.5) * mat3 + 0.5;
+		}
+
+		const deathOffset = rand(in.globalId.x / 15325.0) * 1
+
+		p.age += deltaTime;
+
+		p.position += (cos(p.angle), sin(p.angle)) * p.velocity * deltaTime;
+		const targetPos = mouse;
+		let hit = false;
+		let angleAmount = 7.5;
+		if (p.goal >= 0.5) {
+			targetPos = env.screenSize;
+			angleAmount = 10.0;
+
+			let basePos = (env.screenSize.x / 1.5, env.screenSize.y / 8);
+			let size = (env.screenSize.y / 1.2).xx;
+			basePos.x = env.screenSize.x - size.x - 150;
+			
+
+			let use2 = rand(in.globalId.x / 105320.0) < 0.67;
+
+			let logoSize = (675, 675);
+
+			let firstPos = basePos + trans(logoBuf[0].xy / logoSize) * size;
+			if (use2) {
+				firstPos = basePos + trans(logoBuf2[0].xy / logoSize) * size;
+			}
+			if (numTargets > 0) {
+				firstPos = targetsBuf[0];
+			}
+			
+			if (p.timeline < 0) {
+				targetPos = firstPos;
+
+				targetPos += (rand3((in.globalId.x / 14502.4, 132.52, 55)),
+					rand3((in.globalId.x / 5325.3, 5123.2, 234))) * 50 ;
+
+				if (dist(targetPos, p.position) < 100) {
+					p.timeline = 1.0;
+				}
+
+				if (numTargets == 0) {
+					if (use2) {
+						p.angle += (cos((in.globalId.x + p.age) / 5000.0) * deltaTime * 10.0;
+					}else{
+						p.angle += (sin((in.globalId.x + p.age) / 2400.0) * deltaTime * 6.0;
+					}
+				}
+
+			}else{
+				//p.timeline += deltaTime * 5.0;
+				let t = wrap(p.timeline, 0, use2 ? numLogoPoints2 : numLogoPoints);
+				if (numTargets > 0) {
+					t = wrap(p.timeline, 0, numTargets);
+				}
+				let index = int(t * 1.0);
+				let sub = t * 1.0 - index;
+
+				let a = logoBuf[index];
+				let b = logoBuf[(index + 1) % numLogoPoints];
+				if (use2) {
+					a = logoBuf2[index];
+					b = logoBuf2[(index + 1) % numLogoPoints2];
+				}
+				targetPos = basePos + trans(lerp(a, b, sub).xy / logoSize) * size;
+
+				if (numTargets > 0) {
+					angleAmount = 20.0;
+					
+					a = targetsBuf[index];
+					b = targetsBuf[(index + 1) % numTargets];
+					targetPos = lerp(a, b, sub).xy;
+					if (p.timeline >= 6) {
+						angleAmount =7.0;
+					}
+
+					//if (p.timeline >= numTargets * rand(in.globalId.x / 100.0) * 1.5) {
+					if (p.timeline >= numTargets) {
+						targetPos = (env.screenSize.x + 400,  -400 + scroll);
+						
+					}
+				}
+
+				//p.velocity += (1 + dot(normalize(b - a), (cos(p.angle), sin(p.angle)))) * deltaTime * 100.0;
+				//p.velocity += deltaTime * 1000.0;
+				
+
+				if (dist(targetPos, p.position) < 100) {
+					p.timeline += 1.0;
+				}
+				//p.angle += (rand2((in.globalId.x / 100.0, env.time)) * 2 - 1) * deltaTime * p.timeline * 2.0;
+				if (numTargets == 0) {
+					if (p.age < deathNear + deathOffset) {
+						p.angle += (cos(in.globalId.x + p.timeline)) * deltaTime * 1.0;
+						p.angle += (sin(in.globalId.x + env.time)) * deltaTime * 10.0;
+					}
+				}else{
+					p.angle += (sin(in.globalId.x + env.time)) * deltaTime * 4.0;
+				}
+			}
+
+			
+		}
+
+		const d = dist(targetPos, p.position);
+		if (d < 200.0) {
+			p.goal += deltaTime;
+		}
+		
+		const targetVelocity = d * 6.0;
+
+		if (hit) {
+			targetVelocity = 100.0;
+			//p.velocity = lerp(p.velocity, targetVelocity, deltaTime * 2.0);
+			
+		}
+
+
+
+		const deltaPos = targetPos - p.position;
+		
+		
+		const targetAngle = atan2(deltaPos.y, deltaPos.x);
+		if (p.age < deathNear + deathOffset) {
+			p.angle = lerpAngle(p.angle, targetAngle, deltaTime * angleAmount * p.age / 2.0);
+		}else{
+			p.velocity *= (1.0 - deltaTime *2 );
+		}
+
+		let shouldKill = false;
+		if (p.age > 7.0 + deathOffset) {
+			shouldKill = true;
+		}
+
+		if (p.position.x > env.screenSize.x || p.position.x < 0 || p.position.y > env.screenSize.y || p.position.y < 0) {
+			//shouldKill = true;
+		}
+
+		if (shouldKill) {
+			p.alive = 0;
+			let idx = deadCounter[0].add(1);
+			dead[idx] = uint(in.globalId.x);
+		}
+
+		particles[in.globalId.x] = p;
+	});
+	
+	tex.draw(shader {
+		let pixelDist = (1.0.xy / tex2.size);
+		let angle = rand3((in.screen, env.time)) * PI * 2;
+		let dir = (cos(angle), sin(angle));
+
+		let off = (0, (scroll - lastScroll)) * pixelDist;
+		let val1 = tex2.sample(in.uv + off + dir * pixelDist);
+		let val2 = tex2.sample(in.uv + off);
+
+		out.color = ((val1 + val2) / 2.0) * (1.0 - deltaTime * 8.0);
+		
+		//out.color = tex2.sample((in.uv - 0.5 + pixelDist) + 0.5);
+	});
+
+	lastScroll = scroll;
+
+	drawAdvanced({
+		instances: particles.len(),
+		mesh: mesh::box(0.xyz, (15, 1, 1)),
+		attachments: [tex],
+		vertex: shader {
+			let p = particles[in.instanceIndex];
+
+			if (p.alive == 0) {
+				out.position = 0.xxxx;
+			} else {
+				const mat = float2x2(
+					cos(p.angle), sin(-p.angle),
+					sin(p.angle), cos(p.angle));
+				out.position = (pixelToClip((p.position + (0, -scroll)) + in.position.xy * mat), 0, 1);
+			}
+		},
+		fragment: shader {
+			let p = particles[in.instanceIndex];
+			const c1 = (0.2, 0.3, 0.6, 1);
+			const c2 = (0.6, 0.2, 0.9, 1);
+
+
+			const c = lerp(c1, c2, min(p.age / 5.0, rand(in.instanceIndex / 10526.0) * 2));
+			if (length(overrideColor) > 0.01) {
+				c = lerp(c1, overrideColor, p.age / 3.0);
+			}
+			const base = tex2.sample(in.screen / env.screenSize);
+			out.attachment0 = (base.xyz / 1.5 + c.xyz, base.w + 0.1);
+		},
+		depthTest: false
+	});
+
+	
+	
+	let cam = Camera {
+		position: (0, 0, env.screenSize.y / (2 * tan(PI / 2 / 2.0))),
+		rotation: quat::fromEulerAngles((0, 0, 0)),
+		width: env.screenSize.x,
+		height: env.screenSize.y,
+		fov: 90,
+		near: 0.1,
+		far: 100009,
+	};
+	
+	const refLen = 2.0;
+	const mat = cam.getCombinedMatrix();
+	draw(mesh::plane((0, -env.screenSize.y / 2, -(env.screenSize.y / 2) * refLen), (env.screenSize.x, env.screenSize.y * refLen), 4.xx), shader {
+		out.position = mat * (in.position, 1);
+	}, shader {
+		//out.color = tex.sample(in.uv);
+		//out.color = (in.uv, 0, 1);
+	});
+	let tv = mesh::plane((0, 0, 0), (env.screenSize), 4.xx);
+	tv.rotate(quat::fromEulerAngles((PI / 2, 0, 0)));
+	let instances = 7;
+	drawInstanced(tv, instances, shader {
+		out.position = mat * (in.position + (0, 0, -(50.0) * ((instances - 1) - in.instanceIndex)), 1);
+	}, shader {
+		let c = tex.sample(in.uv);
+		let sc = in.uv * env.screenSize;
+		let fac = 1.0;
+		
+		//saturate(sdf::boxFrame((sc, 0), (env.screenSize / 2, 0), (env.screenSize, 0), 200.0) / 200.0);
+
+		fac *= ((in.instanceIndex / float(instances))) / 2.0;
+
+		if (c.r < c.b * 0.6 ) {
+			fac = 0.0;
+		}
+
+		if (numTargets > 0) {
+			fac = 0.0;
+		}
+
+
+
+		if (in.instanceIndex == instances - 1) {
+			fac = 1.0;
+		}
+		
+		out.color = c * fac;
+		
+		//out.color = (in.uv, 0, 1);
+
+	});
+
+	
+	const swap = tex;
+	tex = tex2;
+	tex2 = swap;
 }
