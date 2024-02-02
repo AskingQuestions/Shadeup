@@ -2,7 +2,7 @@ import logoPath, logoPath2 from "./logoPath";
 
 const logoBuf = buffer<float2>(logoPath.len());
 const logoBuf2 = buffer<float2>(logoPath2.len());
-let xy = "abc";
+//let xy = "abc" + 124;
 
 const deathNear = 6.9;
 

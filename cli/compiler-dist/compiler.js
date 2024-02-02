@@ -50,6 +50,16 @@ export async function makeCompiler() {
       let output = await env.regenerate();
       let finalOutput = "";
       let dts = "";
+      let errors = await env.errors();
+      if (errors.length > 0) {
+        item.callback({
+          errors: errors,
+        });
+
+        envPool.push(env);
+        consumeQueue();
+        return;
+      }
 
       for (let o of output) {
         if (
@@ -74,29 +84,28 @@ export async function makeCompiler() {
 `;
           } else {
             finalOutput += `
-import { bindShadeupEngine } from "shadeup";
-
-export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
-	const __shadeup_gen_shader =
-		localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
-	const __shadeup_make_shader_inst =
-		localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
-	const __shadeup_register_struct =
-		localEngineContext.__shadeup_register_struct.bind(localEngineContext);
-	const env = localEngineContext.env;
-
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
 	${o.contents}
 })(define);
-
-});
 `;
           }
         }
       }
 
-      let final = finalOutput;
+      let final =
+        `import { bindShadeupEngine } from "shadeup";
+
+export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
+  const __shadeup_gen_shader =
+    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+  const __shadeup_make_shader_inst =
+    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+  const __shadeup_register_struct =
+    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+  const env = localEngineContext.env;\n` +
+        finalOutput +
+        `\n});`;
       let doMinify = false;
 
       if (doMinify) {
@@ -157,6 +166,14 @@ export async function makeIncrementalCompiler() {
         }
       }
 
+      let errors = await env.errors();
+      if (errors.length > 0) {
+        return [
+          {
+            errors: errors,
+          },
+        ];
+      }
       let output = await env.regenerate();
       let finalOutput = "";
       let dts = "";
@@ -182,31 +199,32 @@ export async function makeIncrementalCompiler() {
 	${o.contents}
 })(define);
 `;
+            return finalOutput;
           } else {
             finalOutput += `
-import { bindShadeupEngine } from "shadeup";
-
-export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
-	const __shadeup_gen_shader =
-		localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
-	const __shadeup_make_shader_inst =
-		localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
-	const __shadeup_register_struct =
-		localEngineContext.__shadeup_register_struct.bind(localEngineContext);
-	const env = localEngineContext.env;
 
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
 	${o.contents}
 })(define);
-
-});
 `;
           }
         }
       }
 
-      let final = finalOutput;
+      let final =
+        `import { bindShadeupEngine } from "shadeup";
+
+export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
+  const __shadeup_gen_shader =
+    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+  const __shadeup_make_shader_inst =
+    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+  const __shadeup_register_struct =
+    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+  const env = localEngineContext.env;\n` +
+        finalOutput +
+        `\n});`;
 
       console.log("Generated in " + (performance.now() - start) + "ms");
       return final;

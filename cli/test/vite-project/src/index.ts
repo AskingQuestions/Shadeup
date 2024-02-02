@@ -7,8 +7,8 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
 })();
 
 function sizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth * devicePixelRatio;
+  canvas.height = window.innerHeight * devicePixelRatio;
 }
 
 sizeCanvas();

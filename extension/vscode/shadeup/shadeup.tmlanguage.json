@@ -206,7 +206,7 @@
     },
     "storage-func": {
       "name": "storage.type.function.shadeup",
-      "match": "\\b(fn|class|trait|impl)\\b"
+      "match": "\\b(fn|struct|trait|impl)\\b"
     },
     "storage-modifier": {
       "name": "storage.modifier.shadeup",

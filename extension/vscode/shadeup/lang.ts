@@ -79,7 +79,7 @@ const keywords = [
   "assert",
   "provider",
 ];
-const storage = ["fn", "class", "trait", "impl"];
+const storage = ["fn", "struct", "trait", "impl"];
 
 const keywordExpression: MatchRule = {
   key: "keyword",

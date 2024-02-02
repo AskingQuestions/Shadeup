@@ -1,18 +1,293 @@
-
 import { bindShadeupEngine } from "shadeup";
 
 export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
-	const __shadeup_gen_shader =
-		localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
-	const __shadeup_make_shader_inst =
-		localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
-	const __shadeup_register_struct =
-		localEngineContext.__shadeup_register_struct.bind(localEngineContext);
-	const env = localEngineContext.env;
+  const __shadeup_gen_shader =
+    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+  const __shadeup_make_shader_inst =
+    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+  const __shadeup_register_struct =
+    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+  const env = localEngineContext.env;
+
+
+((defineFunc) => {
+	let define = (deps, func) => defineFunc("/logoPath.js", deps, func);
+	var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+define(["require", "exports", "/std_math", "/std___std_all"], function (require, exports, __, std___std_all_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.logoPath2 = exports.logoPath = void 0;
+    __ = __importStar(__);
+    var globalVarGet = std___std_all_1.globalVarGet;
+    exports.logoPath = [__.makeVector(331.8819682214535, 309.37499982761074), __.makeVector(371.32282194357356, 303.64633707500263), __.makeVector(407.46032126878504, 286.8163539059281), __.makeVector(437.274252663429, 260.35535066551427), __.makeVector(458.29984831576394, 226.50580234284354), __.makeVector(468.7136104513537, 188.03532791839726), __.makeVector(467.7118086191006, 148.17574354216006), __.makeVector(455.35191297112505, 110.29043620450224), __.makeVector(432.6263207130228, 77.53229396479205), __.makeVector(401.5178156140271, 52.615834986960536), __.makeVector(364.58359174118056, 37.654862578958394), __.makeVector(324.8932794340484, 33.92378272686386), __.makeVector(285.7795001390052, 41.64769023829373), __.makeVector(250.56380617643717, 60.281665182363334), __.makeVector(222.1106045175098, 88.2185302598852), __.makeVector(202.82739785088438, 123.09151777807875), __.makeVector(194.38489856271633, 162.05350582157), __.makeVector(197.38939677012752, 201.79863233626673), __.makeVector(211.66487429790584, 239.00609777264683), __.makeVector(236.00990811938493, 270.56874343985766), __.makeVector(268.34764758612255, 293.8916209452305), __.makeVector(305.99793844636343, 306.94940550263783)];
+    ;
+    exports.logoPath2 = [__.makeVector(451.87140094230557, 602.1619078110434), __.makeVector(486.29251847854266, 622.2323459015123), __.makeVector(525.0474675157033, 631.5641981376127), __.makeVector(564.852311019554, 629.356639856118), __.makeVector(602.3248780708933, 615.8045994091574), __.makeVector(634.3309736404595, 592.0422272891796), __.makeVector(658.1539457850712, 560.0779291620549), __.makeVector(671.7748167680887, 522.6324487372781), __.makeVector(674.0564197042156, 482.83741996002925), __.makeVector(664.802513049373, 444.0747441577281), __.makeVector(644.7848636535293, 409.5942420839993), __.makeVector(615.7020857431386, 382.3322773053413), __.makeVector(580.0140772066509, 364.5860070980618), __.makeVector(540.7286331849546, 357.84918467153614), __.makeVector(501.165415783651, 362.6925101786735), __.makeVector(464.6647081529237, 378.70718806257287), __.makeVector(432.3072593603389, 402.199889140537), __.makeVector(398.2575592626505, 423.1228910326879), __.makeVector(360.9127940340042, 437.14799612337356), __.makeVector(321.174878646251, 438.4183448188125), __.makeVector(283.2521603337715, 426.1623983366661), __.makeVector(248.70900986328027, 406.05151673315385), __.makeVector(216.43777559524344, 382.4456871602924), __.makeVector(180.8200178325316, 364.5371472183075), __.makeVector(141.5630951779306, 357.6283420525193), __.makeVector(101.9834477806449, 362.29764865112304), __.makeVector(65.40326447164699, 378.15686103433126), __.makeVector(34.94644591589244, 403.8478116568671), __.makeVector(13.153800354272045, 437.21996187233935), __.makeVector(1.8759296978847086, 475.4505834586918), __.makeVector(2.066709423006884, 515.3093933970973), __.makeVector(13.710149187603491, 553.4309022236707), __.makeVector(35.820909042632074, 586.5925166847115), __.makeVector(66.5392314406395, 612.0011914315223), __.makeVector(103.252336820272, 627.4988351532799), __.makeVector(142.8763750292417, 631.7887844293851), __.makeVector(182.0634692296343, 624.5048369401586), __.makeVector(217.51107280796145, 606.2551520383203), __.makeVector(249.81667583724186, 582.6938662902708), __.makeVector(284.49393762749804, 562.8132021128339), __.makeVector(322.56195677111145, 551.0072036701465), __.makeVector(362.2746942768097, 552.8769284491539), __.makeVector(399.45542942085626, 567.3067293377287), __.makeVector(433.38932465259774, 588.460027547873)];
+    ;
+});
+
+})(define);
+
 
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc("/main.js", deps, func);
-	__shadeup_gen_shader("shd_026080640000000011000000097066000024020", {
+	__shadeup_gen_shader("shd_00890360012200000000600490212005400000", {
+					webgl: {_ext_uniform_local_instances: {"type":"primitive","name":"int"}, _ext_uniform_local_numTargets: {"type":"primitive","name":"int"}, _ext_uniform_global_tex: {"type":"primitive","name":"texture2d"}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"screenSize":{"type":"primitive","name":"float2"}}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["instances",{"type":"primitive","name":"int"}],["numTargets",{"type":"primitive","name":"int"}]],"globals":[["tex",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"sample"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["screenSize",{"type":"primitive","name":"float2"}]]}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct str_i_iistd_native_ts_387_FrameContext {
+//  @align(16)  deltaTime: f32,
+//  @align(16)  time: f32,
+ @align(16)  screenSize: vec2<f32>,
+//  @align(16)  frame: i32,
+//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
+//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
+//   camera: str_i_iistd_common_ts_10681_Camera,
+//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
+
+};
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  screenSize: vec2<f32>,) -> str_i_iistd_native_ts_387_FrameContext {
+var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.screenSize = screenSize;
+
+return _s; 
+}
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_local_instances: i32,
+@align(16) _ext_uniform_local_numTargets: i32,
+@align(16) _ext_uniform_global_tex_size: vec2<f32>,
+_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var _ext_uniform_global_tex_texture: texture_2d<f32>;
+@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_tex: sampler;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+var c: vec4<f32> = textureSample(_ext_uniform_global_tex_texture, _ext_uniform_global_tex, vec2(_i_in.uv));
+var sc: vec2<f32> = _i_in.uv * _in_uniforms._ext_uniform_global_env.screenSize;
+var fac: f32 = f32(1);
+fac = fac * ((f32(_i_in.instanceIndex) / f32(_in_uniforms._ext_uniform_local_instances))) / f32(2);
+if ((c.r < c.b * f32(0.6))) 
+{
+fac = f32(0);
+
+}
+if ((_in_uniforms._ext_uniform_local_numTargets > i32(0))) 
+{
+fac = f32(0);
+
+}
+if ((_i_in.instanceIndex == _in_uniforms._ext_uniform_local_instances - i32(1))) 
+{
+fac = f32(1);
+
+}
+_i_out.color = c * fac;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct ShaderOutput {
+  vec4 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec2 uv;
+  vec4 color;
+
+};
+struct str_i_iistd_native_ts_387_FrameContext {
+//   float deltaTime;
+//   float time;
+  vec2 screenSize;
+//   int frame;
+//   str_i_iistd_native_ts_1719_MouseInputState mouse;
+//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
+//   str_i_iistd_common_ts_10681_Camera camera;
+//   str_i_iistd_common_ts_9656_Camera2d camera2d;
+
+};
+str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(vec2 screenSize) {
+str_i_iistd_native_ts_387_FrameContext _s;  _s.screenSize = screenSize;
+  return _s;
+}
+uniform sampler2D _ext_uniform_global_tex;
+uniform vec2 _ext_uniform_global_tex_size;
+uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
+uniform int _ext_uniform_local_instances;
+uniform int _ext_uniform_local_numTargets;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+vec4 c = texture(_ext_uniform_global_tex, vec2(_i_in.uv));
+vec2 sc = _i_in.uv * _ext_uniform_global_env.screenSize;
+float fac = float(1);
+fac = fac * ((float(_i_in.instanceIndex) / float(_ext_uniform_local_instances))) / float(2);
+if ((c.r < c.b * float(0.6))){
+fac = float(0);
+
+}if ((float(_ext_uniform_local_numTargets) > float(int(0)))){
+fac = float(0);
+
+}if ((_i_in.instanceIndex == _ext_uniform_local_instances - int(1))){
+fac = float(1);
+
+}_i_out.color = c * fac;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[493,510,449,471],[577,589,471,488],[623,642,488,507],[674,685,507,523],[745,792,523,578],[842,898,578,639],[972,1002,639,687],[1007,1043,687,738],[387,1715,401,742],[387,1715,742,939],[3753,3898,939,982],[3753,3898,982,1025],[16316,16333,1025,1097],[19083,19104,1097,1139],[7751,7777,1139,1182],[0,0,1301,1324],[0,0,1331,1336],[0,0,1337,1339],[0,0,1331,1339],[0,0,1293,1341],[0,0,1284,1341],[0,0,1284,1343],[0,0,1353,1358],[0,0,1359,1361],[0,0,1353,1361],[0,0,1364,1387],[0,0,1388,1398],[0,0,1364,1398],[0,0,1353,1398],[0,0,1343,1398],[0,0,1343,1400],[19666,19674,1412,1417],[0,0,1418,1419],[0,0,1412,1420],[0,0,1400,1420],[0,0,1400,1422],[0,0,1422,1425],[0,0,1428,1431],[0,0,1442,1447],[0,0,1448,1461],[0,0,1442,1461],[0,0,1436,1462],[19835,19843,1465,1470],[0,0,1471,1499],[0,0,1465,1500],[0,0,1436,1500],[0,0,1435,1501],[0,0,1434,1502],[19860,19868,1505,1510],[0,0,1511,1512],[0,0,1505,1513],[0,0,1434,1513],[0,0,1428,1513],[0,0,1422,1513],[0,0,1422,1515],[0,0,1520,1521],[0,0,1520,1523],[0,0,1526,1527],[0,0,1526,1529],[19937,19945,1532,1537],[0,0,1538,1541],[0,0,1532,1542],[0,0,1526,1542],[0,0,1519,1543],[0,0,1546,1549],[19962,19970,1552,1557],[0,0,1558,1559],[0,0,1552,1560],[0,0,1546,1560],[0,0,1546,1562],[0,0,1544,1564],[0,0,1564,1564],[0,0,1515,1564],[0,0,1575,1604],[0,0,1569,1605],[20001,20007,1614,1617],[0,0,1618,1619],[0,0,1614,1620],[0,0,1608,1621],[0,0,1568,1622],[0,0,1625,1628],[20020,20028,1631,1636],[0,0,1637,1638],[0,0,1631,1639],[0,0,1625,1639],[0,0,1625,1641],[0,0,1623,1643],[0,0,1643,1643],[0,0,1564,1643],[0,0,1648,1653],[0,0,1654,1667],[0,0,1648,1667],[0,0,1671,1699],[20086,20092,1702,1705],[0,0,1706,1707],[0,0,1702,1708],[0,0,1671,1708],[0,0,1647,1709],[0,0,1712,1715],[20107,20115,1718,1723],[0,0,1724,1725],[0,0,1718,1726],[0,0,1712,1726],[0,0,1712,1728],[0,0,1710,1730],[0,0,1730,1730],[0,0,1643,1730],[0,0,1730,1736],[0,0,1737,1742],[0,0,1730,1742],[0,0,1745,1746],[0,0,1749,1752],[0,0,1745,1752],[0,0,1730,1752],[0,0,1730,1754],[9794,10285,1182,1798],[19565,20186,0,1798]]);
+
+__shadeup_gen_shader("shd_06000000951000000000000780140000900940", {
+					webgl: {_ext_uniform_local_mat: {"type":"primitive","name":"float4x4"}, _ext_uniform_local_instances: {"type":"primitive","name":"int"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["mat",{"type":"primitive","name":"float4x4"}],["instances",{"type":"primitive","name":"int"}]],"globals":[]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+_ext_uniform_local_mat: mat4x4<f32>,
+@align(16) _ext_uniform_local_instances: i32,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_i_out.position = _in_uniforms._ext_uniform_local_mat * vec4<f32>(_i_in.position + vec3<f32>(f32(i32(0)), f32(i32(0)), -((f32(50))) * f32(((_in_uniforms._ext_uniform_local_instances - i32(1)) - _i_in.instanceIndex))), f32(i32(1)));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct ShaderOutput {
+  vec4 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec2 uv;
+  vec4 color;
+
+};
+uniform mat4 _ext_uniform_local_mat;
+uniform int _ext_uniform_local_instances;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_i_out.position = _ext_uniform_local_mat * vec4(_i_in.position + vec3(int(0), int(0), -((float(50))) * float(((_ext_uniform_local_instances - int(1)) - _i_in.instanceIndex))), int(1));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[18138,18167,401,438],[19083,19104,438,480],[0,0,582,588],[0,0,589,597],[0,0,582,597],[0,0,600,622],[0,0,630,635],[0,0,636,644],[0,0,630,644],[19325,19331,652,655],[0,0,656,657],[0,0,652,658],[19336,19342,660,663],[0,0,664,665],[0,0,660,666],[19366,19374,671,676],[0,0,677,679],[0,0,671,680],[0,0,670,681],[0,0,668,682],[0,0,693,721],[19413,19419,724,727],[0,0,728,729],[0,0,724,730],[0,0,693,730],[0,0,692,731],[0,0,734,739],[0,0,740,753],[0,0,734,753],[0,0,692,753],[0,0,691,754],[0,0,685,755],[0,0,668,755],[0,0,647,756],[0,0,630,756],[19455,19461,758,761],[0,0,762,763],[0,0,758,764],[0,0,625,765],[0,0,600,765],[0,0,582,765],[0,0,582,767],[9681,9792,480,811],[19226,19470,0,811]]);
+
+__shadeup_gen_shader("shd_0045010050110268436008600090058007300880000", {
 					webgl: {},
 					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[]}
 				}, {webgpu: `struct ShaderInput {
@@ -87,17 +362,282 @@ void main() {
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
 }
-`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[3352,3444,401,547],[7965,8062,0,547]]);
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[9435,9515,401,547],[18780,18863,0,547]]);
 
-__shadeup_gen_shader("shd_468600940132506707176461900000000951000670000", {
-					webgl: {_ext_uniform_local_sunViewProjMatrix: {"type":"primitive","name":"float4x4"}, _ext_uniform_local_sun: {"type":"primitive","name":"float3"}, _ext_uniform_global_shadowMapSize: {"type":"primitive","name":"int"}, _ext_uniform_global_shadow: {"type":"primitive","name":"texture2d"}, _ext_uniform_global_sqNum: {"type":"primitive","name":"int"}, _ext_uniform_global_perlin_octaves: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PI: {"type":"primitive","name":"float"}, _ext_uniform_global_perlin: {"type":"array","element":{"type":"primitive","name":"float"}}, _ext_uniform_global_PERLIN_SIZE: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_perlin_amp_falloff: {"type":"primitive","name":"float"}},
-					webgpu: {"attributeInput":"@location(7) @interpolate(perspective) custom0: vec3<f32>,\n","attributeOutput":"","locals":[["sunViewProjMatrix",{"type":"primitive","name":"float4x4"}],["sun",{"type":"primitive","name":"float3"}]],"globals":[["shadowMapSize",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["shadow",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"sample"}}],["sqNum",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["perlin_octaves",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PI",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}],["perlin",{"fileName":"/_std/common.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float"},"staticSize":1,"access":"read"}}],["PERLIN_SIZE",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["perlin_amp_falloff",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}]]}
-				}, {webgpu: `fn shadeup_up_swizzle_xy_f32(n: f32) -> vec2<f32>{
-	return vec2<f32>(n, n);
+__shadeup_gen_shader("shd_070320052000028790087932500120013360204818950", {
+					webgl: {_ext_uniform_local_mat: {"type":"primitive","name":"float4x4"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["mat",{"type":"primitive","name":"float4x4"}]],"globals":[]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+_ext_uniform_local_mat: mat4x4<f32>,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_i_out.position = _in_uniforms._ext_uniform_local_mat * vec4<f32>(_i_in.position, f32(i32(1)));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct ShaderOutput {
+  vec4 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec2 uv;
+  vec4 color;
+
+};
+uniform mat4 _ext_uniform_local_mat;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_i_out.position = _ext_uniform_local_mat * vec4(_i_in.position, int(1));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[18138,18167,401,438],[0,0,540,546],[0,0,547,555],[0,0,540,555],[0,0,558,580],[0,0,588,593],[0,0,594,602],[0,0,588,602],[18665,18671,604,607],[0,0,608,609],[0,0,604,610],[0,0,583,611],[0,0,558,611],[0,0,540,611],[0,0,540,613],[9379,9433,438,657],[18588,18680,0,657]]);
+
+__shadeup_gen_shader("shd_0005900044000151533001000000860800600000", {
+					webgl: {_ext_uniform_local_overrideColor: {"type":"primitive","name":"float4"}, _ext_uniform_global_particles: {"type":"array","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":{"position":{"type":"primitive","name":"float2"},"angle":{"type":"primitive","name":"float"},"velocity":{"type":"primitive","name":"float"},"age":{"type":"primitive","name":"float"},"alive":{"type":"primitive","name":"int"},"goal":{"type":"primitive","name":"float"},"timeline":{"type":"primitive","name":"float"}}}}, _ext_uniform_global_tex2: {"type":"primitive","name":"texture2d"}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"screenSize":{"type":"primitive","name":"float2"}}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["overrideColor",{"type":"primitive","name":"float4"}]],"globals":[["particles",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":[["position",{"type":"primitive","name":"float2"}],["angle",{"type":"primitive","name":"float"}],["velocity",{"type":"primitive","name":"float"}],["age",{"type":"primitive","name":"float"}],["alive",{"type":"primitive","name":"int"}],["goal",{"type":"primitive","name":"float"}],["timeline",{"type":"primitive","name":"float"}]]},"staticSize":1,"access":"read"}}],["tex2",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"sample"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["screenSize",{"type":"primitive","name":"float2"}]]}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct str_i_main_ts_2739_Particle {
+ @align(16)  position: vec2<f32>,
+ @align(16)  angle: f32,
+ @align(16)  velocity: f32,
+ @align(16)  age: f32,
+ @align(16)  alive: i32,
+ @align(16)  goal: f32,
+ @align(16)  timeline: f32,
+
+};
+fn _make_struct_str_i_main_ts_2739_Particle(  age: f32,  alive: i32,  angle: f32,  goal: f32,  position: vec2<f32>,  timeline: f32,  velocity: f32,) -> str_i_main_ts_2739_Particle {
+var _s: str_i_main_ts_2739_Particle;
+  _s.age = age;
+  _s.alive = alive;
+  _s.angle = angle;
+  _s.goal = goal;
+  _s.position = position;
+  _s.timeline = timeline;
+  _s.velocity = velocity;
+
+return _s; 
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//  @align(16)  deltaTime: f32,
+//  @align(16)  time: f32,
+ @align(16)  screenSize: vec2<f32>,
+//  @align(16)  frame: i32,
+//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
+//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
+//   camera: str_i_iistd_common_ts_10681_Camera,
+//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
+
+};
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  screenSize: vec2<f32>,) -> str_i_iistd_native_ts_387_FrameContext {
+var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.screenSize = screenSize;
+
+return _s; 
+}
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_local_overrideColor: vec4<f32>,
+@align(16) _ext_uniform_global_particles_size: i32,
+@align(16) _ext_uniform_global_tex2_size: vec2<f32>,
+_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var<storage, read> _ext_uniform_global_particles: array<str_i_main_ts_2739_Particle>;
+@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_tex2_texture: texture_2d<f32>;
+@group(%GROUP_INDEX%) @binding(4) var _ext_uniform_global_tex2: sampler;
+fn fn_iistd_math_ts_40366_rand(seed_const: f32) -> f32 {
+var seed = seed_const;
+if (0 == 0) 
+{
+return fract(sin(seed * f32(91.3458)) * f32(47453.5453));
+
+}
+else 
+{
+return 0.0;
+
 }
 
-fn shadeup_up_swizzle_xyz_f32(n: f32) -> vec3<f32>{
-	return vec3<f32>(n, n, n);
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+var p: str_i_main_ts_2739_Particle = _ext_uniform_global_particles[_i_in.instanceIndex];
+var c1: vec4<f32> = vec4<f32>(f32(0.2), f32(0.3), f32(0.6), f32(i32(1)));
+var c2: vec4<f32> = vec4<f32>(f32(0.6), f32(0.2), f32(0.9), f32(i32(1)));
+var c: vec4<f32> = mix(c1, c2, min(p.age / f32(5), fn_iistd_math_ts_40366_rand(f32(_i_in.instanceIndex) / f32(10526)) * f32(i32(2))));
+if ((length(_in_uniforms._ext_uniform_local_overrideColor) > f32(0.01))) 
+{
+c = mix(c1, _in_uniforms._ext_uniform_local_overrideColor, p.age / f32(3));
+
+}
+var base: vec4<f32> = textureSample(_ext_uniform_global_tex2_texture, _ext_uniform_global_tex2, vec2(_i_in.screen / _in_uniforms._ext_uniform_global_env.screenSize));
+_i_out.attachment0 = vec4<f32>(base.xyz / f32(1.5) + c.xyz, base.w + f32(0.1));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct str_i_main_ts_2739_Particle {
+//   vec2 position;
+//   float angle;
+//   float velocity;
+  float age;
+//   int alive;
+//   float goal;
+//   float timeline;
+
+};
+str_i_main_ts_2739_Particle _make_struct_str_i_main_ts_2739_Particle(float age) {
+str_i_main_ts_2739_Particle _s;  _s.age = age;
+  return _s;
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//   float deltaTime;
+//   float time;
+  vec2 screenSize;
+//   int frame;
+//   str_i_iistd_native_ts_1719_MouseInputState mouse;
+//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
+//   str_i_iistd_common_ts_10681_Camera camera;
+//   str_i_iistd_common_ts_9656_Camera2d camera2d;
+
+};
+str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(vec2 screenSize) {
+str_i_iistd_native_ts_387_FrameContext _s;  _s.screenSize = screenSize;
+  return _s;
+}
+uniform str_i_main_ts_2739_Particle[0] _ext_uniform_global_particles;
+uniform vec4 _ext_uniform_local_overrideColor;
+uniform sampler2D _ext_uniform_global_tex2;
+uniform vec2 _ext_uniform_global_tex2_size;
+uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
+float fn_iistd_math_ts_40366_rand(float seed) {
+if (0 == 0){
+return fract(sin(seed * float(91.3458)) * float(47453.5453));
+
+}else 
+{
+return 0.0;
+
+}
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+str_i_main_ts_2739_Particle p = _ext_uniform_global_particles[_i_in.instanceIndex];
+vec4 c1 = vec4(float(0.2), float(0.3), float(0.6), int(1));
+vec4 c2 = vec4(float(0.6), float(0.2), float(0.9), int(1));
+vec4 c = mix(c1, c2, min(p.age / float(5), fn_iistd_math_ts_40366_rand(float(_i_in.instanceIndex) / float(10526)) * float(int(2))));
+if ((length(_ext_uniform_local_overrideColor) > float(0.01))){
+c = mix(c1, _ext_uniform_local_overrideColor, p.age / float(3));
+
+}vec4 base = texture(_ext_uniform_global_tex2, vec2(_i_in.screen / _ext_uniform_global_env.screenSize));
+_i_out.attachment0 = vec4(base.xyz / float(1.5) + c.xyz, base.w + float(0.1));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[3283,3310,321,341],[3312,3335,341,359],[3337,3363,359,380],[3365,3386,380,393],[3388,3409,393,409],[3411,3433,409,426],[3435,3461,426,447],[2739,3748,284,451],[2739,3748,451,595],[493,510,643,665],[577,589,665,682],[623,642,682,701],[674,685,701,717],[745,792,717,772],[842,898,772,833],[972,1002,833,881],[1007,1043,881,932],[387,1715,595,936],[387,1715,936,1133],[4058,4231,1133,1203],[7641,7745,1203,1250],[3904,4052,1250,1294],[3904,4052,1294,1338],[16316,16333,1338,1410],[0,0,1444,1454],[0,0,1462,1463],[0,0,1467,1468],[0,0,1462,1468],[40454,40458,1478,1483],[40463,40466,1484,1487],[0,0,1488,1492],[40477,40482,1495,1500],[0,0,1501,1508],[0,0,1495,1509],[0,0,1488,1509],[0,0,1484,1510],[40495,40500,1513,1518],[0,0,1519,1529],[0,0,1513,1530],[0,0,1484,1530],[0,0,1478,1531],[0,0,1471,1533],[0,0,1469,1535],[0,0,1550,1553],[0,0,1543,1555],[0,0,1541,1557],[0,0,1535,1558],[0,0,1458,1558],[0,0,1410,1562],[0,0,1696,1725],[0,0,1696,1725],[0,0,1726,1731],[0,0,1732,1745],[0,0,1726,1745],[0,0,1696,1746],[0,0,1664,1746],[0,0,1664,1748],[17055,17063,1763,1768],[0,0,1769,1772],[0,0,1763,1773],[17070,17078,1775,1780],[0,0,1781,1784],[0,0,1775,1785],[17085,17093,1787,1792],[0,0,1793,1796],[0,0,1787,1797],[17100,17106,1799,1802],[0,0,1803,1804],[0,0,1799,1805],[0,0,1758,1806],[0,0,1748,1806],[0,0,1748,1808],[17135,17143,1823,1828],[0,0,1829,1832],[0,0,1823,1833],[17150,17158,1835,1840],[0,0,1841,1844],[0,0,1835,1845],[17165,17173,1847,1852],[0,0,1853,1856],[0,0,1847,1857],[17180,17186,1859,1862],[0,0,1863,1864],[0,0,1859,1865],[0,0,1818,1866],[0,0,1808,1866],[0,0,1808,1868],[17200,17204,1877,1880],[0,0,1881,1883],[0,0,1885,1887],[17213,17216,1889,1892],[0,0,1893,1894],[0,0,1895,1898],[0,0,1893,1898],[17232,17240,1901,1906],[0,0,1907,1908],[0,0,1901,1909],[0,0,1893,1909],[17257,17261,1911,1938],[0,0,1945,1950],[0,0,1951,1964],[0,0,1945,1964],[0,0,1939,1965],[17290,17298,1968,1973],[0,0,1974,1979],[0,0,1968,1980],[0,0,1939,1980],[0,0,1911,1981],[17312,17318,1990,1993],[0,0,1994,1995],[0,0,1990,1996],[0,0,1984,1997],[0,0,1911,1997],[0,0,1889,1998],[0,0,1877,1999],[0,0,1868,1999],[0,0,1868,2001],[17338,17344,2006,2012],[0,0,2013,2045],[0,0,2006,2046],[17361,17369,2049,2054],[0,0,2055,2059],[0,0,2049,2060],[0,0,2005,2061],[0,0,2064,2065],[17383,17387,2068,2071],[0,0,2072,2074],[0,0,2076,2108],[0,0,2110,2111],[0,0,2112,2115],[0,0,2110,2115],[17422,17430,2118,2123],[0,0,2124,2125],[0,0,2118,2126],[0,0,2110,2126],[0,0,2068,2127],[0,0,2064,2127],[0,0,2064,2129],[0,0,2062,2131],[0,0,2131,2131],[0,0,2001,2131],[0,0,2151,2175],[0,0,2182,2187],[0,0,2188,2194],[0,0,2182,2194],[0,0,2197,2220],[0,0,2221,2231],[0,0,2197,2231],[0,0,2182,2231],[0,0,2143,2233],[0,0,2131,2233],[0,0,2131,2235],[0,0,2235,2241],[0,0,2242,2253],[0,0,2235,2253],[0,0,2261,2265],[0,0,2261,2269],[17579,17587,2272,2277],[0,0,2278,2281],[0,0,2272,2282],[0,0,2261,2282],[0,0,2285,2286],[0,0,2285,2290],[0,0,2261,2290],[0,0,2292,2296],[0,0,2292,2298],[17651,17659,2301,2306],[0,0,2307,2310],[0,0,2301,2311],[0,0,2292,2311],[0,0,2256,2312],[0,0,2235,2312],[0,0,2235,2314],[8482,8907,1562,2358],[16967,17670,0,2358]]);
+
+__shadeup_gen_shader("shd_00821606432096000132571910900898440480000000", {
+					webgl: {_ext_uniform_local_scroll: {"type":"primitive","name":"float"}, _ext_uniform_global_particles: {"type":"array","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":{"position":{"type":"primitive","name":"float2"},"angle":{"type":"primitive","name":"float"},"velocity":{"type":"primitive","name":"float"},"age":{"type":"primitive","name":"float"},"alive":{"type":"primitive","name":"int"},"goal":{"type":"primitive","name":"float"},"timeline":{"type":"primitive","name":"float"}}}}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"screenSize":{"type":"primitive","name":"float2"}}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["scroll",{"type":"primitive","name":"float"}]],"globals":[["particles",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":[["position",{"type":"primitive","name":"float2"}],["angle",{"type":"primitive","name":"float"}],["velocity",{"type":"primitive","name":"float"}],["age",{"type":"primitive","name":"float"}],["alive",{"type":"primitive","name":"int"}],["goal",{"type":"primitive","name":"float"}],["timeline",{"type":"primitive","name":"float"}]]},"staticSize":1,"access":"read"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["screenSize",{"type":"primitive","name":"float2"}]]}}]]}
+				}, {webgpu: `fn shadeup_up_swizzle_xxxx_i32(n: i32) -> vec4<i32>{
+	return vec4<i32>(n, n, n, n);
+}
+
+fn shadeup_up_swizzle_xy_f32(n: f32) -> vec2<f32>{
+	return vec2<f32>(n, n);
 }
 
 struct ShaderInput {
@@ -116,7 +656,6 @@ struct ShaderInput {
  @align(16)  localId: vec3<i32>,
  @align(16)  instanceIndex: i32,
  @align(16)  vertexIndex: i32,
-@location(7) @interpolate(perspective) custom0: vec3<f32>,
 };
 struct ShaderOutput {
  @align(16)  position: vec4<f32>,
@@ -127,142 +666,59 @@ struct ShaderOutput {
  @align(16)  color: vec4<f32>,
 // %SHADER_ShaderOutput%
 };
+struct str_i_main_ts_2739_Particle {
+ @align(16)  position: vec2<f32>,
+ @align(16)  angle: f32,
+ @align(16)  velocity: f32,
+ @align(16)  age: f32,
+ @align(16)  alive: i32,
+ @align(16)  goal: f32,
+ @align(16)  timeline: f32,
+
+};
+fn _make_struct_str_i_main_ts_2739_Particle(  age: f32,  alive: i32,  angle: f32,  goal: f32,  position: vec2<f32>,  timeline: f32,  velocity: f32,) -> str_i_main_ts_2739_Particle {
+var _s: str_i_main_ts_2739_Particle;
+  _s.age = age;
+  _s.alive = alive;
+  _s.angle = angle;
+  _s.goal = goal;
+  _s.position = position;
+  _s.timeline = timeline;
+  _s.velocity = velocity;
+
+return _s; 
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//  @align(16)  deltaTime: f32,
+//  @align(16)  time: f32,
+ @align(16)  screenSize: vec2<f32>,
+//  @align(16)  frame: i32,
+//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
+//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
+//   camera: str_i_iistd_common_ts_10681_Camera,
+//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
+
+};
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  screenSize: vec2<f32>,) -> str_i_iistd_native_ts_387_FrameContext {
+var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.screenSize = screenSize;
+
+return _s; 
+}
 struct _InUniformsStruct {
 /*SHADEUP_UNIFORM_STRUCT_START*/
-_ext_uniform_local_sunViewProjMatrix: mat4x4<f32>,
-@align(16) _ext_uniform_local_sun: vec3<f32>,
-@align(16) _ext_uniform_global_shadowMapSize: i32,
-@align(16) _ext_uniform_global_shadow_size: vec2<f32>,
-@align(16) _ext_uniform_global_sqNum: i32,
-@align(16) _ext_uniform_global_perlin_octaves: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAPB: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAPB: i32,
-@align(16) _ext_uniform_global_PI: f32,
-@align(16) _ext_uniform_global_perlin_size: i32,
-@align(16) _ext_uniform_global_PERLIN_SIZE: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAP: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAP: i32,
-@align(16) _ext_uniform_global_perlin_amp_falloff: f32,
+@align(16) _ext_uniform_local_scroll: f32,
+@align(16) _ext_uniform_global_particles_size: i32,
+_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
 };
 @group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
-@group(%GROUP_INDEX%) @binding(2) var _ext_uniform_global_shadow_texture: texture_2d<f32>;
-@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_shadow: sampler;
-@group(%GROUP_INDEX%) @binding(4) var<storage, read> _ext_uniform_global_perlin: array<f32>;
-fn fn_ii_std_common_ts_42195_scaled_cosine(i_const: f32) -> f32 {
-var i = i_const;
-return f32(0.5) * (f32(1) - cos(i * _in_uniforms._ext_uniform_global_PI));
-
-}
-
-fn fn_ii_std_common_ts_32873_noise_static_perlin2(v_const: vec2<f32>) -> f32 {
-var v = v_const;
-var x: f32 = v.x;
-var y: f32 = v.y;
-var z: f32 = f32(0);
-if ((x < f32(i32(0)))) 
-{
-x = -(x);
-
-}
-if ((y < f32(i32(0)))) 
-{
-y = -(y);
-
-}
-if ((z < f32(i32(0)))) 
-{
-z = -(z);
-
-}
-var xi: i32 = i32(floor(f32(1.0) * x));
-var yi: i32 = i32(floor(f32(1.0) * y));
-var zi: i32 = i32(floor(f32(1.0) * z));
-var xf: f32 = x - f32(xi);
-var yf: f32 = y - f32(yi);
-var zf: f32 = z - f32(zi);
-var rxf: f32 = f32(0);
-var ryf: f32 = f32(0);
-var r: f32 = f32(0);
-var ampl: f32 = f32(0.5);
-var n1: f32 = f32(0);
-var n2: f32 = f32(0);
-var n3: f32 = f32(0);
-for (var o: i32 = i32(0);(o < _in_uniforms._ext_uniform_global_perlin_octaves);o++){
-var of1: i32 = xi + (yi << u32(_in_uniforms._ext_uniform_global_PERLIN_YWRAPB)) + (zi << u32(_in_uniforms._ext_uniform_global_PERLIN_ZWRAPB));
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _in_uniforms._ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _in_uniforms._ext_uniform_global_perlin_amp_falloff;
-;xi = xi << u32(i32(1));
-;xf = xf * f32(2);
-;yi = yi << u32(i32(1));
-;yf = yf * f32(2);
-;zi = zi << u32(i32(1));
-;zf = zf * f32(2);
-;if ((xf >= f32(1))) 
-{
-xi++;
-;xf = xf - f32(1);
-
-}
-;if ((yf >= f32(1))) 
-{
-yi++;
-;yf = yf - f32(1);
-
-}
-;if ((zf >= f32(1))) 
-{
-zi++;
-;zf = zf - f32(1);
-
-}
-
-}return r;
-
-}
-
-fn fn_iimain_ts_3675_calcColor(instanceIndex_const: i32, inNormal_const: vec3<f32>) -> vec4<f32> {
-var instanceIndex = instanceIndex_const;
-var inNormal = inNormal_const;
-var yFrac: f32 = f32(instanceIndex) / f32(_in_uniforms._ext_uniform_global_sqNum);
-var x: f32 = f32(instanceIndex) - f32(floor(f32(1.0) * yFrac) * f32(_in_uniforms._ext_uniform_global_sqNum));
-var y: f32 = floor(f32(1.0) * yFrac);
-var h: f32 = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2<f32>(x, y) / f32(30));
-var c: vec4<f32> = vec4<f32>(f32(0), f32(i32(0)), f32(i32(1)), f32(i32(1)));
-if ((h > f32(0.2))) 
-{
-c = vec4<f32>(f32(0.9), f32(0.7), f32(0.7), f32(i32(1)));
-
-}
-if ((h > f32(0.25))) 
-{
-c = vec4<f32>(f32(0.1), f32(0.7), f32(0.1), f32(i32(1)));
-
-}
-if ((h > f32(0.6))) 
-{
-c = vec4<f32>(f32(0.6), f32(0.6), f32(0.6), f32(i32(1)));
-
-}
-if ((h > f32(0.7))) 
-{
-c = vec4<f32>(f32(0.9), f32(0.9), f32(0.9), f32(i32(1)));
-
-}
-return vec4<f32>(shadeup_up_swizzle_xyz_f32(((f32(i32(1)) + dot(inNormal, vec3<f32>(vec3<i32>(i32(0), i32(1), i32(0))))) / f32(2))), f32(i32(1))) * c;
+@group(%GROUP_INDEX%) @binding(2) var<storage, read> _ext_uniform_global_particles: array<str_i_main_ts_2739_Particle>;
+fn fn_ii_std_common_ts_1512_pixelToClip(pixelPosition_const: vec2<f32>) -> vec2<f32> {
+var pixelPosition = pixelPosition_const;
+var zeroToOne: vec2<f32> = pixelPosition / _in_uniforms._ext_uniform_global_env.screenSize;
+var zeroToTwo: vec2<f32> = zeroToOne * f32(2);
+var clipSpace: vec2<f32> = zeroToTwo - shadeup_up_swizzle_xy_f32(f32(1));
+return vec2<f32>(clipSpace.x, clipSpace.y * -(f32(1)));
 
 }
 
@@ -270,23 +726,249 @@ return vec4<f32>(shadeup_up_swizzle_xyz_f32(((f32(i32(1)) + dot(inNormal, vec3<f
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
 fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-var realPosition: vec3<f32> = _i_in.custom0;
-var posFromLight: vec4<f32> = _in_uniforms._ext_uniform_local_sunViewProjMatrix * vec4<f32>(realPosition, f32(1));
-posFromLight = posFromLight / posFromLight.w;
-var shadowPos: vec3<f32> = vec3<f32>(posFromLight.xy * vec2<f32>(f32(0.5), -(f32(0.5))) + shadeup_up_swizzle_xy_f32(f32(0.5)), posFromLight.z);
-var visibility: f32 = f32(0);
-for (var y: i32 = -(i32(1));(y <= i32(1));y++){
-for (var x: i32 = -(i32(1));(x <= i32(1));x++){
-var offset: vec2<f32> = vec2<f32>(f32(x), f32(y)) * (f32(1) / f32(_in_uniforms._ext_uniform_global_shadowMapSize));
-;var sampVal: f32 = textureSample(_ext_uniform_global_shadow_texture, _ext_uniform_global_shadow, vec2(shadowPos.xy + offset)).x;
-;var compVal: f32 = shadowPos.z - f32(0.000003);
-;visibility = visibility + f32(select(i32(0), i32(1), (compVal < sampVal)));
+var p: str_i_main_ts_2739_Particle = _ext_uniform_global_particles[_i_in.instanceIndex];
+if ((p.alive == i32(0))) 
+{
+_i_out.position = vec4f(shadeup_up_swizzle_xxxx_i32(i32(0)));
 
 }
-}visibility = visibility / f32(9);
-var lambertFactor: f32 = max(dot(normalize(_in_uniforms._ext_uniform_local_sun - _i_in.position), _i_in.normal), f32(0));
-var lightingFactor: f32 = min(f32(0.2) + visibility * lambertFactor, f32(1));
-return vec4<f32>((fn_iimain_ts_3675_calcColor(_i_in.instanceIndex, _i_in.normal) * lightingFactor).xyz, f32(i32(1)));
+else 
+{
+var mat: mat2x2<f32> = mat2x2<f32>(cos(p.angle), sin(-(p.angle)), sin(p.angle), cos(p.angle));
+;_i_out.position = vec4<f32>(fn_ii_std_common_ts_1512_pixelToClip((p.position + vec2<f32>(f32(i32(0)), -(_in_uniforms._ext_uniform_local_scroll))) + _i_in.position.xy * mat), f32(i32(0)), f32(i32(1)));
+
+}
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`ivec4 shadeup_up_swizzle_xxxx_int(int n) {
+	return ivec4(n, n, n, n);
+}
+
+ivec4 shadeup_up_swizzle_xxxx_int(int n) {
+	return ivec4(n, n, n, n);
+}
+
+ivec2 shadeup_up_swizzle_xy_int(int n) {
+	return ivec2(n, n);
+}
+
+ivec3 shadeup_up_swizzle_xyz_int(int n) {
+	return ivec3(n, n, n);
+}
+
+ivec4 shadeup_up_swizzle_xxxx_int(int n) {
+	return ivec4(n, n, n, n);
+}
+
+ivec2 shadeup_up_swizzle_xy_int(int n) {
+	return ivec2(n, n);
+}
+
+ivec3 shadeup_up_swizzle_xyz_int(int n) {
+	return ivec3(n, n, n);
+}
+
+ivec4 shadeup_up_swizzle_xyzw_int(int n) {
+	return ivec4(n, n, n, n);
+}
+
+ivec4 shadeup_up_swizzle_xxxx_int(int n) {
+	return ivec4(n, n, n, n);
+}
+
+vec2 shadeup_up_swizzle_xy_float(float n) {
+	return vec2(n, n);
+}
+
+struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct ShaderOutput {
+  vec4 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec2 uv;
+  vec4 color;
+
+};
+struct str_i_main_ts_2739_Particle {
+  vec2 position;
+  float angle;
+//   float velocity;
+//   float age;
+  int alive;
+//   float goal;
+//   float timeline;
+
+};
+str_i_main_ts_2739_Particle _make_struct_str_i_main_ts_2739_Particle(vec2 position, float angle, int alive) {
+str_i_main_ts_2739_Particle _s;  _s.position = position;
+  _s.angle = angle;
+  _s.alive = alive;
+  return _s;
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//   float deltaTime;
+//   float time;
+  vec2 screenSize;
+//   int frame;
+//   str_i_iistd_native_ts_1719_MouseInputState mouse;
+//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
+//   str_i_iistd_common_ts_10681_Camera camera;
+//   str_i_iistd_common_ts_9656_Camera2d camera2d;
+
+};
+str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(vec2 screenSize) {
+str_i_iistd_native_ts_387_FrameContext _s;  _s.screenSize = screenSize;
+  return _s;
+}
+uniform str_i_main_ts_2739_Particle[0] _ext_uniform_global_particles;
+uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
+uniform float _ext_uniform_local_scroll;
+vec2 fn_ii_std_common_ts_1512_pixelToClip(vec2 pixelPosition) {
+vec2 zeroToOne = pixelPosition / _ext_uniform_global_env.screenSize;
+vec2 zeroToTwo = zeroToOne * float(2);
+vec2 clipSpace = zeroToTwo - shadeup_up_swizzle_xy_float(float(1));
+return vec2(clipSpace.x, clipSpace.y * -(float(1)));
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+str_i_main_ts_2739_Particle p = _ext_uniform_global_particles[_i_in.instanceIndex];
+if ((p.alive == int(0))){
+_i_out.position = vec4(shadeup_up_swizzle_xxxx_int(int(0)));
+
+}else 
+{
+mat2 mat = mat2(cos(p.angle), sin(-(p.angle)), sin(p.angle), cos(p.angle));
+;_i_out.position = vec4(fn_ii_std_common_ts_1512_pixelToClip((p.position + vec2(int(0), -(_ext_uniform_local_scroll))) + _i_in.position.xy * mat), int(0), int(1));
+
+}
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[3283,3310,438,455],[3312,3335,455,470],[3337,3363,470,491],[3365,3386,491,507],[3388,3409,507,520],[3411,3433,520,537],[3435,3461,537,558],[2739,3748,401,562],[2739,3748,562,784],[493,510,832,854],[577,589,854,871],[623,642,871,890],[674,685,890,906],[745,792,906,961],[842,898,961,1022],[972,1002,1022,1070],[1007,1043,1070,1121],[387,1715,784,1125],[387,1715,1125,1322],[4058,4231,1322,1392],[16316,16333,1392,1464],[7462,7505,1464,1505],[0,0,1547,1565],[0,0,1586,1599],[0,0,1602,1625],[0,0,1626,1636],[0,0,1602,1636],[0,0,1586,1636],[0,0,1569,1636],[0,0,1569,1638],[0,0,1655,1664],[1670,1678,1667,1672],[0,0,1673,1674],[0,0,1667,1675],[0,0,1655,1675],[0,0,1638,1675],[0,0,1638,1677],[0,0,1694,1703],[1733,1741,1734,1739],[0,0,1740,1741],[0,0,1734,1742],[0,0,1706,1743],[0,0,1694,1743],[0,0,1677,1743],[0,0,1677,1745],[0,0,1757,1766],[0,0,1757,1768],[0,0,1770,1779],[0,0,1770,1781],[1852,1860,1786,1791],[0,0,1792,1793],[0,0,1786,1794],[0,0,1784,1795],[0,0,1770,1795],[0,0,1752,1796],[0,0,1745,1798],[231,466,1505,1802],[0,0,1936,1965],[0,0,1936,1965],[0,0,1966,1971],[0,0,1972,1985],[0,0,1966,1985],[0,0,1936,1986],[0,0,1904,1986],[0,0,1904,1988],[0,0,1993,1994],[0,0,1995,2000],[0,0,1993,2000],[16504,16510,2004,2007],[0,0,2008,2009],[0,0,2004,2010],[0,0,1992,2011],[0,0,2014,2020],[0,0,2021,2029],[0,0,2014,2029],[16545,16551,2065,2068],[0,0,2069,2070],[0,0,2065,2071],[0,0,2037,2072],[0,0,2014,2073],[0,0,2014,2075],[0,0,2012,2077],[16595,16598,2101,2104],[0,0,2105,2106],[0,0,2107,2112],[0,0,2105,2112],[0,0,2101,2113],[16609,16612,2115,2118],[0,0,2121,2122],[0,0,2123,2128],[0,0,2121,2128],[0,0,2119,2129],[0,0,2115,2130],[16634,16637,2132,2135],[0,0,2136,2137],[0,0,2138,2143],[0,0,2136,2143],[0,0,2132,2144],[16648,16651,2146,2149],[0,0,2150,2151],[0,0,2152,2157],[0,0,2150,2157],[0,0,2146,2158],[0,0,2096,2159],[0,0,2085,2159],[0,0,2085,2161],[0,0,2162,2168],[0,0,2169,2177],[0,0,2162,2177],[16694,16705,2185,2221],[0,0,2223,2224],[0,0,2225,2233],[0,0,2223,2233],[16749,16755,2241,2244],[0,0,2245,2246],[0,0,2241,2247],[0,0,2251,2276],[0,0,2249,2277],[0,0,2236,2278],[0,0,2223,2278],[0,0,2222,2279],[0,0,2282,2287],[0,0,2288,2296],[0,0,2282,2296],[0,0,2282,2299],[0,0,2302,2305],[0,0,2282,2305],[0,0,2222,2305],[0,0,2185,2306],[16834,16840,2308,2311],[0,0,2312,2313],[0,0,2308,2314],[16845,16851,2316,2319],[0,0,2320,2321],[0,0,2316,2322],[0,0,2180,2323],[0,0,2162,2323],[0,0,2162,2325],[0,0,2083,2327],[0,0,2077,2328],[0,0,1988,2328],[8150,8467,1802,2372],[16419,16860,0,2372]]);
+
+__shadeup_gen_shader("shd_6900259035000093023000000095000000001196", {
+					webgl: {_ext_uniform_local_scroll: {"type":"primitive","name":"float"}, _ext_uniform_local_deltaTime: {"type":"primitive","name":"float"}, _ext_uniform_global_tex2: {"type":"primitive","name":"texture2d"}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"time":{"type":"primitive","name":"float"}}}, _ext_uniform_global_PI: {"type":"primitive","name":"float"}, _ext_uniform_global_lastScroll: {"type":"primitive","name":"float"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["scroll",{"type":"primitive","name":"float"}],["deltaTime",{"type":"primitive","name":"float"}]],"globals":[["tex2",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"sample"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["time",{"type":"primitive","name":"float"}]]}}],["PI",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}],["lastScroll",{"fileName":"/main.ts","structure":{"type":"primitive","name":"float"}}]]}
+				}, {webgpu: `fn shadeup_up_swizzle_xy_f32(n: f32) -> vec2<f32>{
+	return vec2<f32>(n, n);
+}
+
+struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct str_i_iistd_native_ts_387_FrameContext {
+//  @align(16)  deltaTime: f32,
+ @align(16)  time: f32,
+//  @align(16)  screenSize: vec2<f32>,
+//  @align(16)  frame: i32,
+//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
+//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
+//   camera: str_i_iistd_common_ts_10681_Camera,
+//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
+
+};
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  time: f32,) -> str_i_iistd_native_ts_387_FrameContext {
+var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.time = time;
+
+return _s; 
+}
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_local_scroll: f32,
+@align(16) _ext_uniform_local_deltaTime: f32,
+@align(16) _ext_uniform_global_tex2_size: vec2<f32>,
+_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
+@align(16) _ext_uniform_global_PI: f32,
+@align(16) _ext_uniform_global_lastScroll: f32,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var _ext_uniform_global_tex2_texture: texture_2d<f32>;
+@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_tex2: sampler;
+fn fn_iistd_math_ts_40366_rand(seed_const: f32) -> f32 {
+var seed = seed_const;
+if (0 == 0) 
+{
+return fract(sin(seed * f32(91.3458)) * f32(47453.5453));
+
+}
+else 
+{
+return 0.0;
+
+}
+
+}
+
+fn fn_iistd_math_ts_40744_rand2(seed_const: vec2<f32>) -> f32 {
+var seed = seed_const;
+return fract(sin(dot(seed, vec2<f32>(12.9898, 4.1414))) * f32(43758.5453));
+
+}
+
+fn fn_iistd_math_ts_41039_rand3(seed_const: vec3<f32>) -> f32 {
+var seed = seed_const;
+return fn_iistd_math_ts_40744_rand2(seed.xy + fn_iistd_math_ts_40366_rand(seed.z));
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+var pixelDist: vec2<f32> = (shadeup_up_swizzle_xy_f32(f32(1)) / vec2<f32>(textureDimensions(_ext_uniform_global_tex2_texture)));
+var angle: f32 = fn_iistd_math_ts_41039_rand3(vec3<f32>(_i_in.screen, _in_uniforms._ext_uniform_global_env.time)) * _in_uniforms._ext_uniform_global_PI * f32(i32(2));
+var dir: vec2<f32> = vec2<f32>(cos(angle), sin(angle));
+var off: vec2<f32> = vec2<f32>(f32(i32(0)), (_in_uniforms._ext_uniform_local_scroll - _in_uniforms._ext_uniform_global_lastScroll)) * pixelDist;
+var val1: vec4<f32> = textureSample(_ext_uniform_global_tex2_texture, _ext_uniform_global_tex2, vec2(_i_in.uv + off + dir * pixelDist));
+var val2: vec4<f32> = textureSample(_ext_uniform_global_tex2_texture, _ext_uniform_global_tex2, vec2(_i_in.uv + off));
+_i_out.color = ((val1 + val2) / f32(2)) * (f32(1) - _in_uniforms._ext_uniform_local_deltaTime * f32(8));
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
 }
@@ -294,10 +976,6 @@ return vec4<f32>((fn_iimain_ts_3675_calcColor(_i_in.instanceIndex, _i_in.normal)
 	return vec2(n, n);
 }
 
-vec3 shadeup_up_swizzle_xyz_float(float n) {
-	return vec3(n, n, n);
-}
-
 struct ShaderInput {
   vec3 position;
   vec3 normal;
@@ -325,350 +1003,6 @@ struct ShaderOutput {
   vec4 color;
 
 };
-uniform mat4 _ext_uniform_local_sunViewProjMatrix;
-uniform int _ext_uniform_global_shadowMapSize;
-uniform sampler2D _ext_uniform_global_shadow;
-uniform vec2 _ext_uniform_global_shadow_size;
-uniform vec3 _ext_uniform_local_sun;
-uniform int _ext_uniform_global_sqNum;
-uniform int _ext_uniform_global_perlin_octaves;
-uniform int _ext_uniform_global_PERLIN_YWRAPB;
-uniform int _ext_uniform_global_PERLIN_ZWRAPB;
-uniform float _ext_uniform_global_PI;
-uniform float[0] _ext_uniform_global_perlin;
-uniform int _ext_uniform_global_PERLIN_SIZE;
-uniform int _ext_uniform_global_PERLIN_YWRAP;
-uniform int _ext_uniform_global_PERLIN_ZWRAP;
-uniform float _ext_uniform_global_perlin_amp_falloff;
-float fn_ii_std_common_ts_42195_scaled_cosine(float i) {
-return float(0.5) * (float(1) - cos(i * _ext_uniform_global_PI));
-
-}
-
-float fn_ii_std_common_ts_32873_noise_static_perlin2(vec2 v) {
-float x = v.x;
-float y = v.y;
-float z = float(0);
-if ((x < float(float(int(0))))){
-x = -(x);
-
-}if ((y < float(float(int(0))))){
-y = -(y);
-
-}if ((z < float(float(int(0))))){
-z = -(z);
-
-}int xi = int(floor(x));
-int yi = int(floor(y));
-int zi = int(floor(z));
-float xf = x - float(xi);
-float yf = y - float(yi);
-float zf = z - float(zi);
-float rxf = float(0);
-float ryf = float(0);
-float r = float(0);
-float ampl = float(0.5);
-float n1 = float(0);
-float n2 = float(0);
-float n3 = float(0);
-for (int o = int(0);(float(o) < float(_ext_uniform_global_perlin_octaves));o++){
-int of1 = xi + (yi << _ext_uniform_global_PERLIN_YWRAPB) + (zi << _ext_uniform_global_PERLIN_ZWRAPB);
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _ext_uniform_global_perlin_amp_falloff;
-;xi = xi << int(1);
-;xf = xf * float(2);
-;yi = yi << int(1);
-;yf = yf * float(2);
-;zi = zi << int(1);
-;zf = zf * float(2);
-;if ((xf >= float(1))){
-xi++;
-;xf = xf - float(1);
-
-};if ((yf >= float(1))){
-yi++;
-;yf = yf - float(1);
-
-};if ((zf >= float(1))){
-zi++;
-;zf = zf - float(1);
-
-}
-}return r;
-
-}
-
-vec4 fn_iimain_ts_3675_calcColor(int instanceIndex, vec3 inNormal) {
-float yFrac = float(instanceIndex) / float(_ext_uniform_global_sqNum);
-float x = float(instanceIndex) - float(floor(yFrac) * float(_ext_uniform_global_sqNum));
-float y = floor(yFrac);
-float h = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2(x, y) / float(30));
-vec4 c = vec4(float(0), int(0), int(1), int(1));
-if ((h > float(0.2))){
-c = vec4(float(0.9), float(0.7), float(0.7), int(1));
-
-}if ((h > float(0.25))){
-c = vec4(float(0.1), float(0.7), float(0.1), int(1));
-
-}if ((h > float(0.6))){
-c = vec4(float(0.6), float(0.6), float(0.6), int(1));
-
-}if ((h > float(0.7))){
-c = vec4(float(0.9), float(0.9), float(0.9), int(1));
-
-}return vec4(shadeup_up_swizzle_xyz_float(((float(int(1)) + dot(inNormal, vec3(ivec3(int(0), int(1), int(0))))) / float(2))), int(1)) * c;
-
-}
-
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
-void main() {
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-vec3 realPosition = fn_ii_std_drawIndexed_ts_4178_ShaderInput_static_attr(_i_in, int(0));
-vec4 posFromLight = _ext_uniform_local_sunViewProjMatrix * vec4(realPosition, float(1));
-posFromLight = posFromLight / posFromLight.w;
-vec3 shadowPos = vec3(posFromLight.xy * vec2(float(0.5), -(float(0.5))) + shadeup_up_swizzle_xy_float(float(0.5)), posFromLight.z);
-float visibility = float(0);
-for (int y = -(int(1));(float(y) <= float(int(1)));y++){
-for (int x = -(int(1));(float(x) <= float(int(1)));x++){
-vec2 offset = vec2(x, y) * (float(1) / float(_ext_uniform_global_shadowMapSize));
-;float sampVal = texture(_ext_uniform_global_shadow, vec2(shadowPos.xy + offset)).x;
-;float compVal = shadowPos.z - float(0.000003);
-;visibility = visibility + float((compVal < sampVal) ? int(1) : int(0));
-
-}
-}visibility = visibility / float(9);
-float lambertFactor = max(dot(normalize(_ext_uniform_local_sun - _i_in.position), _i_in.normal), float(0));
-float lightingFactor = min(float(0.2) + visibility * lambertFactor, float(1));
-return vec4((fn_iimain_ts_3675_calcColor(_i_in.instanceIndex, _i_in.normal) * lightingFactor).xyz, int(1));
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
-}
-`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[5436,5500,401,452],[1810,1943,452,499],[2271,2444,499,545],[2271,2444,545,591],[5004,5127,591,628],[2721,2834,628,667],[41825,41971,667,715],[41033,41176,715,762],[41356,41499,762,809],[1922,2070,809,847],[42328,42500,847,892],[41679,41819,892,937],[41182,41350,937,983],[41505,41673,983,1029],[42006,42168,1029,1083],[0,0,1129,1136],[42257,42265,1147,1152],[0,0,1153,1156],[0,0,1147,1157],[42281,42289,1161,1166],[0,0,1167,1168],[0,0,1161,1169],[42296,42299,1172,1175],[0,0,1176,1177],[0,0,1180,1202],[0,0,1176,1202],[0,0,1172,1203],[0,0,1161,1203],[0,0,1160,1204],[0,0,1147,1204],[0,0,1140,1206],[19720,19799,1083,1210],[0,0,1263,1269],[0,0,1283,1284],[0,0,1283,1286],[0,0,1273,1286],[0,0,1273,1288],[0,0,1298,1299],[0,0,1298,1301],[0,0,1288,1301],[0,0,1288,1303],[32966,32974,1313,1318],[0,0,1319,1320],[0,0,1313,1321],[0,0,1303,1321],[0,0,1303,1323],[0,0,1328,1329],[32995,33001,1344,1347],[0,0,1348,1349],[0,0,1344,1350],[0,0,1338,1351],[0,0,1332,1352],[0,0,1327,1353],[0,0,1356,1357],[0,0,1362,1363],[0,0,1360,1364],[0,0,1356,1364],[0,0,1356,1366],[0,0,1354,1368],[0,0,1368,1368],[0,0,1323,1368],[0,0,1373,1374],[33041,33047,1389,1392],[0,0,1393,1394],[0,0,1389,1395],[0,0,1383,1396],[0,0,1377,1397],[0,0,1372,1398],[0,0,1401,1402],[0,0,1407,1408],[0,0,1405,1409],[0,0,1401,1409],[0,0,1401,1411],[0,0,1399,1413],[0,0,1413,1413],[0,0,1368,1413],[0,0,1418,1419],[33087,33093,1434,1437],[0,0,1438,1439],[0,0,1434,1440],[0,0,1428,1441],[0,0,1422,1442],[0,0,1417,1443],[0,0,1446,1447],[0,0,1452,1453],[0,0,1450,1454],[0,0,1446,1454],[0,0,1446,1456],[0,0,1444,1458],[0,0,1458,1458],[0,0,1413,1458],[33128,33134,1467,1470],[33135,33140,1471,1476],[0,0,1477,1478],[0,0,1471,1479],[0,0,1467,1480],[0,0,1458,1480],[0,0,1458,1482],[33155,33161,1491,1494],[33162,33167,1495,1500],[0,0,1501,1502],[0,0,1495,1503],[0,0,1491,1504],[0,0,1482,1504],[0,0,1482,1506],[33182,33188,1515,1518],[33189,33194,1519,1524],[0,0,1525,1526],[0,0,1519,1527],[0,0,1515,1528],[0,0,1506,1528],[0,0,1506,1530],[0,0,1541,1542],[0,0,1551,1553],[0,0,1545,1554],[0,0,1541,1554],[0,0,1530,1554],[0,0,1530,1556],[0,0,1567,1568],[0,0,1577,1579],[0,0,1571,1580],[0,0,1567,1580],[0,0,1556,1580],[0,0,1556,1582],[0,0,1593,1594],[0,0,1603,1605],[0,0,1597,1606],[0,0,1593,1606],[0,0,1582,1606],[0,0,1582,1608],[33288,33296,1620,1625],[0,0,1626,1627],[0,0,1620,1628],[0,0,1608,1628],[0,0,1608,1630],[33313,33321,1642,1647],[0,0,1648,1649],[0,0,1642,1650],[0,0,1630,1650],[0,0,1630,1652],[33336,33344,1662,1667],[0,0,1668,1669],[0,0,1662,1670],[0,0,1652,1670],[0,0,1652,1672],[33362,33370,1685,1690],[0,0,1691,1694],[0,0,1685,1695],[0,0,1672,1695],[0,0,1672,1697],[33386,33394,1708,1713],[0,0,1714,1715],[0,0,1708,1716],[0,0,1697,1716],[0,0,1697,1718],[33410,33418,1729,1734],[0,0,1735,1736],[0,0,1729,1737],[0,0,1718,1737],[0,0,1718,1739],[33434,33442,1750,1755],[0,0,1756,1757],[0,0,1750,1758],[0,0,1739,1758],[0,0,1739,1760],[33462,33468,1773,1776],[0,0,1777,1778],[0,0,1773,1779],[0,0,1765,1779],[0,0,1787,1788],[0,0,1781,1789],[0,0,1798,1832],[0,0,1792,1833],[0,0,1780,1834],[0,0,1835,1836],[0,0,1835,1838],[0,0,1851,1853],[0,0,1857,1859],[0,0,1863,1896],[0,0,1857,1896],[0,0,1856,1897],[0,0,1851,1897],[0,0,1901,1903],[0,0,1907,1940],[0,0,1901,1940],[0,0,1900,1941],[0,0,1851,1941],[0,0,1841,1941],[0,0,1841,1943],[0,0,1944,1947],[33625,33638,1950,1989],[0,0,1990,1992],[0,0,1950,1993],[0,0,1944,1993],[0,0,1944,1995],[0,0,1996,1999],[33650,33663,2002,2041],[0,0,2042,2044],[0,0,2002,2045],[0,0,1996,2045],[0,0,1996,2047],[0,0,2048,2050],[0,0,2053,2079],[0,0,2053,2079],[0,0,2080,2083],[0,0,2086,2117],[0,0,2080,2117],[0,0,2053,2118],[0,0,2048,2118],[0,0,2048,2120],[0,0,2121,2123],[0,0,2126,2128],[0,0,2131,2134],[0,0,2138,2164],[0,0,2138,2164],[0,0,2166,2169],[33799,33805,2172,2175],[0,0,2176,2177],[0,0,2172,2178],[0,0,2166,2178],[0,0,2165,2179],[0,0,2182,2213],[0,0,2165,2213],[0,0,2138,2214],[0,0,2217,2219],[0,0,2138,2219],[0,0,2137,2220],[0,0,2131,2220],[0,0,2126,2220],[0,0,2121,2220],[0,0,2121,2222],[0,0,2223,2225],[0,0,2228,2254],[0,0,2228,2254],[0,0,2256,2259],[0,0,2262,2294],[0,0,2256,2294],[0,0,2255,2295],[0,0,2298,2329],[0,0,2255,2329],[0,0,2228,2330],[0,0,2223,2330],[0,0,2223,2332],[0,0,2333,2335],[0,0,2338,2340],[0,0,2343,2346],[0,0,2350,2376],[0,0,2350,2376],[0,0,2378,2381],[0,0,2384,2416],[0,0,2378,2416],[34019,34025,2419,2422],[0,0,2423,2424],[0,0,2419,2425],[0,0,2378,2425],[0,0,2377,2426],[0,0,2429,2460],[0,0,2377,2460],[0,0,2350,2461],[0,0,2464,2466],[0,0,2350,2466],[0,0,2349,2467],[0,0,2343,2467],[0,0,2338,2467],[0,0,2333,2467],[0,0,2333,2469],[0,0,2470,2472],[0,0,2475,2477],[0,0,2480,2483],[0,0,2487,2489],[0,0,2492,2494],[0,0,2487,2494],[0,0,2486,2495],[0,0,2480,2495],[0,0,2475,2495],[0,0,2470,2495],[0,0,2470,2497],[0,0,2498,2501],[0,0,2504,2507],[0,0,2510,2542],[0,0,2504,2542],[0,0,2498,2542],[0,0,2498,2544],[0,0,2545,2547],[0,0,2550,2576],[0,0,2550,2576],[0,0,2577,2580],[0,0,2583,2614],[0,0,2577,2614],[0,0,2550,2615],[0,0,2545,2615],[0,0,2545,2617],[0,0,2618,2620],[0,0,2623,2625],[0,0,2628,2631],[0,0,2635,2661],[0,0,2635,2661],[0,0,2663,2666],[34274,34280,2669,2672],[0,0,2673,2674],[0,0,2669,2675],[0,0,2663,2675],[0,0,2662,2676],[0,0,2679,2710],[0,0,2662,2710],[0,0,2635,2711],[0,0,2714,2716],[0,0,2635,2716],[0,0,2634,2717],[0,0,2628,2717],[0,0,2623,2717],[0,0,2618,2717],[0,0,2618,2719],[0,0,2720,2722],[0,0,2725,2751],[0,0,2725,2751],[0,0,2753,2756],[0,0,2759,2791],[0,0,2753,2791],[0,0,2752,2792],[0,0,2795,2826],[0,0,2752,2826],[0,0,2725,2827],[0,0,2720,2827],[0,0,2720,2829],[0,0,2830,2832],[0,0,2835,2837],[0,0,2840,2843],[0,0,2847,2873],[0,0,2847,2873],[0,0,2875,2878],[0,0,2881,2913],[0,0,2875,2913],[34494,34500,2916,2919],[0,0,2920,2921],[0,0,2916,2922],[0,0,2875,2922],[0,0,2874,2923],[0,0,2926,2957],[0,0,2874,2957],[0,0,2847,2958],[0,0,2961,2963],[0,0,2847,2963],[0,0,2846,2964],[0,0,2840,2964],[0,0,2835,2964],[0,0,2830,2964],[0,0,2830,2966],[0,0,2967,2969],[0,0,2972,2974],[0,0,2977,2980],[0,0,2984,2986],[0,0,2989,2991],[0,0,2984,2991],[0,0,2983,2992],[0,0,2977,2992],[0,0,2972,2992],[0,0,2967,2992],[0,0,2967,2994],[0,0,2995,2997],[0,0,3000,3002],[34610,34623,3005,3044],[0,0,3045,3047],[0,0,3005,3048],[0,0,3052,3054],[0,0,3057,3059],[0,0,3052,3059],[0,0,3051,3060],[0,0,3005,3060],[0,0,3000,3060],[0,0,2995,3060],[0,0,2995,3062],[0,0,3063,3064],[0,0,3067,3068],[0,0,3071,3073],[0,0,3076,3080],[0,0,3071,3080],[0,0,3067,3080],[0,0,3063,3080],[0,0,3063,3082],[0,0,3083,3087],[0,0,3090,3094],[0,0,3097,3135],[0,0,3090,3135],[0,0,3083,3135],[0,0,3083,3137],[0,0,3138,3140],[0,0,3143,3145],[34748,34754,3149,3152],[0,0,3153,3154],[0,0,3149,3155],[0,0,3143,3155],[0,0,3138,3155],[0,0,3138,3157],[0,0,3158,3160],[0,0,3163,3165],[34777,34785,3168,3173],[0,0,3174,3175],[0,0,3168,3176],[0,0,3163,3176],[0,0,3158,3176],[0,0,3158,3178],[0,0,3179,3181],[0,0,3184,3186],[34813,34819,3190,3193],[0,0,3194,3195],[0,0,3190,3196],[0,0,3184,3196],[0,0,3179,3196],[0,0,3179,3198],[0,0,3199,3201],[0,0,3204,3206],[34842,34850,3209,3214],[0,0,3215,3216],[0,0,3209,3217],[0,0,3204,3217],[0,0,3199,3217],[0,0,3199,3219],[0,0,3220,3222],[0,0,3225,3227],[34878,34884,3231,3234],[0,0,3235,3236],[0,0,3231,3237],[0,0,3225,3237],[0,0,3220,3237],[0,0,3220,3239],[0,0,3240,3242],[0,0,3245,3247],[34907,34915,3250,3255],[0,0,3256,3257],[0,0,3250,3258],[0,0,3245,3258],[0,0,3240,3258],[0,0,3240,3260],[0,0,3266,3268],[34939,34947,3272,3277],[0,0,3278,3279],[0,0,3272,3280],[0,0,3265,3281],[0,0,3284,3286],[0,0,3284,3288],[0,0,3284,3290],[0,0,3291,3293],[0,0,3296,3298],[34978,34986,3301,3306],[0,0,3307,3308],[0,0,3301,3309],[0,0,3296,3309],[0,0,3291,3309],[0,0,3291,3311],[0,0,3282,3313],[0,0,3313,3313],[0,0,3261,3313],[0,0,3319,3321],[35011,35019,3325,3330],[0,0,3331,3332],[0,0,3325,3333],[0,0,3318,3334],[0,0,3337,3339],[0,0,3337,3341],[0,0,3337,3343],[0,0,3344,3346],[0,0,3349,3351],[35050,35058,3354,3359],[0,0,3360,3361],[0,0,3354,3362],[0,0,3349,3362],[0,0,3344,3362],[0,0,3344,3364],[0,0,3335,3366],[0,0,3366,3366],[0,0,3314,3366],[0,0,3372,3374],[35083,35091,3378,3383],[0,0,3384,3385],[0,0,3378,3386],[0,0,3371,3387],[0,0,3390,3392],[0,0,3390,3394],[0,0,3390,3396],[0,0,3397,3399],[0,0,3402,3404],[35122,35130,3407,3412],[0,0,3413,3414],[0,0,3407,3415],[0,0,3402,3415],[0,0,3397,3415],[0,0,3397,3417],[0,0,3388,3419],[0,0,3419,3419],[0,0,3367,3419],[0,0,1839,3421],[0,0,1760,3421],[0,0,3428,3429],[0,0,3421,3431],[19421,19436,1210,3435],[0,0,3468,3485],[0,0,3487,3500],[0,0,3524,3537],[0,0,3518,3538],[3785,3793,3541,3546],[0,0,3547,3572],[0,0,3541,3573],[0,0,3518,3573],[0,0,3504,3573],[0,0,3504,3575],[0,0,3591,3604],[0,0,3585,3605],[3835,3843,3608,3613],[3852,3857,3614,3619],[0,0,3620,3625],[0,0,3614,3626],[0,0,3635,3660],[0,0,3629,3661],[0,0,3614,3661],[0,0,3608,3662],[0,0,3585,3662],[0,0,3575,3662],[0,0,3575,3664],[3886,3891,3674,3679],[0,0,3680,3685],[0,0,3674,3686],[0,0,3664,3686],[0,0,3664,3688],[3908,3921,3698,3744],[0,0,3750,3751],[0,0,3753,3754],[0,0,3745,3755],[3951,3959,3758,3763],[0,0,3764,3766],[0,0,3758,3767],[0,0,3745,3767],[0,0,3698,3768],[0,0,3688,3768],[0,0,3688,3770],[3992,4000,3784,3789],[0,0,3790,3791],[0,0,3784,3792],[4007,4013,3794,3797],[0,0,3798,3799],[0,0,3794,3800],[4018,4024,3802,3805],[0,0,3806,3807],[0,0,3802,3808],[4029,4035,3810,3813],[0,0,3814,3815],[0,0,3810,3816],[0,0,3779,3817],[0,0,3770,3817],[0,0,3770,3819],[0,0,3824,3825],[4055,4063,3828,3833],[0,0,3834,3837],[0,0,3828,3838],[0,0,3823,3839],[0,0,3842,3843],[4090,4098,3851,3856],[0,0,3857,3860],[0,0,3851,3861],[4105,4113,3863,3868],[0,0,3869,3872],[0,0,3863,3873],[4120,4128,3875,3880],[0,0,3881,3884],[0,0,3875,3885],[4135,4141,3887,3890],[0,0,3891,3892],[0,0,3887,3893],[0,0,3846,3894],[0,0,3842,3894],[0,0,3842,3896],[0,0,3840,3898],[0,0,3898,3898],[0,0,3819,3898],[0,0,3903,3904],[4162,4170,3907,3912],[0,0,3913,3917],[0,0,3907,3918],[0,0,3902,3919],[0,0,3922,3923],[4198,4206,3931,3936],[0,0,3937,3940],[0,0,3931,3941],[4213,4221,3943,3948],[0,0,3949,3952],[0,0,3943,3953],[4228,4236,3955,3960],[0,0,3961,3964],[0,0,3955,3965],[4243,4249,3967,3970],[0,0,3971,3972],[0,0,3967,3973],[0,0,3926,3974],[0,0,3922,3974],[0,0,3922,3976],[0,0,3920,3978],[0,0,3978,3978],[0,0,3898,3978],[0,0,3983,3984],[4270,4278,3987,3992],[0,0,3993,3996],[0,0,3987,3997],[0,0,3982,3998],[0,0,4001,4002],[4305,4313,4010,4015],[0,0,4016,4019],[0,0,4010,4020],[4320,4328,4022,4027],[0,0,4028,4031],[0,0,4022,4032],[4335,4343,4034,4039],[0,0,4040,4043],[0,0,4034,4044],[4350,4356,4046,4049],[0,0,4050,4051],[0,0,4046,4052],[0,0,4005,4053],[0,0,4001,4053],[0,0,4001,4055],[0,0,3999,4057],[0,0,4057,4057],[0,0,3978,4057],[0,0,4062,4063],[4377,4385,4066,4071],[0,0,4072,4075],[0,0,4066,4076],[0,0,4061,4077],[0,0,4080,4081],[4412,4420,4089,4094],[0,0,4095,4098],[0,0,4089,4099],[4427,4435,4101,4106],[0,0,4107,4110],[0,0,4101,4111],[4442,4450,4113,4118],[0,0,4119,4122],[0,0,4113,4123],[4457,4463,4125,4128],[0,0,4129,4130],[0,0,4125,4131],[0,0,4084,4132],[0,0,4080,4132],[0,0,4080,4134],[0,0,4078,4136],[0,0,4136,4136],[0,0,4057,4136],[4528,4534,4185,4188],[0,0,4189,4190],[0,0,4185,4191],[0,0,4179,4192],[4539,4542,4195,4198],[0,0,4199,4207],[4567,4573,4220,4223],[0,0,4224,4225],[0,0,4220,4226],[4578,4584,4228,4231],[0,0,4232,4233],[0,0,4228,4234],[4589,4595,4236,4239],[0,0,4240,4241],[0,0,4236,4242],[0,0,4214,4243],[0,0,4209,4244],[0,0,4195,4245],[0,0,4179,4245],[0,0,4178,4246],[4605,4613,4249,4254],[0,0,4255,4256],[0,0,4249,4257],[0,0,4178,4257],[0,0,4177,4258],[0,0,4148,4259],[4631,4637,4261,4264],[0,0,4265,4266],[0,0,4261,4267],[0,0,4143,4268],[0,0,4271,4272],[0,0,4143,4272],[0,0,4136,4274],[894,1403,3435,4278],[6583,6592,4400,4453],[0,0,4454,4459],[6604,6610,4461,4464],[0,0,4465,4466],[0,0,4461,4467],[0,0,4400,4468],[0,0,4380,4468],[0,0,4380,4470],[0,0,4490,4526],[0,0,4534,4546],[6690,6698,4548,4553],[0,0,4554,4555],[0,0,4548,4556],[0,0,4529,4557],[0,0,4490,4557],[0,0,4470,4557],[0,0,4470,4559],[0,0,4559,4571],[0,0,4574,4586],[0,0,4589,4601],[0,0,4589,4603],[0,0,4574,4603],[0,0,4559,4603],[0,0,4559,4605],[0,0,4627,4639],[0,0,4627,4642],[6868,6876,4650,4655],[0,0,4656,4659],[0,0,4650,4660],[6893,6901,4664,4669],[0,0,4670,4673],[0,0,4664,4674],[0,0,4662,4675],[0,0,4645,4676],[0,0,4627,4676],[6923,6931,4707,4712],[0,0,4713,4716],[0,0,4707,4717],[0,0,4679,4718],[0,0,4627,4718],[0,0,4720,4732],[0,0,4720,4734],[0,0,4622,4735],[0,0,4605,4735],[0,0,4605,4737],[6996,7004,4756,4761],[0,0,4762,4763],[0,0,4756,4764],[0,0,4737,4764],[0,0,4737,4766],[7034,7040,4781,4784],[0,0,4785,4786],[0,0,4781,4787],[0,0,4779,4788],[0,0,4771,4788],[0,0,4796,4797],[0,0,4790,4798],[7058,7064,4808,4811],[0,0,4812,4813],[0,0,4808,4814],[0,0,4802,4815],[0,0,4789,4816],[0,0,4817,4818],[0,0,4817,4820],[7101,7107,4838,4841],[0,0,4842,4843],[0,0,4838,4844],[0,0,4836,4845],[0,0,4828,4845],[0,0,4853,4854],[0,0,4847,4855],[7125,7131,4865,4868],[0,0,4869,4870],[0,0,4865,4871],[0,0,4859,4872],[0,0,4846,4873],[0,0,4874,4875],[0,0,4874,4877],[0,0,4899,4900],[0,0,4902,4903],[0,0,4894,4904],[7192,7200,4908,4913],[0,0,4914,4915],[0,0,4908,4916],[0,0,4925,4958],[0,0,4919,4959],[0,0,4908,4959],[0,0,4907,4960],[0,0,4894,4960],[0,0,4880,4960],[0,0,4880,4962],[0,0,4987,5013],[0,0,5020,5029],[0,0,5020,5032],[0,0,5035,5041],[0,0,5020,5041],[0,0,4979,5043],[0,0,4979,5045],[0,0,4963,5045],[0,0,4963,5047],[0,0,5064,5073],[0,0,5064,5075],[7370,7378,5078,5083],[0,0,5084,5092],[0,0,5078,5093],[0,0,5064,5093],[0,0,5048,5093],[0,0,5048,5095],[0,0,5096,5106],[0,0,5109,5119],[0,0,5129,5136],[0,0,5139,5146],[0,0,5128,5147],[7452,7458,5150,5153],[0,0,5154,5155],[0,0,5150,5156],[7464,7470,5159,5162],[0,0,5163,5164],[0,0,5159,5165],[0,0,5128,5165],[0,0,5122,5166],[0,0,5109,5166],[0,0,5096,5166],[0,0,5096,5168],[0,0,4878,5170],[0,0,4823,5170],[0,0,4821,5172],[0,0,4766,5172],[0,0,5172,5182],[0,0,5185,5195],[7510,7518,5198,5203],[0,0,5204,5205],[0,0,5198,5206],[0,0,5185,5206],[0,0,5172,5206],[0,0,5172,5208],[7556,7559,5230,5233],[7560,7563,5234,5237],[7564,7573,5238,5247],[0,0,5248,5270],[0,0,5273,5278],[0,0,5279,5287],[0,0,5273,5287],[0,0,5248,5287],[0,0,5238,5288],[0,0,5290,5295],[0,0,5296,5302],[0,0,5290,5302],[0,0,5234,5303],[7619,7627,5305,5310],[0,0,5311,5312],[0,0,5305,5313],[0,0,5230,5314],[0,0,5208,5314],[0,0,5208,5316],[7656,7659,5339,5342],[7668,7676,5343,5348],[0,0,5349,5352],[0,0,5343,5353],[0,0,5356,5366],[0,0,5369,5382],[0,0,5356,5382],[0,0,5343,5382],[7722,7730,5384,5389],[0,0,5390,5391],[0,0,5384,5392],[0,0,5339,5393],[0,0,5316,5393],[0,0,5316,5395],[7779,7788,5408,5435],[0,0,5436,5441],[0,0,5442,5455],[0,0,5436,5455],[0,0,5457,5462],[0,0,5463,5469],[0,0,5457,5469],[0,0,5408,5470],[0,0,5473,5487],[0,0,5408,5487],[0,0,5407,5488],[0,0,5407,5492],[7850,7856,5494,5497],[0,0,5498,5499],[0,0,5494,5500],[0,0,5402,5501],[0,0,5395,5503],[2500,3336,4278,5547],[6546,7862,0,5547]]);
-
-__shadeup_gen_shader("shd_00006405900710000000088000759302300086039", {
-					webgl: {_ext_uniform_local_viewProjMatrix: {"type":"primitive","name":"float4x4"}, _ext_uniform_global_sqNum: {"type":"primitive","name":"int"}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"time":{"type":"primitive","name":"float"}}}, _ext_uniform_global_perlin_octaves: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PI: {"type":"primitive","name":"float"}, _ext_uniform_global_perlin: {"type":"array","element":{"type":"primitive","name":"float"}}, _ext_uniform_global_PERLIN_SIZE: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_perlin_amp_falloff: {"type":"primitive","name":"float"}},
-					webgpu: {"attributeInput":"","attributeOutput":"@location(7) @interpolate(perspective) custom0: vec3<f32>,\n","locals":[["viewProjMatrix",{"type":"primitive","name":"float4x4"}]],"globals":[["sqNum",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["time",{"type":"primitive","name":"float"}]]}}],["perlin_octaves",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PI",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}],["perlin",{"fileName":"/_std/common.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float"},"staticSize":1,"access":"read"}}],["PERLIN_SIZE",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["perlin_amp_falloff",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}]]}
-				}, {webgpu: `struct ShaderInput {
- @align(16)  position: vec3<f32>,
- @align(16)  normal: vec3<f32>,
- @align(16)  tangent: vec3<f32>,
- @align(16)  bitangent: vec3<f32>,
- @align(16)  clipPosition: vec4<f32>,
- @align(16)  realPosition: vec4<f32>,
- @align(16)  uv: vec2<f32>,
- @align(16)  screen: vec2<f32>,
- @align(16)  color: vec4<f32>,
- @align(16)  groupId: vec3<i32>,
- @align(16)  groupSize: vec3<i32>,
- @align(16)  globalId: vec3<i32>,
- @align(16)  localId: vec3<i32>,
- @align(16)  instanceIndex: i32,
- @align(16)  vertexIndex: i32,
-};
-struct ShaderOutput {
- @align(16)  position: vec4<f32>,
- @align(16)  normal: vec3<f32>,
- @align(16)  tangent: vec3<f32>,
- @align(16)  bitangent: vec3<f32>,
- @align(16)  uv: vec2<f32>,
- @align(16)  color: vec4<f32>,
-// %SHADER_ShaderOutput%
-};
-struct str_i_iistd_native_ts_387_FrameContext {
-//  @align(16)  deltaTime: f32,
- @align(16)  time: f32,
-//  @align(16)  screenSize: vec2<f32>,
-//  @align(16)  frame: i32,
-//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
-//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
-//   camera: str_i_iistd_common_ts_10663_Camera,
-//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
-
-};
-fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  time: f32,) -> str_i_iistd_native_ts_387_FrameContext {
-var _s: str_i_iistd_native_ts_387_FrameContext;
-  _s.time = time;
-
-return _s; 
-}
-struct _InUniformsStruct {
-/*SHADEUP_UNIFORM_STRUCT_START*/
-_ext_uniform_local_viewProjMatrix: mat4x4<f32>,
-@align(16) _ext_uniform_global_sqNum: i32,
-_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
-@align(16) _ext_uniform_global_perlin_octaves: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAPB: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAPB: i32,
-@align(16) _ext_uniform_global_PI: f32,
-@align(16) _ext_uniform_global_perlin_size: i32,
-@align(16) _ext_uniform_global_PERLIN_SIZE: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAP: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAP: i32,
-@align(16) _ext_uniform_global_perlin_amp_falloff: f32,
-};
-@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
-@group(%GROUP_INDEX%) @binding(2) var<storage, read> _ext_uniform_global_perlin: array<f32>;
-fn fn_ii_std_common_ts_42195_scaled_cosine(i_const: f32) -> f32 {
-var i = i_const;
-return f32(0.5) * (f32(1) - cos(i * _in_uniforms._ext_uniform_global_PI));
-
-}
-
-fn fn_ii_std_common_ts_32873_noise_static_perlin2(v_const: vec2<f32>) -> f32 {
-var v = v_const;
-var x: f32 = v.x;
-var y: f32 = v.y;
-var z: f32 = f32(0);
-if ((x < f32(i32(0)))) 
-{
-x = -(x);
-
-}
-if ((y < f32(i32(0)))) 
-{
-y = -(y);
-
-}
-if ((z < f32(i32(0)))) 
-{
-z = -(z);
-
-}
-var xi: i32 = i32(floor(f32(1.0) * x));
-var yi: i32 = i32(floor(f32(1.0) * y));
-var zi: i32 = i32(floor(f32(1.0) * z));
-var xf: f32 = x - f32(xi);
-var yf: f32 = y - f32(yi);
-var zf: f32 = z - f32(zi);
-var rxf: f32 = f32(0);
-var ryf: f32 = f32(0);
-var r: f32 = f32(0);
-var ampl: f32 = f32(0.5);
-var n1: f32 = f32(0);
-var n2: f32 = f32(0);
-var n3: f32 = f32(0);
-for (var o: i32 = i32(0);(o < _in_uniforms._ext_uniform_global_perlin_octaves);o++){
-var of1: i32 = xi + (yi << u32(_in_uniforms._ext_uniform_global_PERLIN_YWRAPB)) + (zi << u32(_in_uniforms._ext_uniform_global_PERLIN_ZWRAPB));
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _in_uniforms._ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _in_uniforms._ext_uniform_global_perlin_amp_falloff;
-;xi = xi << u32(i32(1));
-;xf = xf * f32(2);
-;yi = yi << u32(i32(1));
-;yf = yf * f32(2);
-;zi = zi << u32(i32(1));
-;zf = zf * f32(2);
-;if ((xf >= f32(1))) 
-{
-xi++;
-;xf = xf - f32(1);
-
-}
-;if ((yf >= f32(1))) 
-{
-yi++;
-;yf = yf - f32(1);
-
-}
-;if ((zf >= f32(1))) 
-{
-zi++;
-;zf = zf - f32(1);
-
-}
-
-}return r;
-
-}
-
-fn fn_iimain_ts_2866_calcPosition(instanceIndex_const: i32, inPos_const: vec3<f32>) -> vec3<f32> {
-var instanceIndex = instanceIndex_const;
-var inPos = inPos_const;
-var yFrac: f32 = f32(instanceIndex) / f32(_in_uniforms._ext_uniform_global_sqNum);
-var x: f32 = f32(instanceIndex) - f32(floor(f32(1.0) * yFrac) * f32(_in_uniforms._ext_uniform_global_sqNum));
-var y: f32 = floor(f32(1.0) * yFrac);
-var t: f32 = _in_uniforms._ext_uniform_global_env.time / f32(200);
-var h: f32 = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2<f32>(x, y) / f32(30));
-if ((h > f32(0.6))) 
-{
-h = h + (h - f32(0.6)) * f32(1.5);
-
-}
-var p: vec3<f32> = inPos * vec3<f32>(f32(i32(1)), f32(1), f32(i32(1))) + vec3<f32>(x * f32(i32(100)), round((h * f32(i32(3000))) / f32(100)) * f32(100), y * f32(i32(100)));
-if ((inPos.y < f32(i32(0)))) 
-{
-p = p * vec3<f32>(vec3<f32>(vec3<i32>(i32(1), i32(0), i32(1))));
-
-}
-return p;
-
-}
-
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
-fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-var realPosition: vec3<f32> = fn_iimain_ts_2866_calcPosition(_i_in.instanceIndex, _i_in.position);
-_i_out.custom0 = realPosition;
-_i_out.position = _in_uniforms._ext_uniform_local_viewProjMatrix * vec4<f32>(realPosition, f32(i32(1)));
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
-}
-`,webgl:`struct ShaderInput {
-  vec3 position;
-  vec3 normal;
-  vec3 tangent;
-  vec3 bitangent;
-  vec4 clipPosition;
-  vec4 realPosition;
-  vec2 uv;
-  vec2 screen;
-  vec4 color;
-  ivec3 groupId;
-  ivec3 groupSize;
-  ivec3 globalId;
-  ivec3 localId;
-  int instanceIndex;
-  int vertexIndex;
-
-};
-struct ShaderOutput {
-  vec4 position;
-  vec3 normal;
-  vec3 tangent;
-  vec3 bitangent;
-  vec2 uv;
-  vec4 color;
-
-};
 struct str_i_iistd_native_ts_387_FrameContext {
 //   float deltaTime;
   float time;
@@ -676,7 +1010,7 @@ struct str_i_iistd_native_ts_387_FrameContext {
 //   int frame;
 //   str_i_iistd_native_ts_1719_MouseInputState mouse;
 //   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
-//   str_i_iistd_common_ts_10663_Camera camera;
+//   str_i_iistd_common_ts_10681_Camera camera;
 //   str_i_iistd_common_ts_9656_Camera2d camera2d;
 
 };
@@ -684,104 +1018,32 @@ str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_Fr
 str_i_iistd_native_ts_387_FrameContext _s;  _s.time = time;
   return _s;
 }
-uniform int _ext_uniform_global_sqNum;
+uniform sampler2D _ext_uniform_global_tex2;
+uniform vec2 _ext_uniform_global_tex2_size;
 uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
-uniform int _ext_uniform_global_perlin_octaves;
-uniform int _ext_uniform_global_PERLIN_YWRAPB;
-uniform int _ext_uniform_global_PERLIN_ZWRAPB;
 uniform float _ext_uniform_global_PI;
-uniform float[0] _ext_uniform_global_perlin;
-uniform int _ext_uniform_global_PERLIN_SIZE;
-uniform int _ext_uniform_global_PERLIN_YWRAP;
-uniform int _ext_uniform_global_PERLIN_ZWRAP;
-uniform float _ext_uniform_global_perlin_amp_falloff;
-uniform mat4 _ext_uniform_local_viewProjMatrix;
-float fn_ii_std_common_ts_42195_scaled_cosine(float i) {
-return float(0.5) * (float(1) - cos(i * _ext_uniform_global_PI));
+uniform float _ext_uniform_local_scroll;
+uniform float _ext_uniform_global_lastScroll;
+uniform float _ext_uniform_local_deltaTime;
+float fn_iistd_math_ts_40366_rand(float seed) {
+if (0 == 0){
+return fract(sin(seed * float(91.3458)) * float(47453.5453));
+
+}else 
+{
+return 0.0;
 
 }
 
-float fn_ii_std_common_ts_32873_noise_static_perlin2(vec2 v) {
-float x = v.x;
-float y = v.y;
-float z = float(0);
-if ((x < float(float(int(0))))){
-x = -(x);
-
-}if ((y < float(float(int(0))))){
-y = -(y);
-
-}if ((z < float(float(int(0))))){
-z = -(z);
-
-}int xi = int(floor(x));
-int yi = int(floor(y));
-int zi = int(floor(z));
-float xf = x - float(xi);
-float yf = y - float(yi);
-float zf = z - float(zi);
-float rxf = float(0);
-float ryf = float(0);
-float r = float(0);
-float ampl = float(0.5);
-float n1 = float(0);
-float n2 = float(0);
-float n3 = float(0);
-for (int o = int(0);(float(o) < float(_ext_uniform_global_perlin_octaves));o++){
-int of1 = xi + (yi << _ext_uniform_global_PERLIN_YWRAPB) + (zi << _ext_uniform_global_PERLIN_ZWRAPB);
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _ext_uniform_global_perlin_amp_falloff;
-;xi = xi << int(1);
-;xf = xf * float(2);
-;yi = yi << int(1);
-;yf = yf * float(2);
-;zi = zi << int(1);
-;zf = zf * float(2);
-;if ((xf >= float(1))){
-xi++;
-;xf = xf - float(1);
-
-};if ((yf >= float(1))){
-yi++;
-;yf = yf - float(1);
-
-};if ((zf >= float(1))){
-zi++;
-;zf = zf - float(1);
-
 }
-}return r;
+
+float fn_iistd_math_ts_40744_rand2(vec2 seed) {
+return fract(sin(dot(seed, vec2(12.9898, 4.1414))) * float(43758.5453));
 
 }
 
-vec3 fn_iimain_ts_2866_calcPosition(int instanceIndex, vec3 inPos) {
-float yFrac = float(instanceIndex) / float(_ext_uniform_global_sqNum);
-float x = float(instanceIndex) - float(floor(yFrac) * float(_ext_uniform_global_sqNum));
-float y = floor(yFrac);
-float t = _ext_uniform_global_env.time / float(200);
-float h = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2(x, y) / float(30));
-if ((h > float(0.6))){
-h = h + (h - float(0.6)) * float(1.5);
-
-}vec3 p = inPos * vec3(int(1), float(1), int(1)) + vec3(x * float(int(100)), round((h * float(int(3000))) / float(100)) * float(100), y * float(int(100)));
-if ((inPos.y < float(float(int(0))))){
-p = p * vec3(vec3(ivec3(int(1), int(0), int(1))));
-
-}return p;
+float fn_iistd_math_ts_41039_rand3(vec3 seed) {
+return fn_iistd_math_ts_40744_rand2(seed.xy + fn_iistd_math_ts_40366_rand(seed.z));
 
 }
 
@@ -789,18 +1051,26 @@ p = p * vec3(vec3(ivec3(int(1), int(0), int(1))));
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
 void main() {
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-vec3 realPosition = fn_iimain_ts_2866_calcPosition(_i_in.instanceIndex, _i_in.position);
-fn_ii_std_drawIndexed_ts_4783_ShaderOutput_static_attr(_i_out, int(0), realPosition);
-_i_out.position = _ext_uniform_local_viewProjMatrix * vec4(realPosition, int(1));
+vec2 pixelDist = (shadeup_up_swizzle_xy_float(float(1)) / _ext_uniform_global_tex2_size);
+float angle = fn_iistd_math_ts_41039_rand3(vec3(_i_in.screen, _ext_uniform_global_env.time)) * _ext_uniform_global_PI * float(int(2));
+vec2 dir = vec2(cos(angle), sin(angle));
+vec2 off = vec2(int(0), (_ext_uniform_local_scroll - _ext_uniform_global_lastScroll)) * pixelDist;
+vec4 val1 = texture(_ext_uniform_global_tex2, vec2(_i_in.uv + off + dir * pixelDist));
+vec4 val2 = texture(_ext_uniform_global_tex2, vec2(_i_in.uv + off));
+_i_out.color = ((val1 + val2) / float(2)) * (float(1) - _ext_uniform_local_deltaTime * float(8));
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
 }
-`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[493,510,449,471],[577,589,471,485],[623,642,485,507],[674,685,507,523],[745,792,523,578],[842,898,578,639],[972,1002,639,687],[1007,1043,687,738],[387,1715,401,742],[387,1715,742,922],[2721,2834,922,961],[16316,16333,961,1033],[41825,41971,1033,1081],[41033,41176,1081,1128],[41356,41499,1128,1175],[1922,2070,1175,1213],[42328,42500,1213,1258],[41679,41819,1258,1303],[41182,41350,1303,1349],[41505,41673,1349,1395],[42006,42168,1395,1449],[5506,5601,1449,1497],[0,0,1543,1550],[42257,42265,1561,1566],[0,0,1567,1570],[0,0,1561,1571],[42281,42289,1575,1580],[0,0,1581,1582],[0,0,1575,1583],[42296,42299,1586,1589],[0,0,1590,1591],[0,0,1594,1616],[0,0,1590,1616],[0,0,1586,1617],[0,0,1575,1617],[0,0,1574,1618],[0,0,1561,1618],[0,0,1554,1620],[19720,19799,1497,1624],[0,0,1677,1683],[0,0,1697,1698],[0,0,1697,1700],[0,0,1687,1700],[0,0,1687,1702],[0,0,1712,1713],[0,0,1712,1715],[0,0,1702,1715],[0,0,1702,1717],[32966,32974,1727,1732],[0,0,1733,1734],[0,0,1727,1735],[0,0,1717,1735],[0,0,1717,1737],[0,0,1742,1743],[32995,33001,1758,1761],[0,0,1762,1763],[0,0,1758,1764],[0,0,1752,1765],[0,0,1746,1766],[0,0,1741,1767],[0,0,1770,1771],[0,0,1776,1777],[0,0,1774,1778],[0,0,1770,1778],[0,0,1770,1780],[0,0,1768,1782],[0,0,1782,1782],[0,0,1737,1782],[0,0,1787,1788],[33041,33047,1803,1806],[0,0,1807,1808],[0,0,1803,1809],[0,0,1797,1810],[0,0,1791,1811],[0,0,1786,1812],[0,0,1815,1816],[0,0,1821,1822],[0,0,1819,1823],[0,0,1815,1823],[0,0,1815,1825],[0,0,1813,1827],[0,0,1827,1827],[0,0,1782,1827],[0,0,1832,1833],[33087,33093,1848,1851],[0,0,1852,1853],[0,0,1848,1854],[0,0,1842,1855],[0,0,1836,1856],[0,0,1831,1857],[0,0,1860,1861],[0,0,1866,1867],[0,0,1864,1868],[0,0,1860,1868],[0,0,1860,1870],[0,0,1858,1872],[0,0,1872,1872],[0,0,1827,1872],[33128,33134,1881,1884],[33135,33140,1885,1890],[0,0,1891,1892],[0,0,1885,1893],[0,0,1881,1894],[0,0,1872,1894],[0,0,1872,1896],[33155,33161,1905,1908],[33162,33167,1909,1914],[0,0,1915,1916],[0,0,1909,1917],[0,0,1905,1918],[0,0,1896,1918],[0,0,1896,1920],[33182,33188,1929,1932],[33189,33194,1933,1938],[0,0,1939,1940],[0,0,1933,1941],[0,0,1929,1942],[0,0,1920,1942],[0,0,1920,1944],[0,0,1955,1956],[0,0,1965,1967],[0,0,1959,1968],[0,0,1955,1968],[0,0,1944,1968],[0,0,1944,1970],[0,0,1981,1982],[0,0,1991,1993],[0,0,1985,1994],[0,0,1981,1994],[0,0,1970,1994],[0,0,1970,1996],[0,0,2007,2008],[0,0,2017,2019],[0,0,2011,2020],[0,0,2007,2020],[0,0,1996,2020],[0,0,1996,2022],[33288,33296,2034,2039],[0,0,2040,2041],[0,0,2034,2042],[0,0,2022,2042],[0,0,2022,2044],[33313,33321,2056,2061],[0,0,2062,2063],[0,0,2056,2064],[0,0,2044,2064],[0,0,2044,2066],[33336,33344,2076,2081],[0,0,2082,2083],[0,0,2076,2084],[0,0,2066,2084],[0,0,2066,2086],[33362,33370,2099,2104],[0,0,2105,2108],[0,0,2099,2109],[0,0,2086,2109],[0,0,2086,2111],[33386,33394,2122,2127],[0,0,2128,2129],[0,0,2122,2130],[0,0,2111,2130],[0,0,2111,2132],[33410,33418,2143,2148],[0,0,2149,2150],[0,0,2143,2151],[0,0,2132,2151],[0,0,2132,2153],[33434,33442,2164,2169],[0,0,2170,2171],[0,0,2164,2172],[0,0,2153,2172],[0,0,2153,2174],[33462,33468,2187,2190],[0,0,2191,2192],[0,0,2187,2193],[0,0,2179,2193],[0,0,2201,2202],[0,0,2195,2203],[0,0,2212,2246],[0,0,2206,2247],[0,0,2194,2248],[0,0,2249,2250],[0,0,2249,2252],[0,0,2265,2267],[0,0,2271,2273],[0,0,2277,2310],[0,0,2271,2310],[0,0,2270,2311],[0,0,2265,2311],[0,0,2315,2317],[0,0,2321,2354],[0,0,2315,2354],[0,0,2314,2355],[0,0,2265,2355],[0,0,2255,2355],[0,0,2255,2357],[0,0,2358,2361],[33625,33638,2364,2403],[0,0,2404,2406],[0,0,2364,2407],[0,0,2358,2407],[0,0,2358,2409],[0,0,2410,2413],[33650,33663,2416,2455],[0,0,2456,2458],[0,0,2416,2459],[0,0,2410,2459],[0,0,2410,2461],[0,0,2462,2464],[0,0,2467,2493],[0,0,2467,2493],[0,0,2494,2497],[0,0,2500,2531],[0,0,2494,2531],[0,0,2467,2532],[0,0,2462,2532],[0,0,2462,2534],[0,0,2535,2537],[0,0,2540,2542],[0,0,2545,2548],[0,0,2552,2578],[0,0,2552,2578],[0,0,2580,2583],[33799,33805,2586,2589],[0,0,2590,2591],[0,0,2586,2592],[0,0,2580,2592],[0,0,2579,2593],[0,0,2596,2627],[0,0,2579,2627],[0,0,2552,2628],[0,0,2631,2633],[0,0,2552,2633],[0,0,2551,2634],[0,0,2545,2634],[0,0,2540,2634],[0,0,2535,2634],[0,0,2535,2636],[0,0,2637,2639],[0,0,2642,2668],[0,0,2642,2668],[0,0,2670,2673],[0,0,2676,2708],[0,0,2670,2708],[0,0,2669,2709],[0,0,2712,2743],[0,0,2669,2743],[0,0,2642,2744],[0,0,2637,2744],[0,0,2637,2746],[0,0,2747,2749],[0,0,2752,2754],[0,0,2757,2760],[0,0,2764,2790],[0,0,2764,2790],[0,0,2792,2795],[0,0,2798,2830],[0,0,2792,2830],[34019,34025,2833,2836],[0,0,2837,2838],[0,0,2833,2839],[0,0,2792,2839],[0,0,2791,2840],[0,0,2843,2874],[0,0,2791,2874],[0,0,2764,2875],[0,0,2878,2880],[0,0,2764,2880],[0,0,2763,2881],[0,0,2757,2881],[0,0,2752,2881],[0,0,2747,2881],[0,0,2747,2883],[0,0,2884,2886],[0,0,2889,2891],[0,0,2894,2897],[0,0,2901,2903],[0,0,2906,2908],[0,0,2901,2908],[0,0,2900,2909],[0,0,2894,2909],[0,0,2889,2909],[0,0,2884,2909],[0,0,2884,2911],[0,0,2912,2915],[0,0,2918,2921],[0,0,2924,2956],[0,0,2918,2956],[0,0,2912,2956],[0,0,2912,2958],[0,0,2959,2961],[0,0,2964,2990],[0,0,2964,2990],[0,0,2991,2994],[0,0,2997,3028],[0,0,2991,3028],[0,0,2964,3029],[0,0,2959,3029],[0,0,2959,3031],[0,0,3032,3034],[0,0,3037,3039],[0,0,3042,3045],[0,0,3049,3075],[0,0,3049,3075],[0,0,3077,3080],[34274,34280,3083,3086],[0,0,3087,3088],[0,0,3083,3089],[0,0,3077,3089],[0,0,3076,3090],[0,0,3093,3124],[0,0,3076,3124],[0,0,3049,3125],[0,0,3128,3130],[0,0,3049,3130],[0,0,3048,3131],[0,0,3042,3131],[0,0,3037,3131],[0,0,3032,3131],[0,0,3032,3133],[0,0,3134,3136],[0,0,3139,3165],[0,0,3139,3165],[0,0,3167,3170],[0,0,3173,3205],[0,0,3167,3205],[0,0,3166,3206],[0,0,3209,3240],[0,0,3166,3240],[0,0,3139,3241],[0,0,3134,3241],[0,0,3134,3243],[0,0,3244,3246],[0,0,3249,3251],[0,0,3254,3257],[0,0,3261,3287],[0,0,3261,3287],[0,0,3289,3292],[0,0,3295,3327],[0,0,3289,3327],[34494,34500,3330,3333],[0,0,3334,3335],[0,0,3330,3336],[0,0,3289,3336],[0,0,3288,3337],[0,0,3340,3371],[0,0,3288,3371],[0,0,3261,3372],[0,0,3375,3377],[0,0,3261,3377],[0,0,3260,3378],[0,0,3254,3378],[0,0,3249,3378],[0,0,3244,3378],[0,0,3244,3380],[0,0,3381,3383],[0,0,3386,3388],[0,0,3391,3394],[0,0,3398,3400],[0,0,3403,3405],[0,0,3398,3405],[0,0,3397,3406],[0,0,3391,3406],[0,0,3386,3406],[0,0,3381,3406],[0,0,3381,3408],[0,0,3409,3411],[0,0,3414,3416],[34610,34623,3419,3458],[0,0,3459,3461],[0,0,3419,3462],[0,0,3466,3468],[0,0,3471,3473],[0,0,3466,3473],[0,0,3465,3474],[0,0,3419,3474],[0,0,3414,3474],[0,0,3409,3474],[0,0,3409,3476],[0,0,3477,3478],[0,0,3481,3482],[0,0,3485,3487],[0,0,3490,3494],[0,0,3485,3494],[0,0,3481,3494],[0,0,3477,3494],[0,0,3477,3496],[0,0,3497,3501],[0,0,3504,3508],[0,0,3511,3549],[0,0,3504,3549],[0,0,3497,3549],[0,0,3497,3551],[0,0,3552,3554],[0,0,3557,3559],[34748,34754,3563,3566],[0,0,3567,3568],[0,0,3563,3569],[0,0,3557,3569],[0,0,3552,3569],[0,0,3552,3571],[0,0,3572,3574],[0,0,3577,3579],[34777,34785,3582,3587],[0,0,3588,3589],[0,0,3582,3590],[0,0,3577,3590],[0,0,3572,3590],[0,0,3572,3592],[0,0,3593,3595],[0,0,3598,3600],[34813,34819,3604,3607],[0,0,3608,3609],[0,0,3604,3610],[0,0,3598,3610],[0,0,3593,3610],[0,0,3593,3612],[0,0,3613,3615],[0,0,3618,3620],[34842,34850,3623,3628],[0,0,3629,3630],[0,0,3623,3631],[0,0,3618,3631],[0,0,3613,3631],[0,0,3613,3633],[0,0,3634,3636],[0,0,3639,3641],[34878,34884,3645,3648],[0,0,3649,3650],[0,0,3645,3651],[0,0,3639,3651],[0,0,3634,3651],[0,0,3634,3653],[0,0,3654,3656],[0,0,3659,3661],[34907,34915,3664,3669],[0,0,3670,3671],[0,0,3664,3672],[0,0,3659,3672],[0,0,3654,3672],[0,0,3654,3674],[0,0,3680,3682],[34939,34947,3686,3691],[0,0,3692,3693],[0,0,3686,3694],[0,0,3679,3695],[0,0,3698,3700],[0,0,3698,3702],[0,0,3698,3704],[0,0,3705,3707],[0,0,3710,3712],[34978,34986,3715,3720],[0,0,3721,3722],[0,0,3715,3723],[0,0,3710,3723],[0,0,3705,3723],[0,0,3705,3725],[0,0,3696,3727],[0,0,3727,3727],[0,0,3675,3727],[0,0,3733,3735],[35011,35019,3739,3744],[0,0,3745,3746],[0,0,3739,3747],[0,0,3732,3748],[0,0,3751,3753],[0,0,3751,3755],[0,0,3751,3757],[0,0,3758,3760],[0,0,3763,3765],[35050,35058,3768,3773],[0,0,3774,3775],[0,0,3768,3776],[0,0,3763,3776],[0,0,3758,3776],[0,0,3758,3778],[0,0,3749,3780],[0,0,3780,3780],[0,0,3728,3780],[0,0,3786,3788],[35083,35091,3792,3797],[0,0,3798,3799],[0,0,3792,3800],[0,0,3785,3801],[0,0,3804,3806],[0,0,3804,3808],[0,0,3804,3810],[0,0,3811,3813],[0,0,3816,3818],[35122,35130,3821,3826],[0,0,3827,3828],[0,0,3821,3829],[0,0,3816,3829],[0,0,3811,3829],[0,0,3811,3831],[0,0,3802,3833],[0,0,3833,3833],[0,0,3781,3833],[0,0,2253,3835],[0,0,2174,3835],[0,0,3842,3843],[0,0,3835,3845],[19421,19436,1624,3849],[0,0,3885,3902],[0,0,3904,3914],[0,0,3938,3951],[0,0,3932,3952],[2976,2984,3955,3960],[0,0,3961,3986],[0,0,3955,3987],[0,0,3932,3987],[0,0,3918,3987],[0,0,3918,3989],[0,0,4005,4018],[0,0,3999,4019],[3026,3034,4022,4027],[3043,3048,4028,4033],[0,0,4034,4039],[0,0,4028,4040],[0,0,4049,4074],[0,0,4043,4075],[0,0,4028,4075],[0,0,4022,4076],[0,0,3999,4076],[0,0,3989,4076],[0,0,3989,4078],[3077,3082,4088,4093],[0,0,4094,4099],[0,0,4088,4100],[0,0,4078,4100],[0,0,4078,4102],[0,0,4112,4135],[0,0,4136,4140],[0,0,4112,4140],[3117,3125,4143,4148],[0,0,4149,4152],[0,0,4143,4153],[0,0,4112,4153],[0,0,4102,4153],[0,0,4102,4155],[3144,3157,4165,4211],[0,0,4217,4218],[0,0,4220,4221],[0,0,4212,4222],[3187,3195,4225,4230],[0,0,4231,4233],[0,0,4225,4234],[0,0,4212,4234],[0,0,4165,4235],[0,0,4155,4235],[0,0,4155,4237],[0,0,4242,4243],[3220,3228,4246,4251],[0,0,4252,4255],[0,0,4246,4256],[0,0,4241,4257],[0,0,4260,4261],[0,0,4264,4265],[0,0,4269,4270],[3271,3279,4273,4278],[0,0,4279,4282],[0,0,4273,4283],[0,0,4269,4283],[0,0,4268,4284],[3289,3297,4287,4292],[0,0,4293,4296],[0,0,4287,4297],[0,0,4268,4297],[0,0,4264,4297],[0,0,4260,4297],[0,0,4260,4299],[0,0,4258,4301],[0,0,4301,4301],[0,0,4237,4301],[0,0,4310,4315],[3353,3359,4323,4326],[0,0,4327,4328],[0,0,4323,4329],[3364,3372,4331,4336],[0,0,4337,4338],[0,0,4331,4339],[3379,3385,4341,4344],[0,0,4345,4346],[0,0,4341,4347],[0,0,4318,4348],[0,0,4310,4348],[0,0,4356,4357],[3418,3424,4366,4369],[0,0,4370,4373],[0,0,4366,4374],[0,0,4360,4375],[0,0,4356,4375],[3441,3446,4377,4382],[0,0,4384,4385],[3467,3473,4394,4397],[0,0,4398,4402],[0,0,4394,4403],[0,0,4388,4404],[0,0,4384,4404],[0,0,4383,4405],[3484,3492,4408,4413],[0,0,4414,4417],[0,0,4408,4418],[0,0,4383,4418],[0,0,4377,4419],[3504,3512,4422,4427],[0,0,4428,4431],[0,0,4422,4432],[0,0,4377,4432],[0,0,4434,4435],[3534,3540,4444,4447],[0,0,4448,4451],[0,0,4444,4452],[0,0,4438,4453],[0,0,4434,4453],[0,0,4351,4454],[0,0,4310,4454],[0,0,4301,4454],[0,0,4301,4456],[0,0,4461,4466],[0,0,4461,4468],[3587,3593,4483,4486],[0,0,4487,4488],[0,0,4483,4489],[0,0,4477,4490],[0,0,4471,4491],[0,0,4460,4492],[0,0,4495,4496],[0,0,4499,4500],[3628,3634,4519,4522],[0,0,4523,4524],[0,0,4519,4525],[3639,3645,4527,4530],[0,0,4531,4532],[0,0,4527,4533],[3650,3656,4535,4538],[0,0,4539,4540],[0,0,4535,4541],[0,0,4513,4542],[0,0,4508,4543],[0,0,4503,4544],[0,0,4499,4544],[0,0,4495,4544],[0,0,4495,4546],[0,0,4493,4548],[0,0,4548,4548],[0,0,4456,4548],[0,0,4555,4556],[0,0,4548,4558],[419,890,3849,4562],[6253,6265,4684,4714],[0,0,4715,4720],[0,0,4721,4734],[0,0,4715,4734],[0,0,4736,4741],[0,0,4742,4750],[0,0,4736,4750],[0,0,4684,4751],[0,0,4664,4751],[0,0,4664,4753],[6302,6312,4753,4807],[0,0,4808,4814],[6324,6330,4816,4819],[0,0,4820,4821],[0,0,4816,4822],[0,0,4824,4836],[0,0,4753,4837],[0,0,4753,4839],[0,0,4839,4845],[0,0,4846,4854],[0,0,4839,4854],[0,0,4857,4890],[0,0,4898,4910],[6419,6425,4912,4915],[0,0,4916,4917],[0,0,4912,4918],[0,0,4893,4919],[0,0,4857,4919],[0,0,4839,4919],[0,0,4839,4921],[2310,2485,4562,4965],[6216,6434,0,4965]]);
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[493,510,449,471],[577,589,471,485],[623,642,485,507],[674,685,507,523],[745,792,523,578],[842,898,578,639],[972,1002,639,687],[1007,1043,687,738],[387,1715,401,742],[387,1715,742,922],[3904,4052,922,966],[3904,4052,966,1010],[16316,16333,1010,1082],[1922,2070,1082,1120],[7462,7505,1120,1161],[6952,7077,1161,1207],[7264,7289,1207,1251],[0,0,1285,1295],[0,0,1303,1304],[0,0,1308,1309],[0,0,1303,1309],[40454,40458,1319,1324],[40463,40466,1325,1328],[0,0,1329,1333],[40477,40482,1336,1341],[0,0,1342,1349],[0,0,1336,1350],[0,0,1329,1350],[0,0,1325,1351],[40495,40500,1354,1359],[0,0,1360,1370],[0,0,1354,1371],[0,0,1325,1371],[0,0,1319,1372],[0,0,1312,1374],[0,0,1310,1376],[0,0,1391,1394],[0,0,1384,1396],[0,0,1382,1398],[0,0,1376,1399],[0,0,1299,1399],[0,0,1251,1403],[0,0,1438,1447],[40798,40802,1458,1463],[40807,40810,1464,1467],[40811,40814,1468,1471],[0,0,1472,1476],[0,0,1483,1490],[0,0,1492,1498],[0,0,1478,1499],[0,0,1468,1500],[0,0,1464,1501],[40848,40853,1504,1509],[0,0,1510,1520],[0,0,1504,1521],[0,0,1464,1521],[0,0,1458,1522],[0,0,1451,1524],[0,0,1403,1528],[0,0,1563,1572],[41093,41098,1583,1611],[0,0,1612,1616],[0,0,1612,1619],[41124,41128,1622,1649],[0,0,1650,1654],[0,0,1650,1656],[0,0,1622,1657],[0,0,1612,1657],[0,0,1583,1658],[0,0,1576,1660],[0,0,1528,1664],[15533,15541,1812,1817],[0,0,1818,1819],[0,0,1812,1820],[0,0,1784,1821],[0,0,1824,1848],[0,0,1824,1853],[0,0,1784,1853],[0,0,1783,1854],[0,0,1766,1854],[0,0,1766,1856],[15597,15602,1870,1898],[0,0,1904,1909],[0,0,1910,1916],[0,0,1904,1916],[0,0,1918,1941],[0,0,1942,1946],[0,0,1918,1946],[0,0,1899,1947],[0,0,1870,1948],[0,0,1951,1973],[0,0,1870,1973],[15648,15654,1982,1985],[0,0,1986,1987],[0,0,1982,1988],[0,0,1976,1989],[0,0,1870,1989],[0,0,1856,1989],[0,0,1856,1991],[15685,15688,2007,2010],[0,0,2011,2016],[0,0,2007,2017],[15697,15700,2019,2022],[0,0,2023,2028],[0,0,2019,2029],[0,0,2002,2030],[0,0,1991,2030],[0,0,1991,2032],[15742,15748,2048,2051],[0,0,2052,2053],[0,0,2048,2054],[0,0,2057,2082],[0,0,2085,2115],[0,0,2057,2115],[0,0,2056,2116],[0,0,2043,2117],[0,0,2120,2129],[0,0,2043,2129],[0,0,2032,2129],[0,0,2032,2131],[0,0,2151,2175],[0,0,2182,2187],[0,0,2188,2190],[0,0,2182,2190],[0,0,2193,2196],[0,0,2182,2196],[0,0,2199,2202],[0,0,2205,2214],[0,0,2199,2214],[0,0,2182,2214],[0,0,2143,2216],[0,0,2131,2216],[0,0,2131,2218],[0,0,2238,2262],[0,0,2269,2274],[0,0,2275,2277],[0,0,2269,2277],[0,0,2280,2283],[0,0,2269,2283],[0,0,2230,2285],[0,0,2218,2285],[0,0,2218,2287],[0,0,2287,2293],[0,0,2294,2299],[0,0,2287,2299],[0,0,2304,2308],[0,0,2311,2315],[0,0,2304,2315],[0,0,2303,2316],[15986,15994,2319,2324],[0,0,2325,2326],[0,0,2319,2327],[0,0,2303,2327],[0,0,2302,2328],[16013,16021,2332,2337],[0,0,2338,2339],[0,0,2332,2340],[0,0,2343,2371],[16047,16055,2374,2379],[0,0,2380,2381],[0,0,2374,2382],[0,0,2343,2382],[0,0,2332,2382],[0,0,2331,2383],[0,0,2302,2383],[0,0,2287,2383],[0,0,2287,2385],[7567,7999,1664,2429],[15479,16131,0,2429]]);
 
-__shadeup_gen_shader("shd_44130055067011460160064094000000831006000000", {
-					webgl: {},
-					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[]}
-				}, {webgpu: `struct ShaderInput {
+__shadeup_gen_shader("shd_08708500520000900005000007802065008012", {
+					webgl: {_ext_uniform_local_numTargets: {"type":"primitive","name":"int"}, _ext_uniform_local_scroll: {"type":"primitive","name":"float"}, _ext_uniform_local_deltaTime: {"type":"primitive","name":"float"}, _ext_uniform_local_mouse: {"type":"primitive","name":"float2"}, _ext_uniform_global_particles: {"type":"array","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":{"position":{"type":"primitive","name":"float2"},"angle":{"type":"primitive","name":"float"},"velocity":{"type":"primitive","name":"float"},"age":{"type":"primitive","name":"float"},"alive":{"type":"primitive","name":"int"},"goal":{"type":"primitive","name":"float"},"timeline":{"type":"primitive","name":"float"}}}}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"time":{"type":"primitive","name":"float"},"screenSize":{"type":"primitive","name":"float2"}}}, _ext_uniform_global_logoBuf: {"type":"array","element":{"type":"primitive","name":"float2"}}, _ext_uniform_global_logoBuf2: {"type":"array","element":{"type":"primitive","name":"float2"}}, _ext_uniform_global_targetsBuf: {"type":"array","element":{"type":"primitive","name":"float2"}}, _ext_uniform_global_numLogoPoints2: {"type":"primitive","name":"int"}, _ext_uniform_global_numLogoPoints: {"type":"primitive","name":"int"}, _ext_uniform_global_deathNear: {"type":"primitive","name":"float"}, _ext_uniform_global_deadCounter: {"type":"array","element":{"type":"primitive","name":"atomic"}}, _ext_uniform_global_dead: {"type":"array","element":{"type":"primitive","name":"uint"}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["numTargets",{"type":"primitive","name":"int"}],["scroll",{"type":"primitive","name":"float"}],["deltaTime",{"type":"primitive","name":"float"}],["mouse",{"type":"primitive","name":"float2"}]],"globals":[["particles",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":[["position",{"type":"primitive","name":"float2"}],["angle",{"type":"primitive","name":"float"}],["velocity",{"type":"primitive","name":"float"}],["age",{"type":"primitive","name":"float"}],["alive",{"type":"primitive","name":"int"}],["goal",{"type":"primitive","name":"float"}],["timeline",{"type":"primitive","name":"float"}]]},"staticSize":1,"access":"write"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["time",{"type":"primitive","name":"float"}],["screenSize",{"type":"primitive","name":"float2"}]]}}],["logoBuf",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float2"},"staticSize":1,"access":"read"}}],["logoBuf2",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float2"},"staticSize":1,"access":"read"}}],["targetsBuf",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float2"},"staticSize":1,"access":"read"}}],["numLogoPoints2",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["numLogoPoints",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["deathNear",{"fileName":"/main.ts","structure":{"type":"primitive","name":"float"}}],["deadCounter",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"atomic","element":"i32"},"staticSize":1,"access":"write"}}],["dead",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"uint"},"staticSize":1,"access":"write"}}]]}
+				}, {webgpu: `fn shadeup_up_swizzle_xx_f32(n: f32) -> vec2<f32>{
+	return vec2<f32>(n, n);
+}
+
+struct ShaderInput {
  @align(16)  position: vec3<f32>,
  @align(16)  normal: vec3<f32>,
  @align(16)  tangent: vec3<f32>,
@@ -817,240 +1087,978 @@ __shadeup_gen_shader("shd_44130055067011460160064094000000831006000000", {
  @align(16)  instanceIndex: i32,
  @align(16)  vertexIndex: i32,
 };
-struct ShaderOutput {
- @align(16)  position: vec4<f32>,
- @align(16)  normal: vec3<f32>,
- @align(16)  tangent: vec3<f32>,
- @align(16)  bitangent: vec3<f32>,
- @align(16)  uv: vec2<f32>,
- @align(16)  color: vec4<f32>,
-// %SHADER_ShaderOutput%
-};
-struct _InUniformsStruct {
-/*SHADEUP_UNIFORM_STRUCT_START*/
-dummy: vec4<f32>,
-};
-@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+struct str_i_main_ts_2739_Particle {
+ @align(16)  position: vec2<f32>,
+ @align(16)  angle: f32,
+ @align(16)  velocity: f32,
+ @align(16)  age: f32,
+ @align(16)  alive: i32,
+ @align(16)  goal: f32,
+ @align(16)  timeline: f32,
 
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
-fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+};
+fn _make_struct_str_i_main_ts_2739_Particle(  age: f32,  alive: i32,  angle: f32,  goal: f32,  position: vec2<f32>,  timeline: f32,  velocity: f32,) -> str_i_main_ts_2739_Particle {
+var _s: str_i_main_ts_2739_Particle;
+  _s.age = age;
+  _s.alive = alive;
+  _s.angle = angle;
+  _s.goal = goal;
+  _s.position = position;
+  _s.timeline = timeline;
+  _s.velocity = velocity;
 
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+return _s; 
 }
-`,webgl:`struct ShaderInput {
-  vec3 position;
-  vec3 normal;
-  vec3 tangent;
-  vec3 bitangent;
-  vec4 clipPosition;
-  vec4 realPosition;
-  vec2 uv;
-  vec2 screen;
-  vec4 color;
-  ivec3 groupId;
-  ivec3 groupSize;
-  ivec3 globalId;
-  ivec3 localId;
-  int instanceIndex;
-  int vertexIndex;
-
-};
-struct ShaderOutput {
-  vec4 position;
-  vec3 normal;
-  vec3 tangent;
-  vec3 bitangent;
-  vec2 uv;
-  vec4 color;
-
-};
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
-void main() {
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-
-/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
-}
-`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[2230,2239,401,547],[6050,6069,0,547]]);
-
-__shadeup_gen_shader("shd_6700026809507899063930060096151892028000990000", {
-					webgl: {_ext_uniform_local_sunViewProjMatrix: {"type":"primitive","name":"float4x4"}, _ext_uniform_global_sqNum: {"type":"primitive","name":"int"}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"time":{"type":"primitive","name":"float"}}}, _ext_uniform_global_perlin_octaves: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAPB: {"type":"primitive","name":"int"}, _ext_uniform_global_PI: {"type":"primitive","name":"float"}, _ext_uniform_global_perlin: {"type":"array","element":{"type":"primitive","name":"float"}}, _ext_uniform_global_PERLIN_SIZE: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_YWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_PERLIN_ZWRAP: {"type":"primitive","name":"int"}, _ext_uniform_global_perlin_amp_falloff: {"type":"primitive","name":"float"}},
-					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["sunViewProjMatrix",{"type":"primitive","name":"float4x4"}]],"globals":[["sqNum",{"fileName":"/main.ts","structure":{"type":"primitive","name":"int"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["time",{"type":"primitive","name":"float"}]]}}],["perlin_octaves",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAPB",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PI",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}],["perlin",{"fileName":"/_std/common.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"float"},"staticSize":1,"access":"read"}}],["PERLIN_SIZE",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_YWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["PERLIN_ZWRAP",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"int"}}],["perlin_amp_falloff",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}]]}
-				}, {webgpu: `struct ShaderInput {
- @align(16)  position: vec3<f32>,
- @align(16)  normal: vec3<f32>,
- @align(16)  tangent: vec3<f32>,
- @align(16)  bitangent: vec3<f32>,
- @align(16)  clipPosition: vec4<f32>,
- @align(16)  realPosition: vec4<f32>,
- @align(16)  uv: vec2<f32>,
- @align(16)  screen: vec2<f32>,
- @align(16)  color: vec4<f32>,
- @align(16)  groupId: vec3<i32>,
- @align(16)  groupSize: vec3<i32>,
- @align(16)  globalId: vec3<i32>,
- @align(16)  localId: vec3<i32>,
- @align(16)  instanceIndex: i32,
- @align(16)  vertexIndex: i32,
-};
-struct ShaderOutput {
- @align(16)  position: vec4<f32>,
- @align(16)  normal: vec3<f32>,
- @align(16)  tangent: vec3<f32>,
- @align(16)  bitangent: vec3<f32>,
- @align(16)  uv: vec2<f32>,
- @align(16)  color: vec4<f32>,
-// %SHADER_ShaderOutput%
-};
 struct str_i_iistd_native_ts_387_FrameContext {
 //  @align(16)  deltaTime: f32,
  @align(16)  time: f32,
-//  @align(16)  screenSize: vec2<f32>,
+ @align(16)  screenSize: vec2<f32>,
 //  @align(16)  frame: i32,
 //   mouse: str_i_iistd_native_ts_1719_MouseInputState,
 //   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
-//   camera: str_i_iistd_common_ts_10663_Camera,
+//   camera: str_i_iistd_common_ts_10681_Camera,
 //   camera2d: str_i_iistd_common_ts_9656_Camera2d,
 
 };
-fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  time: f32,) -> str_i_iistd_native_ts_387_FrameContext {
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  screenSize: vec2<f32>,  time: f32,) -> str_i_iistd_native_ts_387_FrameContext {
 var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.screenSize = screenSize;
   _s.time = time;
 
 return _s; 
 }
 struct _InUniformsStruct {
 /*SHADEUP_UNIFORM_STRUCT_START*/
-_ext_uniform_local_sunViewProjMatrix: mat4x4<f32>,
-@align(16) _ext_uniform_global_sqNum: i32,
+@align(16) _ext_uniform_local_numTargets: i32,
+@align(16) _ext_uniform_local_scroll: f32,
+@align(16) _ext_uniform_local_deltaTime: f32,
+@align(16) _ext_uniform_local_mouse: vec2<f32>,
+@align(16) _ext_uniform_global_particles_size: i32,
 _ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
-@align(16) _ext_uniform_global_perlin_octaves: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAPB: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAPB: i32,
-@align(16) _ext_uniform_global_PI: f32,
-@align(16) _ext_uniform_global_perlin_size: i32,
-@align(16) _ext_uniform_global_PERLIN_SIZE: i32,
-@align(16) _ext_uniform_global_PERLIN_YWRAP: i32,
-@align(16) _ext_uniform_global_PERLIN_ZWRAP: i32,
-@align(16) _ext_uniform_global_perlin_amp_falloff: f32,
+@align(16) _ext_uniform_global_logoBuf_size: i32,
+@align(16) _ext_uniform_global_logoBuf2_size: i32,
+@align(16) _ext_uniform_global_targetsBuf_size: i32,
+@align(16) _ext_uniform_global_numLogoPoints2: i32,
+@align(16) _ext_uniform_global_numLogoPoints: i32,
+@align(16) _ext_uniform_global_deathNear: f32,
+@align(16) _ext_uniform_global_deadCounter_size: i32,
+@align(16) _ext_uniform_global_dead_size: i32,
 };
 @group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
-@group(%GROUP_INDEX%) @binding(2) var<storage, read> _ext_uniform_global_perlin: array<f32>;
-fn fn_ii_std_common_ts_42195_scaled_cosine(i_const: f32) -> f32 {
-var i = i_const;
-return f32(0.5) * (f32(1) - cos(i * _in_uniforms._ext_uniform_global_PI));
+@group(%GROUP_INDEX%) @binding(2) var<storage, read_write> _ext_uniform_global_particles: array<str_i_main_ts_2739_Particle>;
+@group(%GROUP_INDEX%) @binding(3) var<storage, read> _ext_uniform_global_logoBuf: array<vec2<f32>>;
+@group(%GROUP_INDEX%) @binding(4) var<storage, read> _ext_uniform_global_logoBuf2: array<vec2<f32>>;
+@group(%GROUP_INDEX%) @binding(5) var<storage, read> _ext_uniform_global_targetsBuf: array<vec2<f32>>;
+@group(%GROUP_INDEX%) @binding(6) var<storage, read_write> _ext_uniform_global_deadCounter: array<atomic<i32>>;
+@group(%GROUP_INDEX%) @binding(7) var<storage, read_write> _ext_uniform_global_dead: array<u32>;
+fn fn_iistd_math_ts_40744_rand2(seed_const: vec2<f32>) -> f32 {
+var seed = seed_const;
+return fract(sin(dot(seed, vec2<f32>(12.9898, 4.1414))) * f32(43758.5453));
 
 }
 
-fn fn_ii_std_common_ts_32873_noise_static_perlin2(v_const: vec2<f32>) -> f32 {
-var v = v_const;
-var x: f32 = v.x;
-var y: f32 = v.y;
-var z: f32 = f32(0);
-if ((x < f32(i32(0)))) 
+fn fn_iimain_ts_6579_lerpAngle(a_const: f32, b_const: f32, t_const: f32) -> f32 {
+var a = a_const;
+var b = b_const;
+var t = t_const;
+var av: vec2<f32> = vec2<f32>(cos(a), sin(a));
+var bv: vec2<f32> = vec2<f32>(cos(b), sin(b));
+var cv: vec2<f32> = normalize(mix(av, bv, t));
+return atan2(cv.y, cv.x);
+
+}
+
+fn fn_iistd_math_ts_39781_wrap(x_const: f32, low_const: f32, high_const: f32) -> f32 {
+var x = x_const;
+var low = low_const;
+var high = high_const;
+if ((x < low)) 
 {
-x = -(x);
+var rng: f32 = high - low;
+;var s1: f32 = low - x;
+;var ms: f32 = s1 % rng;
+;return high - ms;
 
 }
-if ((y < f32(i32(0)))) 
+else 
+if ((x >= high)) 
 {
-y = -(y);
+var rng: f32 = high - low;
+;var s1: f32 = x - high;
+;var ms: f32 = s1 % rng;
+;return low + ms;
 
 }
-if ((z < f32(i32(0)))) 
+else 
 {
-z = -(z);
+return x;
 
 }
-var xi: i32 = i32(floor(f32(1.0) * x));
-var yi: i32 = i32(floor(f32(1.0) * y));
-var zi: i32 = i32(floor(f32(1.0) * z));
-var xf: f32 = x - f32(xi);
-var yf: f32 = y - f32(yi);
-var zf: f32 = z - f32(zi);
-var rxf: f32 = f32(0);
-var ryf: f32 = f32(0);
-var r: f32 = f32(0);
-var ampl: f32 = f32(0.5);
-var n1: f32 = f32(0);
-var n2: f32 = f32(0);
-var n3: f32 = f32(0);
-for (var o: i32 = i32(0);(o < _in_uniforms._ext_uniform_global_perlin_octaves);o++){
-var of1: i32 = xi + (yi << u32(_in_uniforms._ext_uniform_global_PERLIN_YWRAPB)) + (zi << u32(_in_uniforms._ext_uniform_global_PERLIN_ZWRAPB));
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _in_uniforms._ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP) & _in_uniforms._ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _in_uniforms._ext_uniform_global_PERLIN_YWRAP + i32(1)) & _in_uniforms._ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _in_uniforms._ext_uniform_global_perlin_amp_falloff;
-;xi = xi << u32(i32(1));
-;xf = xf * f32(2);
-;yi = yi << u32(i32(1));
-;yf = yf * f32(2);
-;zi = zi << u32(i32(1));
-;zf = zf * f32(2);
-;if ((xf >= f32(1))) 
+
+
+}
+
+fn fn_iistd_math_ts_40366_rand(seed_const: f32) -> f32 {
+var seed = seed_const;
+if (0 == 0) 
 {
-xi++;
-;xf = xf - f32(1);
+return fract(sin(seed * f32(91.3458)) * f32(47453.5453));
 
 }
-;if ((yf >= f32(1))) 
+else 
 {
-yi++;
-;yf = yf - f32(1);
-
-}
-;if ((zf >= f32(1))) 
-{
-zi++;
-;zf = zf - f32(1);
+return 0.0;
 
 }
 
-}return r;
+}
+
+fn fn_iistd_math_ts_41039_rand3(seed_const: vec3<f32>) -> f32 {
+var seed = seed_const;
+return fn_iistd_math_ts_40744_rand2(seed.xy + fn_iistd_math_ts_40366_rand(seed.z));
 
 }
 
-fn fn_iimain_ts_2866_calcPosition(instanceIndex_const: i32, inPos_const: vec3<f32>) -> vec3<f32> {
-var instanceIndex = instanceIndex_const;
-var inPos = inPos_const;
-var yFrac: f32 = f32(instanceIndex) / f32(_in_uniforms._ext_uniform_global_sqNum);
-var x: f32 = f32(instanceIndex) - f32(floor(f32(1.0) * yFrac) * f32(_in_uniforms._ext_uniform_global_sqNum));
-var y: f32 = floor(f32(1.0) * yFrac);
-var t: f32 = _in_uniforms._ext_uniform_global_env.time / f32(200);
-var h: f32 = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2<f32>(x, y) / f32(30));
-if ((h > f32(0.6))) 
-{
-h = h + (h - f32(0.6)) * f32(1.5);
-
-}
-var p: vec3<f32> = inPos * vec3<f32>(f32(i32(1)), f32(1), f32(i32(1))) + vec3<f32>(x * f32(i32(100)), round((h * f32(i32(3000))) / f32(100)) * f32(100), y * f32(i32(100)));
-if ((inPos.y < f32(i32(0)))) 
-{
-p = p * vec3<f32>(vec3<f32>(vec3<i32>(i32(1), i32(0), i32(1))));
-
-}
-return p;
+fn fn_iimain_ts_9718_trans(p_const: vec2<f32>) -> vec2<f32> {
+var p = p_const;
+var tt: f32 = _in_uniforms._ext_uniform_local_scroll / f32(500);
+var mat3: mat2x2<f32> = mat2x2<f32>(cos(tt), -(sin(tt)), sin(tt), cos(tt));
+return (p - f32(0.5)) * mat3 + f32(0.5);
 
 }
 
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+@compute @workgroup_size(32, 1, 1)
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/){
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+var p: str_i_main_ts_2739_Particle = _ext_uniform_global_particles[_i_in.globalId.x];
+if ((p.alive == i32(0))) 
+{
+return;
+
+}
+if ((_in_uniforms._ext_uniform_local_numTargets > i32(0))) 
+{
+p.goal = p.goal + f32(0.5);
+
+}
+var deathOffset: f32 = fn_iistd_math_ts_40366_rand(f32(_i_in.globalId.x) / f32(15325)) * f32(i32(1));
+p.age = p.age + _in_uniforms._ext_uniform_local_deltaTime;
+p.position = p.position + vec2<f32>(cos(p.angle), sin(p.angle)) * p.velocity * _in_uniforms._ext_uniform_local_deltaTime;
+var targetPos: vec2<f32> = _in_uniforms._ext_uniform_local_mouse;
+var hit: bool = false;
+var angleAmount: f32 = f32(7.5);
+if ((p.goal >= f32(0.5))) 
+{
+targetPos = _in_uniforms._ext_uniform_global_env.screenSize;
+;angleAmount = f32(10);
+;var basePos: vec2<f32> = vec2<f32>(_in_uniforms._ext_uniform_global_env.screenSize.x / f32(1.5), _in_uniforms._ext_uniform_global_env.screenSize.y / f32(i32(8)));
+;var size: vec2<f32> = shadeup_up_swizzle_xx_f32((_in_uniforms._ext_uniform_global_env.screenSize.y / f32(1.2)));
+;var tempVal_10598 = _in_uniforms._ext_uniform_global_env.screenSize.x - size.x - f32(i32(150));
+basePos.x = tempVal_10598;
+;
+;var use2: bool = (fn_iistd_math_ts_40366_rand(f32(_i_in.globalId.x) / f32(105320)) < f32(0.67));
+;var logoSize: vec2<i32> = vec2<i32>(i32(675), i32(675));
+;var firstPos: vec2<f32> = basePos + fn_iimain_ts_9718_trans(_ext_uniform_global_logoBuf[i32(0)].xy / vec2<f32>(vec2<f32>(logoSize))) * size;
+;if (use2) 
+{
+firstPos = basePos + fn_iimain_ts_9718_trans(_ext_uniform_global_logoBuf2[i32(0)].xy / vec2<f32>(vec2<f32>(logoSize))) * size;
+
+}
+;if ((_in_uniforms._ext_uniform_local_numTargets > i32(0))) 
+{
+firstPos = _ext_uniform_global_targetsBuf[i32(0)];
+
+}
+;if ((p.timeline < f32(i32(0)))) 
+{
+targetPos = firstPos;
+;targetPos = targetPos + vec2<f32>(fn_iistd_math_ts_41039_rand3(vec3<f32>(f32(_i_in.globalId.x) / f32(14502.4), f32(132.52), f32(i32(55)))), fn_iistd_math_ts_41039_rand3(vec3<f32>(f32(_i_in.globalId.x) / f32(5325.3), f32(5123.2), f32(i32(234))))) * f32(i32(50));
+;if ((distance(targetPos, p.position) < f32(i32(100)))) 
+{
+p.timeline = f32(1);
+
+}
+;if ((_in_uniforms._ext_uniform_local_numTargets == i32(0))) 
+{
+if (use2) 
+{
+p.angle = p.angle + (cos((f32(_i_in.globalId.x) + p.age) / f32(5000)) * _in_uniforms._ext_uniform_local_deltaTime * f32(10));
+
+}
+else 
+{
+p.angle = p.angle + (sin((f32(_i_in.globalId.x) + p.age) / f32(2400)) * _in_uniforms._ext_uniform_local_deltaTime * f32(6));
+
+}
+
+}
+
+}
+else 
+{
+var t: f32 = fn_iistd_math_ts_39781_wrap(p.timeline, f32(i32(0)), f32(select(_in_uniforms._ext_uniform_global_numLogoPoints, _in_uniforms._ext_uniform_global_numLogoPoints2, use2)));
+;if ((_in_uniforms._ext_uniform_local_numTargets > i32(0))) 
+{
+t = fn_iistd_math_ts_39781_wrap(p.timeline, f32(i32(0)), f32(_in_uniforms._ext_uniform_local_numTargets));
+
+}
+;var index: i32 = i32(t * f32(1));
+;var sub: f32 = t * f32(1) - f32(index);
+;var a: vec2<f32> = _ext_uniform_global_logoBuf[index];
+;var b: vec2<f32> = _ext_uniform_global_logoBuf[(index + i32(1)) % _in_uniforms._ext_uniform_global_numLogoPoints];
+;if (use2) 
+{
+a = _ext_uniform_global_logoBuf2[index];
+;b = _ext_uniform_global_logoBuf2[(index + i32(1)) % _in_uniforms._ext_uniform_global_numLogoPoints2];
+
+}
+;targetPos = basePos + fn_iimain_ts_9718_trans(mix(a, b, sub).xy / vec2<f32>(vec2<f32>(logoSize))) * size;
+;if ((_in_uniforms._ext_uniform_local_numTargets > i32(0))) 
+{
+angleAmount = f32(20);
+;a = _ext_uniform_global_targetsBuf[index];
+;b = _ext_uniform_global_targetsBuf[(index + i32(1)) % _in_uniforms._ext_uniform_local_numTargets];
+;targetPos = mix(a, b, sub).xy;
+;if ((p.timeline >= f32(i32(6)))) 
+{
+angleAmount = f32(7);
+
+}
+;if ((p.timeline >= f32(_in_uniforms._ext_uniform_local_numTargets))) 
+{
+targetPos = vec2<f32>(_in_uniforms._ext_uniform_global_env.screenSize.x + f32(i32(400)), f32(-(i32(400))) + _in_uniforms._ext_uniform_local_scroll);
+
+}
+
+}
+;if ((distance(targetPos, p.position) < f32(i32(100)))) 
+{
+p.timeline = p.timeline + f32(1);
+
+}
+;if ((_in_uniforms._ext_uniform_local_numTargets == i32(0))) 
+{
+if ((p.age < _in_uniforms._ext_uniform_global_deathNear + deathOffset)) 
+{
+p.angle = p.angle + (cos(f32(_i_in.globalId.x) + p.timeline)) * _in_uniforms._ext_uniform_local_deltaTime * f32(1);
+;p.angle = p.angle + (sin(f32(_i_in.globalId.x) + _in_uniforms._ext_uniform_global_env.time)) * _in_uniforms._ext_uniform_local_deltaTime * f32(10);
+
+}
+
+}
+else 
+{
+p.angle = p.angle + (sin(f32(_i_in.globalId.x) + _in_uniforms._ext_uniform_global_env.time)) * _in_uniforms._ext_uniform_local_deltaTime * f32(4);
+
+}
+
+}
+
+}
+var d: f32 = distance(targetPos, p.position);
+if ((d < f32(200))) 
+{
+p.goal = p.goal + _in_uniforms._ext_uniform_local_deltaTime;
+
+}
+var targetVelocity: f32 = d * f32(6);
+if (hit) 
+{
+targetVelocity = f32(100);
+
+}
+var deltaPos: vec2<f32> = targetPos - p.position;
+var targetAngle: f32 = atan2(deltaPos.y, deltaPos.x);
+if ((p.age < _in_uniforms._ext_uniform_global_deathNear + deathOffset)) 
+{
+p.angle = fn_iimain_ts_6579_lerpAngle(p.angle, targetAngle, _in_uniforms._ext_uniform_local_deltaTime * angleAmount * p.age / f32(2));
+
+}
+else 
+{
+p.velocity = p.velocity * (f32(1) - _in_uniforms._ext_uniform_local_deltaTime * f32(i32(2)));
+
+}
+var shouldKill: bool = false;
+if ((p.age > f32(7) + deathOffset)) 
+{
+shouldKill = true;
+
+}
+if (((((p.position.x > _in_uniforms._ext_uniform_global_env.screenSize.x) || (p.position.x < f32(i32(0)))) || (p.position.y > _in_uniforms._ext_uniform_global_env.screenSize.y)) || (p.position.y < f32(i32(0))))) 
+{
+
+}
+if (shouldKill) 
+{
+p.alive = i32(0);
+;var idx: i32 = atomicAdd(&_ext_uniform_global_deadCounter[i32(0)], i32(1));
+;_ext_uniform_global_dead[idx] = u32(_i_in.globalId.x);
+
+}
+_ext_uniform_global_particles[_i_in.globalId.x] = p;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`vec2 shadeup_up_swizzle_xx_float(float n) {
+	return vec2(n, n);
+}
+
+struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct str_i_main_ts_2739_Particle {
+  vec2 position;
+  float angle;
+  float velocity;
+  float age;
+  int alive;
+  float goal;
+  float timeline;
+
+};
+str_i_main_ts_2739_Particle _make_struct_str_i_main_ts_2739_Particle(vec2 position, float angle, float velocity, float age, int alive, float goal, float timeline) {
+str_i_main_ts_2739_Particle _s;  _s.position = position;
+  _s.angle = angle;
+  _s.velocity = velocity;
+  _s.age = age;
+  _s.alive = alive;
+  _s.goal = goal;
+  _s.timeline = timeline;
+  return _s;
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//   float deltaTime;
+  float time;
+  vec2 screenSize;
+//   int frame;
+//   str_i_iistd_native_ts_1719_MouseInputState mouse;
+//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
+//   str_i_iistd_common_ts_10681_Camera camera;
+//   str_i_iistd_common_ts_9656_Camera2d camera2d;
+
+};
+str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(float time, vec2 screenSize) {
+str_i_iistd_native_ts_387_FrameContext _s;  _s.time = time;
+  _s.screenSize = screenSize;
+  return _s;
+}
+uniform str_i_main_ts_2739_Particle[0] _ext_uniform_global_particles;
+uniform int _ext_uniform_local_numTargets;
+uniform float _ext_uniform_local_scroll;
+uniform float _ext_uniform_local_deltaTime;
+uniform vec2 _ext_uniform_local_mouse;
+uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
+uniform vec2[0] _ext_uniform_global_logoBuf;
+uniform vec2[0] _ext_uniform_global_logoBuf2;
+uniform vec2[0] _ext_uniform_global_targetsBuf;
+uniform int _ext_uniform_global_numLogoPoints2;
+uniform int _ext_uniform_global_numLogoPoints;
+uniform float _ext_uniform_global_deathNear;
+uniform atomic_int[0] _ext_uniform_global_deadCounter;
+uniform uint[0] _ext_uniform_global_dead;
+float fn_iistd_math_ts_40744_rand2(vec2 seed) {
+return fract(sin(dot(seed, vec2(12.9898, 4.1414))) * float(43758.5453));
+
+}
+
+float fn_iimain_ts_6579_lerpAngle(float a, float b, float t) {
+vec2 av = vec2(cos(a), sin(a));
+vec2 bv = vec2(cos(b), sin(b));
+vec2 cv = normalize(mix(av, bv, t));
+return atan2(cv.y, cv.x);
+
+}
+
+float fn_iistd_math_ts_39781_wrap(float x, float low, float high) {
+if ((x < low)){
+float rng = high - low;
+;float s1 = low - x;
+;float ms = mod(s1, rng);
+;return high - ms;
+
+}else 
+if ((x >= high)){
+float rng = high - low;
+;float s1 = x - high;
+;float ms = mod(s1, rng);
+;return low + ms;
+
+}else 
+{
+return x;
+
+}
+
+
+}
+
+float fn_iistd_math_ts_40366_rand(float seed) {
+if (0 == 0){
+return fract(sin(seed * float(91.3458)) * float(47453.5453));
+
+}else 
+{
+return 0.0;
+
+}
+
+}
+
+float fn_iistd_math_ts_41039_rand3(vec3 seed) {
+return fn_iistd_math_ts_40744_rand2(seed.xy + fn_iistd_math_ts_40366_rand(seed.z));
+
+}
+
+vec2 fn_iimain_ts_9718_trans(vec2 p) {
+float tt = _ext_uniform_local_scroll / float(500);
+mat2 mat3 = mat2(cos(tt), -(sin(tt)), sin(tt), cos(tt));
+return (p - float(0.5)) * mat3 + float(0.5);
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+str_i_main_ts_2739_Particle p = _ext_uniform_global_particles[_i_in.globalId.x];
+if ((p.alive == int(0))){
+return;
+
+}if ((float(_ext_uniform_local_numTargets) > float(int(0)))){
+p.goal = p.goal + float(0.5);
+
+}vec2 fn_iimain_ts_9718_trans(vec2 p) {
+float tt = _ext_uniform_local_scroll / float(500);
+mat2 mat3 = mat2(cos(tt), -(sin(tt)), sin(tt), cos(tt));
+return (p - float(0.5)) * mat3 + float(0.5);
+
+}
+
+float deathOffset = fn_iistd_math_ts_40366_rand(float(_i_in.globalId.x) / float(15325)) * float(int(1));
+p.age = p.age + _ext_uniform_local_deltaTime;
+p.position = p.position + vec2(cos(p.angle), sin(p.angle)) * p.velocity * _ext_uniform_local_deltaTime;
+vec2 targetPos = _ext_uniform_local_mouse;
+bool hit = false;
+float angleAmount = float(7.5);
+if ((p.goal >= float(0.5))){
+targetPos = _ext_uniform_global_env.screenSize;
+;angleAmount = float(10);
+;vec2 basePos = vec2(_ext_uniform_global_env.screenSize.x / float(1.5), _ext_uniform_global_env.screenSize.y / float(int(8)));
+;vec2 size = shadeup_up_swizzle_xx_float((_ext_uniform_global_env.screenSize.y / float(1.2)));
+;basePos.x;
+;bool use2 = (fn_iistd_math_ts_40366_rand(float(_i_in.globalId.x) / float(105320)) < float(0.67));
+;ivec2 logoSize = ivec2(int(675), int(675));
+;vec2 firstPos = basePos + fn_iimain_ts_9718_trans(_ext_uniform_global_logoBuf[int(0)].xy / vec2(vec2(logoSize))) * size;
+;if (use2){
+firstPos = basePos + fn_iimain_ts_9718_trans(_ext_uniform_global_logoBuf2[int(0)].xy / vec2(vec2(logoSize))) * size;
+
+};if ((float(_ext_uniform_local_numTargets) > float(int(0)))){
+firstPos = _ext_uniform_global_targetsBuf[int(0)];
+
+};if ((p.timeline < float(float(int(0))))){
+targetPos = firstPos;
+;targetPos = targetPos + vec2(fn_iistd_math_ts_41039_rand3(vec3(float(_i_in.globalId.x) / float(14502.4), float(132.52), int(55))), fn_iistd_math_ts_41039_rand3(vec3(float(_i_in.globalId.x) / float(5325.3), float(5123.2), int(234)))) * float(float(int(50)));
+;if ((distance(targetPos, p.position) < float(float(int(100))))){
+p.timeline = float(1);
+
+};if ((_ext_uniform_local_numTargets == int(0))){
+if (use2){
+p.angle = p.angle + (cos((float(_i_in.globalId.x) + p.age) / float(5000)) * _ext_uniform_local_deltaTime * float(10));
+
+}else 
+{
+p.angle = p.angle + (sin((float(_i_in.globalId.x) + p.age) / float(2400)) * _ext_uniform_local_deltaTime * float(6));
+
+}
+
+}
+}else 
+{
+float t = fn_iistd_math_ts_39781_wrap(p.timeline, float(int(0)), float(use2 ? _ext_uniform_global_numLogoPoints2 : _ext_uniform_global_numLogoPoints));
+;if ((float(_ext_uniform_local_numTargets) > float(int(0)))){
+t = fn_iistd_math_ts_39781_wrap(p.timeline, float(int(0)), float(_ext_uniform_local_numTargets));
+
+};int index = int(t * float(1));
+;float sub = t * float(1) - float(index);
+;vec2 a = _ext_uniform_global_logoBuf[index];
+;vec2 b = _ext_uniform_global_logoBuf[mod((index + int(1)), _ext_uniform_global_numLogoPoints)];
+;if (use2){
+a = _ext_uniform_global_logoBuf2[index];
+;b = _ext_uniform_global_logoBuf2[mod((index + int(1)), _ext_uniform_global_numLogoPoints2)];
+
+};targetPos = basePos + fn_iimain_ts_9718_trans(mix(a, b, sub).xy / vec2(vec2(logoSize))) * size;
+;if ((float(_ext_uniform_local_numTargets) > float(int(0)))){
+angleAmount = float(20);
+;a = _ext_uniform_global_targetsBuf[index];
+;b = _ext_uniform_global_targetsBuf[mod((index + int(1)), _ext_uniform_local_numTargets)];
+;targetPos = mix(a, b, sub).xy;
+;if ((p.timeline >= float(float(int(6))))){
+angleAmount = float(7);
+
+};if ((p.timeline >= float(float(_ext_uniform_local_numTargets)))){
+targetPos = vec2(_ext_uniform_global_env.screenSize.x + float(int(400)), float(-(int(400))) + _ext_uniform_local_scroll);
+
+}
+};if ((distance(targetPos, p.position) < float(float(int(100))))){
+p.timeline = p.timeline + float(1);
+
+};if ((_ext_uniform_local_numTargets == int(0))){
+if ((p.age < _ext_uniform_global_deathNear + deathOffset)){
+p.angle = p.angle + (cos(float(_i_in.globalId.x) + p.timeline)) * _ext_uniform_local_deltaTime * float(1);
+;p.angle = p.angle + (sin(float(_i_in.globalId.x) + _ext_uniform_global_env.time)) * _ext_uniform_local_deltaTime * float(10);
+
+}
+}else 
+{
+p.angle = p.angle + (sin(float(_i_in.globalId.x) + _ext_uniform_global_env.time)) * _ext_uniform_local_deltaTime * float(4);
+
+}
+
+}
+
+}float d = distance(targetPos, p.position);
+if ((d < float(200))){
+p.goal = p.goal + _ext_uniform_local_deltaTime;
+
+}float targetVelocity = d * float(6);
+if (hit){
+targetVelocity = float(100);
+
+}vec2 deltaPos = targetPos - p.position;
+float targetAngle = atan2(deltaPos.y, deltaPos.x);
+if ((p.age < _ext_uniform_global_deathNear + deathOffset)){
+p.angle = fn_iimain_ts_6579_lerpAngle(p.angle, targetAngle, _ext_uniform_local_deltaTime * angleAmount * p.age / float(2));
+
+}else 
+{
+p.velocity = p.velocity * (float(1) - _ext_uniform_local_deltaTime * float(int(2)));
+
+}
+bool shouldKill = false;
+if ((p.age > float(7) + deathOffset)){
+shouldKill = true;
+
+}if (((((p.position.x > _ext_uniform_global_env.screenSize.x) || (p.position.x < float(float(int(0))))) || (p.position.y > _ext_uniform_global_env.screenSize.y)) || (p.position.y < float(float(int(0)))))){
+
+}if (shouldKill){
+p.alive = int(0);
+;int idx = atomicAdd(&_ext_uniform_global_deadCounter[int(0)], int(1));
+;_ext_uniform_global_dead[idx] = uint(_i_in.globalId.x);
+
+}_ext_uniform_global_particles[_i_in.globalId.x] = p;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[3283,3310,321,338],[3312,3335,338,353],[3337,3363,353,371],[3365,3386,371,384],[3388,3409,384,397],[3411,3433,397,411],[3435,3461,411,429],[2739,3748,284,433],[2739,3748,433,796],[493,510,844,866],[577,589,866,880],[623,642,880,899],[674,685,899,915],[745,792,915,970],[842,898,970,1031],[972,1002,1031,1079],[1007,1043,1079,1130],[387,1715,796,1134],[387,1715,1134,1361],[4058,4231,1361,1431],[7751,7777,1431,1474],[7462,7505,1474,1515],[7264,7289,1515,1559],[7412,7456,1559,1598],[16316,16333,1598,1670],[1722,1868,1670,1715],[1874,2024,1715,1761],[7083,7235,1761,1809],[2579,2717,1809,1857],[2420,2554,1857,1904],[2055,2177,1904,1949],[4237,4403,1949,2004],[4559,4693,2004,2046],[0,0,2081,2090],[40798,40802,2101,2106],[40807,40810,2107,2110],[40811,40814,2111,2114],[0,0,2115,2119],[0,0,2126,2133],[0,0,2135,2141],[0,0,2121,2142],[0,0,2111,2143],[0,0,2107,2144],[40848,40853,2147,2152],[0,0,2153,2163],[0,0,2147,2164],[0,0,2107,2164],[0,0,2101,2165],[0,0,2094,2167],[0,0,2046,2171],[0,0,2205,2212],[0,0,2214,2221],[0,0,2223,2230],[6660,6663,2249,2252],[0,0,2253,2254],[0,0,2249,2255],[6668,6671,2257,2260],[0,0,2261,2262],[0,0,2257,2263],[0,0,2244,2264],[0,0,2234,2264],[0,0,2234,2266],[6700,6703,2281,2284],[0,0,2285,2286],[0,0,2281,2287],[6708,6711,2289,2292],[0,0,2293,2294],[0,0,2289,2295],[0,0,2276,2296],[0,0,2266,2296],[0,0,2266,2298],[6726,6735,2308,2317],[6736,6740,2318,2321],[0,0,2322,2324],[0,0,2326,2328],[0,0,2330,2331],[0,0,2318,2332],[0,0,2308,2333],[0,0,2298,2333],[0,0,2298,2335],[6761,6766,2342,2347],[0,0,2348,2350],[0,0,2348,2352],[0,0,2354,2356],[0,0,2354,2358],[0,0,2342,2359],[0,0,2335,2361],[1921,2093,2171,2365],[0,0,2399,2406],[0,0,2408,2417],[0,0,2419,2429],[0,0,2438,2439],[0,0,2442,2445],[0,0,2437,2446],[0,0,2461,2465],[0,0,2468,2471],[0,0,2461,2471],[0,0,2449,2471],[0,0,2449,2473],[0,0,2485,2488],[0,0,2491,2492],[0,0,2485,2492],[0,0,2474,2492],[0,0,2474,2494],[0,0,2510,2512],[0,0,2514,2517],[0,0,2506,2518],[0,0,2495,2518],[0,0,2495,2520],[0,0,2528,2532],[0,0,2535,2537],[0,0,2528,2537],[0,0,2521,2539],[0,0,2447,2541],[0,0,2552,2553],[0,0,2557,2561],[0,0,2551,2562],[0,0,2577,2581],[0,0,2584,2587],[0,0,2577,2587],[0,0,2565,2587],[0,0,2565,2589],[0,0,2601,2602],[0,0,2605,2609],[0,0,2601,2609],[0,0,2590,2609],[0,0,2590,2611],[0,0,2627,2629],[0,0,2631,2634],[0,0,2623,2635],[0,0,2612,2635],[0,0,2612,2637],[0,0,2645,2648],[0,0,2651,2653],[0,0,2645,2653],[0,0,2638,2655],[0,0,2563,2657],[0,0,2672,2673],[0,0,2665,2675],[0,0,2663,2677],[0,0,2657,2678],[0,0,2547,2678],[0,0,2541,2679],[0,0,2433,2679],[0,0,2365,2683],[0,0,2717,2727],[0,0,2735,2736],[0,0,2740,2741],[0,0,2735,2741],[40454,40458,2751,2756],[40463,40466,2757,2760],[0,0,2761,2765],[40477,40482,2768,2773],[0,0,2774,2781],[0,0,2768,2782],[0,0,2761,2782],[0,0,2757,2783],[40495,40500,2786,2791],[0,0,2792,2802],[0,0,2786,2803],[0,0,2757,2803],[0,0,2751,2804],[0,0,2744,2806],[0,0,2742,2808],[0,0,2823,2826],[0,0,2816,2828],[0,0,2814,2830],[0,0,2808,2831],[0,0,2731,2831],[0,0,2683,2835],[0,0,2870,2879],[41093,41098,2890,2918],[0,0,2919,2923],[0,0,2919,2926],[41124,41128,2929,2956],[0,0,2957,2961],[0,0,2957,2963],[0,0,2929,2964],[0,0,2919,2964],[0,0,2890,2965],[0,0,2883,2967],[0,0,2835,2971],[0,0,3000,3006],[0,0,3021,3046],[9772,9780,3049,3054],[0,0,3055,3058],[0,0,3049,3059],[0,0,3021,3059],[0,0,3010,3059],[0,0,3010,3061],[9814,9817,3078,3081],[0,0,3082,3084],[0,0,3078,3085],[9833,9836,3089,3092],[0,0,3093,3095],[0,0,3089,3096],[0,0,3087,3097],[9843,9846,3099,3102],[0,0,3103,3105],[0,0,3099,3106],[9852,9855,3108,3111],[0,0,3112,3114],[0,0,3108,3115],[0,0,3073,3116],[0,0,3061,3116],[0,0,3061,3118],[0,0,3126,3127],[9897,9905,3130,3135],[0,0,3136,3139],[0,0,3130,3140],[0,0,3126,3140],[0,0,3125,3141],[0,0,3144,3148],[0,0,3125,3148],[9923,9931,3151,3156],[0,0,3157,3160],[0,0,3151,3161],[0,0,3125,3161],[0,0,3118,3163],[3530,3700,2971,3167],[0,0,3301,3330],[0,0,3301,3330],[0,0,3331,3336],[0,0,3337,3345],[0,0,3331,3345],[0,0,3331,3347],[0,0,3301,3348],[0,0,3269,3348],[0,0,3269,3350],[0,0,3355,3356],[0,0,3357,3362],[0,0,3355,3362],[9620,9626,3366,3369],[0,0,3370,3371],[0,0,3366,3372],[0,0,3354,3373],[0,0,3376,3384],[0,0,3374,3386],[0,0,3386,3386],[0,0,3350,3386],[0,0,3397,3426],[0,0,3391,3427],[9664,9670,3436,3439],[0,0,3440,3441],[0,0,3436,3442],[0,0,3430,3443],[0,0,3390,3444],[0,0,3447,3448],[0,0,3449,3453],[0,0,3447,3453],[0,0,3456,3457],[0,0,3458,3462],[0,0,3456,3462],[9701,9709,3465,3470],[0,0,3471,3474],[0,0,3465,3475],[0,0,3456,3475],[0,0,3447,3475],[0,0,3447,3477],[0,0,3445,3479],[0,0,3479,3479],[0,0,3386,3479],[0,0,3508,3514],[0,0,3529,3554],[9772,9780,3557,3562],[0,0,3563,3566],[0,0,3557,3567],[0,0,3529,3567],[0,0,3518,3567],[0,0,3518,3569],[9814,9817,3586,3589],[0,0,3590,3592],[0,0,3586,3593],[9833,9836,3597,3600],[0,0,3601,3603],[0,0,3597,3604],[0,0,3595,3605],[9843,9846,3607,3610],[0,0,3611,3613],[0,0,3607,3614],[9852,9855,3616,3619],[0,0,3620,3622],[0,0,3616,3623],[0,0,3581,3624],[0,0,3569,3624],[0,0,3569,3626],[0,0,3634,3635],[9897,9905,3638,3643],[0,0,3644,3647],[0,0,3638,3648],[0,0,3634,3648],[0,0,3633,3649],[0,0,3652,3656],[0,0,3633,3656],[9923,9931,3659,3664],[0,0,3665,3668],[0,0,3659,3669],[0,0,3633,3669],[0,0,3626,3671],[0,0,3479,3675],[9967,9971,3695,3722],[0,0,3729,3734],[0,0,3735,3743],[0,0,3729,3743],[0,0,3729,3745],[0,0,3723,3746],[10012,10020,3749,3754],[0,0,3755,3760],[0,0,3749,3761],[0,0,3723,3761],[0,0,3695,3762],[10034,10040,3771,3774],[0,0,3775,3776],[0,0,3771,3777],[0,0,3765,3778],[0,0,3695,3778],[0,0,3675,3778],[0,0,3675,3780],[0,0,3780,3781],[0,0,3782,3785],[0,0,3780,3785],[0,0,3788,3789],[0,0,3790,3793],[0,0,3788,3793],[0,0,3796,3824],[0,0,3788,3824],[0,0,3780,3824],[0,0,3780,3826],[0,0,3826,3827],[0,0,3828,3836],[0,0,3826,3836],[0,0,3839,3840],[0,0,3841,3849],[0,0,3839,3849],[10143,10146,3857,3860],[0,0,3861,3862],[0,0,3863,3868],[0,0,3861,3868],[0,0,3857,3869],[10157,10160,3871,3874],[0,0,3875,3876],[0,0,3877,3882],[0,0,3875,3882],[0,0,3871,3883],[0,0,3852,3884],[0,0,3887,3888],[0,0,3889,3897],[0,0,3887,3897],[0,0,3852,3897],[0,0,3900,3928],[0,0,3852,3928],[0,0,3839,3928],[0,0,3826,3928],[0,0,3826,3930],[0,0,3947,3971],[0,0,3930,3971],[0,0,3930,3973],[0,0,3984,3989],[0,0,3973,3989],[0,0,3973,3991],[10258,10266,4011,4016],[0,0,4017,4020],[0,0,4011,4021],[0,0,3991,4021],[0,0,3991,4023],[0,0,4028,4029],[0,0,4030,4034],[0,0,4028,4034],[10293,10301,4038,4043],[0,0,4044,4047],[0,0,4038,4048],[0,0,4027,4049],[0,0,4052,4061],[0,0,4064,4087],[0,0,4088,4098],[0,0,4064,4098],[0,0,4052,4098],[0,0,4052,4100],[0,0,4101,4112],[10352,10360,4115,4120],[0,0,4121,4123],[0,0,4115,4124],[0,0,4101,4124],[0,0,4101,4126],[0,0,4147,4170],[0,0,4171,4181],[0,0,4147,4181],[0,0,4147,4183],[10437,10445,4186,4191],[0,0,4192,4195],[0,0,4186,4196],[0,0,4147,4196],[0,0,4198,4221],[0,0,4222,4232],[0,0,4198,4232],[0,0,4198,4234],[10495,10501,4243,4246],[0,0,4247,4248],[0,0,4243,4249],[0,0,4237,4250],[0,0,4198,4250],[0,0,4142,4251],[0,0,4127,4251],[0,0,4127,4253],[0,0,4295,4318],[0,0,4319,4329],[0,0,4295,4329],[0,0,4295,4331],[10573,10581,4334,4339],[0,0,4340,4343],[0,0,4334,4344],[0,0,4295,4344],[0,0,4294,4345],[0,0,4266,4346],[0,0,4254,4346],[0,0,4254,4348],[0,0,4349,4356],[0,0,4349,4358],[0,0,4349,4360],[10731,10735,4374,4401],[0,0,4408,4413],[0,0,4414,4422],[0,0,4408,4422],[0,0,4408,4424],[0,0,4402,4425],[10776,10784,4428,4433],[0,0,4434,4440],[0,0,4428,4441],[0,0,4402,4441],[0,0,4374,4442],[10799,10807,4445,4450],[0,0,4451,4455],[0,0,4445,4456],[0,0,4373,4457],[0,0,4361,4457],[0,0,4361,4459],[10846,10852,4483,4486],[0,0,4487,4490],[0,0,4483,4491],[10859,10865,4493,4496],[0,0,4497,4500],[0,0,4493,4501],[0,0,4477,4502],[0,0,4460,4502],[0,0,4460,4504],[0,0,4521,4528],[10913,10918,4531,4554],[0,0,4555,4582],[0,0,4555,4582],[10954,10960,4583,4586],[0,0,4587,4588],[0,0,4583,4589],[0,0,4555,4590],[0,0,4555,4593],[0,0,4606,4614],[0,0,4601,4615],[0,0,4596,4616],[0,0,4555,4616],[0,0,4531,4617],[0,0,4620,4624],[0,0,4531,4624],[0,0,4521,4624],[0,0,4505,4624],[0,0,4505,4626],[0,0,4631,4635],[0,0,4638,4646],[0,0,4649,4656],[11042,11047,4659,4682],[0,0,4683,4711],[0,0,4683,4711],[11084,11090,4712,4715],[0,0,4716,4717],[0,0,4712,4718],[0,0,4683,4719],[0,0,4683,4722],[0,0,4735,4743],[0,0,4730,4744],[0,0,4725,4745],[0,0,4683,4745],[0,0,4659,4746],[0,0,4749,4753],[0,0,4659,4753],[0,0,4649,4753],[0,0,4638,4753],[0,0,4638,4755],[0,0,4636,4757],[0,0,4757,4757],[0,0,4627,4757],[0,0,4769,4798],[0,0,4763,4799],[11150,11156,4808,4811],[0,0,4812,4813],[0,0,4808,4814],[0,0,4802,4815],[0,0,4762,4816],[0,0,4819,4827],[0,0,4830,4860],[0,0,4830,4860],[11193,11199,4861,4864],[0,0,4865,4866],[0,0,4861,4867],[0,0,4830,4868],[0,0,4819,4868],[0,0,4819,4870],[0,0,4817,4872],[0,0,4872,4872],[0,0,4758,4872],[0,0,4878,4879],[0,0,4880,4888],[0,0,4878,4888],[11229,11235,4903,4906],[0,0,4907,4908],[0,0,4903,4909],[0,0,4897,4910],[0,0,4891,4911],[0,0,4877,4912],[0,0,4915,4924],[0,0,4927,4935],[0,0,4915,4935],[0,0,4915,4937],[0,0,4938,4947],[0,0,4950,4959],[11316,11321,4967,4995],[0,0,5007,5012],[0,0,5013,5021],[0,0,5007,5021],[0,0,5007,5023],[0,0,5001,5024],[11376,11384,5027,5032],[0,0,5033,5040],[0,0,5027,5041],[0,0,5001,5041],[11397,11405,5043,5048],[0,0,5049,5055],[0,0,5043,5056],[11415,11421,5058,5061],[0,0,5062,5064],[0,0,5058,5065],[0,0,4996,5066],[0,0,4967,5067],[11429,11434,5069,5097],[0,0,5109,5114],[0,0,5115,5123],[0,0,5109,5123],[0,0,5109,5125],[0,0,5103,5126],[11489,11497,5129,5134],[0,0,5135,5141],[0,0,5129,5142],[0,0,5103,5142],[11509,11517,5144,5149],[0,0,5150,5156],[0,0,5144,5157],[11527,11533,5159,5162],[0,0,5163,5166],[0,0,5159,5167],[0,0,5098,5168],[0,0,5069,5169],[0,0,4962,5170],[11543,11549,5185,5188],[0,0,5189,5191],[0,0,5185,5192],[0,0,5179,5193],[0,0,5173,5194],[0,0,4962,5194],[0,0,4950,5194],[0,0,4938,5194],[0,0,4938,5196],[11569,11573,5202,5210],[0,0,5211,5220],[0,0,5222,5223],[0,0,5224,5232],[0,0,5222,5232],[0,0,5202,5233],[11598,11604,5248,5251],[0,0,5252,5255],[0,0,5248,5256],[0,0,5242,5257],[0,0,5236,5258],[0,0,5201,5259],[0,0,5262,5263],[0,0,5264,5272],[0,0,5262,5272],[11626,11634,5275,5280],[0,0,5281,5282],[0,0,5275,5283],[0,0,5262,5283],[0,0,5262,5285],[0,0,5260,5287],[0,0,5287,5287],[0,0,5197,5287],[0,0,5293,5322],[11665,11671,5326,5329],[0,0,5330,5331],[0,0,5326,5332],[0,0,5292,5333],[0,0,5340,5344],[0,0,5347,5348],[0,0,5349,5354],[0,0,5347,5354],[0,0,5357,5358],[0,0,5359,5364],[0,0,5357,5364],[11731,11734,5368,5371],[0,0,5379,5384],[0,0,5385,5393],[0,0,5379,5393],[0,0,5379,5395],[0,0,5373,5396],[0,0,5399,5400],[0,0,5401,5404],[0,0,5399,5404],[0,0,5373,5404],[0,0,5372,5405],[11794,11802,5408,5413],[0,0,5414,5418],[0,0,5408,5419],[0,0,5372,5419],[0,0,5368,5420],[0,0,5423,5451],[0,0,5368,5451],[11828,11836,5454,5459],[0,0,5460,5462],[0,0,5454,5463],[0,0,5368,5463],[0,0,5367,5464],[0,0,5357,5464],[0,0,5347,5464],[0,0,5347,5466],[0,0,5345,5468],[0,0,5476,5477],[0,0,5478,5483],[0,0,5476,5483],[0,0,5486,5487],[0,0,5488,5493],[0,0,5486,5493],[11899,11902,5497,5500],[0,0,5508,5513],[0,0,5514,5522],[0,0,5508,5522],[0,0,5508,5524],[0,0,5502,5525],[0,0,5528,5529],[0,0,5530,5533],[0,0,5528,5533],[0,0,5502,5533],[0,0,5501,5534],[11962,11970,5537,5542],[0,0,5543,5547],[0,0,5537,5548],[0,0,5501,5548],[0,0,5497,5549],[0,0,5552,5580],[0,0,5497,5580],[11996,12004,5583,5588],[0,0,5589,5590],[0,0,5583,5591],[0,0,5497,5591],[0,0,5496,5592],[0,0,5486,5592],[0,0,5476,5592],[0,0,5476,5594],[0,0,5474,5596],[0,0,5468,5597],[0,0,5336,5597],[0,0,5334,5599],[0,0,5599,5599],[0,0,5288,5599],[0,0,4913,5601],[12068,12072,5619,5646],[0,0,5647,5648],[0,0,5649,5657],[0,0,5647,5657],[12085,12091,5665,5668],[0,0,5669,5670],[0,0,5665,5671],[0,0,5659,5672],[0,0,5680,5684],[0,0,5687,5721],[0,0,5724,5757],[0,0,5680,5757],[0,0,5674,5758],[0,0,5619,5759],[0,0,5609,5759],[0,0,5609,5761],[0,0,5773,5802],[0,0,5767,5803],[12159,12165,5812,5815],[0,0,5816,5817],[0,0,5812,5818],[0,0,5806,5819],[0,0,5766,5820],[0,0,5823,5824],[12176,12180,5827,5854],[0,0,5855,5856],[0,0,5857,5865],[0,0,5855,5865],[12193,12199,5873,5876],[0,0,5877,5878],[0,0,5873,5879],[0,0,5867,5880],[0,0,5888,5917],[0,0,5882,5918],[0,0,5827,5919],[0,0,5823,5919],[0,0,5823,5921],[0,0,5821,5923],[0,0,5923,5923],[0,0,5762,5923],[12230,12236,5936,5939],[0,0,5940,5941],[12248,12256,5944,5949],[0,0,5950,5951],[0,0,5944,5952],[0,0,5940,5952],[0,0,5936,5953],[0,0,5924,5953],[0,0,5924,5955],[0,0,5968,5969],[12295,12303,5972,5977],[0,0,5978,5979],[0,0,5972,5980],[0,0,5968,5980],[0,0,5989,5994],[0,0,5983,5995],[0,0,5968,5995],[0,0,5956,5995],[0,0,5956,5997],[0,0,6007,6034],[0,0,6007,6034],[0,0,6035,6040],[0,0,6007,6041],[0,0,5998,6041],[0,0,5998,6043],[0,0,6053,6080],[0,0,6053,6080],[0,0,6086,6091],[12401,12407,6094,6097],[0,0,6098,6099],[0,0,6094,6100],[0,0,6086,6100],[0,0,6085,6101],[0,0,6103,6136],[0,0,6081,6137],[0,0,6053,6138],[0,0,6044,6138],[0,0,6044,6140],[0,0,6145,6149],[0,0,6152,6153],[0,0,6156,6184],[0,0,6156,6184],[0,0,6185,6190],[0,0,6156,6191],[0,0,6152,6191],[0,0,6152,6193],[0,0,6194,6195],[0,0,6198,6226],[0,0,6198,6226],[0,0,6232,6237],[12517,12523,6240,6243],[0,0,6244,6245],[0,0,6240,6246],[0,0,6232,6246],[0,0,6231,6247],[0,0,6249,6283],[0,0,6227,6284],[0,0,6198,6285],[0,0,6194,6285],[0,0,6194,6287],[0,0,6150,6289],[0,0,6289,6289],[0,0,6141,6289],[0,0,6290,6299],[0,0,6302,6309],[12588,12593,6312,6335],[12613,12617,6336,6339],[0,0,6340,6341],[0,0,6343,6344],[0,0,6346,6349],[0,0,6336,6350],[0,0,6336,6353],[0,0,6366,6374],[0,0,6361,6375],[0,0,6356,6376],[0,0,6336,6376],[0,0,6312,6377],[0,0,6380,6384],[0,0,6312,6384],[0,0,6302,6384],[0,0,6290,6384],[0,0,6290,6386],[0,0,6398,6427],[0,0,6392,6428],[12683,12689,6437,6440],[0,0,6441,6442],[0,0,6437,6443],[0,0,6431,6444],[0,0,6391,6445],[0,0,6448,6459],[12710,12718,6462,6467],[0,0,6468,6470],[0,0,6462,6471],[0,0,6448,6471],[0,0,6448,6473],[0,0,6474,6475],[0,0,6478,6508],[0,0,6478,6508],[0,0,6509,6514],[0,0,6478,6515],[0,0,6474,6515],[0,0,6474,6517],[0,0,6518,6519],[0,0,6522,6552],[0,0,6522,6552],[0,0,6558,6563],[12804,12810,6566,6569],[0,0,6570,6571],[0,0,6566,6572],[0,0,6558,6572],[0,0,6557,6573],[0,0,6575,6604],[0,0,6553,6605],[0,0,6522,6606],[0,0,6518,6606],[0,0,6518,6608],[0,0,6609,6618],[12856,12860,6621,6624],[0,0,6625,6626],[0,0,6628,6629],[0,0,6631,6634],[0,0,6621,6635],[0,0,6621,6638],[0,0,6609,6638],[0,0,6609,6640],[0,0,6646,6647],[0,0,6648,6656],[0,0,6646,6656],[12904,12910,6672,6675],[0,0,6676,6677],[0,0,6672,6678],[0,0,6666,6679],[0,0,6660,6680],[0,0,6645,6681],[0,0,6684,6695],[12931,12939,6698,6703],[0,0,6704,6705],[0,0,6698,6706],[0,0,6684,6706],[0,0,6684,6708],[0,0,6682,6710],[0,0,6710,6710],[0,0,6641,6710],[0,0,6716,6717],[0,0,6718,6726],[0,0,6716,6726],[0,0,6742,6771],[0,0,6736,6772],[0,0,6730,6773],[0,0,6715,6774],[0,0,6777,6786],[0,0,6794,6817],[0,0,6818,6828],[0,0,6794,6828],[0,0,6794,6830],[13123,13129,6839,6842],[0,0,6843,6846],[0,0,6839,6847],[0,0,6833,6848],[0,0,6794,6848],[13156,13162,6858,6861],[0,0,6862,6865],[0,0,6858,6866],[0,0,6856,6867],[0,0,6850,6868],[0,0,6871,6896],[0,0,6850,6896],[0,0,6789,6897],[0,0,6777,6897],[0,0,6777,6899],[0,0,6775,6901],[0,0,6901,6901],[0,0,6711,6901],[0,0,6446,6903],[0,0,6903,6903],[0,0,6387,6903],[13327,13331,6909,6917],[0,0,6918,6927],[0,0,6929,6930],[0,0,6931,6939],[0,0,6929,6939],[0,0,6909,6940],[13356,13362,6955,6958],[0,0,6959,6962],[0,0,6955,6963],[0,0,6949,6964],[0,0,6943,6965],[0,0,6908,6966],[0,0,6969,6970],[0,0,6971,6979],[0,0,6969,6979],[0,0,6982,6983],[0,0,6984,6992],[0,0,6982,6992],[13403,13411,6995,7000],[0,0,7001,7002],[0,0,6995,7003],[0,0,6982,7003],[0,0,6969,7003],[0,0,6969,7005],[0,0,6967,7007],[0,0,7007,7007],[0,0,6904,7007],[0,0,7013,7042],[13540,13546,7046,7049],[0,0,7050,7051],[0,0,7046,7052],[0,0,7012,7053],[0,0,7061,7062],[0,0,7063,7066],[0,0,7061,7066],[0,0,7069,7098],[0,0,7101,7112],[0,0,7069,7112],[0,0,7060,7113],[0,0,7116,7117],[0,0,7118,7123],[0,0,7116,7123],[0,0,7126,7127],[0,0,7128,7133],[0,0,7126,7133],[13650,13653,7137,7140],[0,0,7147,7152],[0,0,7153,7161],[0,0,7147,7161],[0,0,7147,7163],[0,0,7141,7164],[0,0,7167,7168],[0,0,7169,7177],[0,0,7167,7177],[0,0,7141,7177],[0,0,7137,7178],[0,0,7136,7179],[0,0,7182,7210],[0,0,7136,7210],[13723,13731,7213,7218],[0,0,7219,7220],[0,0,7213,7221],[0,0,7136,7221],[0,0,7126,7221],[0,0,7116,7221],[0,0,7116,7223],[0,0,7224,7225],[0,0,7226,7231],[0,0,7224,7231],[0,0,7234,7235],[0,0,7236,7241],[0,0,7234,7241],[13784,13787,7245,7248],[0,0,7255,7260],[0,0,7261,7269],[0,0,7255,7269],[0,0,7255,7271],[0,0,7249,7272],[0,0,7275,7298],[0,0,7299,7303],[0,0,7275,7303],[0,0,7249,7303],[0,0,7245,7304],[0,0,7244,7305],[0,0,7308,7336],[0,0,7244,7336],[13855,13863,7339,7344],[0,0,7345,7347],[0,0,7339,7348],[0,0,7244,7348],[0,0,7234,7348],[0,0,7224,7348],[0,0,7224,7350],[0,0,7114,7352],[0,0,7352,7352],[0,0,7056,7352],[0,0,7054,7354],[0,0,7362,7363],[0,0,7364,7369],[0,0,7362,7369],[0,0,7372,7373],[0,0,7374,7379],[0,0,7372,7379],[13926,13929,7383,7386],[0,0,7393,7398],[0,0,7399,7407],[0,0,7393,7407],[0,0,7393,7409],[0,0,7387,7410],[0,0,7413,7436],[0,0,7437,7441],[0,0,7413,7441],[0,0,7387,7441],[0,0,7383,7442],[0,0,7382,7443],[0,0,7446,7474],[0,0,7382,7474],[13997,14005,7477,7482],[0,0,7483,7484],[0,0,7477,7485],[0,0,7382,7485],[0,0,7372,7485],[0,0,7362,7485],[0,0,7362,7487],[0,0,7360,7489],[0,0,7354,7490],[0,0,7008,7490],[0,0,5607,7492],[0,0,5601,7493],[0,0,4873,7493],[0,0,4050,7495],[0,0,7495,7495],[0,0,4023,7495],[14028,14032,7505,7513],[0,0,7514,7523],[0,0,7525,7526],[0,0,7527,7535],[0,0,7525,7535],[0,0,7505,7536],[0,0,7495,7536],[0,0,7495,7538],[0,0,7543,7544],[14071,14079,7547,7552],[0,0,7553,7556],[0,0,7547,7557],[0,0,7542,7558],[0,0,7561,7562],[0,0,7563,7567],[0,0,7561,7567],[0,0,7570,7571],[0,0,7572,7576],[0,0,7570,7576],[0,0,7579,7607],[0,0,7570,7607],[0,0,7561,7607],[0,0,7561,7609],[0,0,7559,7611],[0,0,7611,7611],[0,0,7538,7611],[0,0,7634,7635],[14159,14167,7638,7643],[0,0,7644,7645],[0,0,7638,7646],[0,0,7634,7646],[0,0,7611,7646],[0,0,7611,7648],[0,0,7652,7655],[0,0,7658,7672],[14202,14210,7675,7680],[0,0,7681,7684],[0,0,7675,7685],[0,0,7658,7685],[0,0,7658,7687],[0,0,7656,7689],[0,0,7689,7689],[0,0,7648,7689],[0,0,7705,7714],[0,0,7717,7718],[0,0,7719,7727],[0,0,7717,7727],[0,0,7705,7727],[0,0,7689,7727],[0,0,7689,7729],[14353,14358,7749,7754],[0,0,7755,7763],[0,0,7755,7765],[0,0,7767,7775],[0,0,7767,7777],[0,0,7749,7778],[0,0,7729,7778],[0,0,7729,7780],[0,0,7785,7786],[0,0,7787,7790],[0,0,7785,7790],[0,0,7793,7822],[0,0,7825,7836],[0,0,7793,7836],[0,0,7784,7837],[0,0,7840,7841],[0,0,7842,7847],[0,0,7840,7847],[14478,14487,7850,7877],[0,0,7878,7879],[0,0,7880,7885],[0,0,7878,7885],[0,0,7887,7898],[0,0,7900,7928],[0,0,7931,7942],[0,0,7900,7942],[0,0,7945,7946],[0,0,7947,7950],[0,0,7945,7950],[0,0,7900,7950],[14569,14577,7953,7958],[0,0,7959,7960],[0,0,7953,7961],[0,0,7900,7961],[0,0,7850,7962],[0,0,7840,7962],[0,0,7840,7964],[0,0,7838,7966],[0,0,7974,7975],[0,0,7976,7984],[0,0,7974,7984],[0,0,7987,7988],[0,0,7989,7997],[0,0,7987,7997],[14636,14644,8001,8006],[0,0,8007,8008],[0,0,8001,8009],[0,0,8012,8040],[14670,14676,8049,8052],[0,0,8053,8054],[0,0,8049,8055],[0,0,8043,8056],[0,0,8012,8056],[0,0,8001,8056],[0,0,8000,8057],[0,0,7987,8057],[0,0,7974,8057],[0,0,7974,8059],[0,0,7972,8061],[0,0,7966,8062],[0,0,7780,8062],[0,0,8080,8085],[0,0,8062,8085],[0,0,8062,8087],[0,0,8092,8093],[0,0,8094,8097],[0,0,8092,8097],[14739,14747,8100,8105],[0,0,8106,8107],[0,0,8100,8108],[0,0,8111,8122],[0,0,8100,8122],[0,0,8091,8123],[0,0,8126,8136],[0,0,8139,8143],[0,0,8126,8143],[0,0,8126,8145],[0,0,8124,8147],[0,0,8147,8147],[0,0,8087,8147],[0,0,8155,8156],[0,0,8157,8165],[0,0,8155,8165],[0,0,8155,8167],[0,0,8170,8193],[0,0,8194,8204],[0,0,8170,8204],[0,0,8170,8206],[0,0,8154,8207],[0,0,8212,8213],[0,0,8214,8222],[0,0,8212,8222],[0,0,8212,8224],[14923,14929,8239,8242],[0,0,8243,8244],[0,0,8239,8245],[0,0,8233,8246],[0,0,8227,8247],[0,0,8211,8248],[0,0,8153,8249],[0,0,8254,8255],[0,0,8256,8264],[0,0,8254,8264],[0,0,8254,8266],[0,0,8269,8292],[0,0,8293,8303],[0,0,8269,8303],[0,0,8269,8305],[0,0,8253,8306],[0,0,8152,8307],[0,0,8312,8313],[0,0,8314,8322],[0,0,8312,8322],[0,0,8312,8324],[15047,15053,8339,8342],[0,0,8343,8344],[0,0,8339,8345],[0,0,8333,8346],[0,0,8327,8347],[0,0,8311,8348],[0,0,8151,8349],[0,0,8350,8354],[0,0,8354,8354],[0,0,8147,8354],[0,0,8358,8368],[0,0,8371,8372],[0,0,8373,8378],[0,0,8371,8378],[15111,15117,8381,8384],[0,0,8385,8386],[0,0,8381,8387],[0,0,8371,8387],[0,0,8371,8389],[0,0,8411,8442],[0,0,8411,8442],[15152,15158,8443,8446],[0,0,8447,8448],[0,0,8443,8449],[0,0,8411,8450],[15167,15173,8452,8455],[0,0,8456,8457],[0,0,8452,8458],[0,0,8400,8459],[0,0,8390,8459],[0,0,8390,8461],[0,0,8462,8486],[0,0,8487,8490],[15204,15211,8494,8498],[0,0,8499,8504],[0,0,8505,8513],[0,0,8499,8513],[0,0,8499,8515],[0,0,8494,8516],[0,0,8494,8516],[0,0,8462,8516],[0,0,8462,8518],[0,0,8369,8520],[0,0,8520,8520],[0,0,8354,8520],[0,0,8520,8549],[0,0,8550,8555],[0,0,8556,8564],[0,0,8550,8564],[0,0,8550,8566],[0,0,8570,8571],[0,0,8570,8571],[0,0,8520,8571],[0,0,8520,8573],[3375,7550,3167,8617],[9506,15309,0,8617]]);
+
+__shadeup_gen_shader("shd_5749083002000000000000006242000000005772", {
+					webgl: {_ext_uniform_global_deadReader: {"type":"array","element":{"type":"primitive","name":"int"}}, _ext_uniform_global_deadCounter: {"type":"array","element":{"type":"primitive","name":"atomic"}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[["deadReader",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"int"},"staticSize":1,"access":"write"}}],["deadCounter",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"atomic","element":"i32"},"staticSize":1,"access":"write"}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_global_deadReader_size: i32,
+@align(16) _ext_uniform_global_deadCounter_size: i32,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var<storage, read_write> _ext_uniform_global_deadReader: array<i32>;
+@group(%GROUP_INDEX%) @binding(3) var<storage, read_write> _ext_uniform_global_deadCounter: array<atomic<i32>>;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+@compute @workgroup_size(1, 1, 1)
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/){
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_ext_uniform_global_deadReader[i32(0)] = atomicLoad(&_ext_uniform_global_deadCounter[i32(0)]);
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+uniform int[0] _ext_uniform_global_deadReader;
+uniform atomic_int[0] _ext_uniform_global_deadCounter;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_ext_uniform_global_deadReader[int(0)] = atomicLoad(&_ext_uniform_global_deadCounter[int(0)]);
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4409,4553,284,331],[4237,4403,331,386],[0,0,488,518],[9112,9118,519,522],[0,0,523,524],[0,0,519,525],[0,0,541,572],[0,0,541,572],[9143,9149,573,576],[0,0,577,578],[0,0,573,579],[0,0,541,580],[0,0,529,581],[0,0,529,581],[0,0,488,581],[0,0,488,583],[3155,3219,386,627],[9051,9164,0,627]]);
+
+__shadeup_gen_shader("shd_585386095968817081280000007085053678100007900028", {
+					webgl: {_ext_uniform_local_emitter: {"type":"primitive","name":"float2"}, _ext_uniform_global_deadCounter: {"type":"array","element":{"type":"primitive","name":"atomic"}}, _ext_uniform_global_dead: {"type":"array","element":{"type":"primitive","name":"uint"}}, _ext_uniform_global_particles: {"type":"array","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":{"position":{"type":"primitive","name":"float2"},"angle":{"type":"primitive","name":"float"},"velocity":{"type":"primitive","name":"float"},"age":{"type":"primitive","name":"float"},"alive":{"type":"primitive","name":"int"},"goal":{"type":"primitive","name":"float"},"timeline":{"type":"primitive","name":"float"}}}}, _ext_uniform_global_env: {"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":{"time":{"type":"primitive","name":"float"},"frame":{"type":"primitive","name":"int"}}}, _ext_uniform_global_PI: {"type":"primitive","name":"float"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[["emitter",{"type":"primitive","name":"float2"}]],"globals":[["deadCounter",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"atomic","element":"i32"},"staticSize":1,"access":"write"}}],["dead",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"uint"},"staticSize":1,"access":"write"}}],["particles",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"struct","name":"str_i_main_ts_2739_Particle","fields":[["position",{"type":"primitive","name":"float2"}],["angle",{"type":"primitive","name":"float"}],["velocity",{"type":"primitive","name":"float"}],["age",{"type":"primitive","name":"float"}],["alive",{"type":"primitive","name":"int"}],["goal",{"type":"primitive","name":"float"}],["timeline",{"type":"primitive","name":"float"}]]},"staticSize":1,"access":"write"}}],["env",{"fileName":"/_std/native.ts","structure":{"type":"struct","name":"str_i_iistd_native_ts_387_FrameContext","fields":[["time",{"type":"primitive","name":"float"}],["frame",{"type":"primitive","name":"int"}]]}}],["PI",{"fileName":"/_std/common.ts","structure":{"type":"primitive","name":"float"}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct str_i_main_ts_2739_Particle {
+ @align(16)  position: vec2<f32>,
+ @align(16)  angle: f32,
+ @align(16)  velocity: f32,
+ @align(16)  age: f32,
+ @align(16)  alive: i32,
+ @align(16)  goal: f32,
+ @align(16)  timeline: f32,
+
+};
+fn _make_struct_str_i_main_ts_2739_Particle(  age: f32,  alive: i32,  angle: f32,  goal: f32,  position: vec2<f32>,  timeline: f32,  velocity: f32,) -> str_i_main_ts_2739_Particle {
+var _s: str_i_main_ts_2739_Particle;
+  _s.age = age;
+  _s.alive = alive;
+  _s.angle = angle;
+  _s.goal = goal;
+  _s.position = position;
+  _s.timeline = timeline;
+  _s.velocity = velocity;
+
+return _s; 
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//  @align(16)  deltaTime: f32,
+ @align(16)  time: f32,
+//  @align(16)  screenSize: vec2<f32>,
+ @align(16)  frame: i32,
+//   mouse: str_i_iistd_native_ts_1719_MouseInputState,
+//   keyboard: str_i_iistd_native_ts_3334_KeyboardInputState,
+//   camera: str_i_iistd_common_ts_10681_Camera,
+//   camera2d: str_i_iistd_common_ts_9656_Camera2d,
+
+};
+fn _make_struct_str_i_iistd_native_ts_387_FrameContext(  frame: i32,  time: f32,) -> str_i_iistd_native_ts_387_FrameContext {
+var _s: str_i_iistd_native_ts_387_FrameContext;
+  _s.frame = frame;
+  _s.time = time;
+
+return _s; 
+}
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_local_emitter: vec2<f32>,
+@align(16) _ext_uniform_global_deadCounter_size: i32,
+@align(16) _ext_uniform_global_dead_size: i32,
+@align(16) _ext_uniform_global_particles_size: i32,
+_ext_uniform_global_env: str_i_iistd_native_ts_387_FrameContext,
+@align(16) _ext_uniform_global_PI: f32,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var<storage, read_write> _ext_uniform_global_deadCounter: array<atomic<i32>>;
+@group(%GROUP_INDEX%) @binding(3) var<storage, read_write> _ext_uniform_global_dead: array<u32>;
+@group(%GROUP_INDEX%) @binding(4) var<storage, read_write> _ext_uniform_global_particles: array<str_i_main_ts_2739_Particle>;
+fn fn_iistd_math_ts_40744_rand2(seed_const: vec2<f32>) -> f32 {
+var seed = seed_const;
+return fract(sin(dot(seed, vec2<f32>(12.9898, 4.1414))) * f32(43758.5453));
+
+}
+
+fn fn_iimain_ts_6181_spawnParticle(p_const: str_i_main_ts_2739_Particle) {
+var p = p_const;
+var idx: i32 = atomicAdd(&_ext_uniform_global_deadCounter[i32(0)], -(i32(1)));
+atomicMax(&_ext_uniform_global_deadCounter[i32(0)], i32(0));
+if ((idx < i32(0))) 
+{
+return;
+
+}
+var realIndex: u32 = _ext_uniform_global_dead[idx];
+_ext_uniform_global_dead[idx] = u32(0);
+p.alive = i32(1);
+p.age = f32(i32(0));
+p.goal = f32(i32(0));
+p.timeline = f32(-(i32(1)));
+_ext_uniform_global_particles[realIndex] = p;
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+@compute @workgroup_size(16, 1, 1)
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/){
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+fn_iimain_ts_6181_spawnParticle(_make_struct_str_i_main_ts_2739_Particle(
+/* age: */ f32(0.0)
+, /* alive: */ i32(0)
+, /* angle: */ f32(i32(0)) * fn_iistd_math_ts_40744_rand2(vec2<f32>(f32(_i_in.globalId.x) / f32(1452), _in_uniforms._ext_uniform_global_env.time)) * _in_uniforms._ext_uniform_global_PI / f32(i32(14))
+, /* goal: */ f32(0.0)
+, /* position: */ _in_uniforms._ext_uniform_local_emitter + vec2<f32>(f32(i32(0)), fn_iistd_math_ts_40744_rand2(vec2<f32>(f32(_i_in.globalId.x) / f32(103), f32(_in_uniforms._ext_uniform_global_env.frame))) * f32(20) - f32(30))
+, /* timeline: */ f32(0.0)
+, /* velocity: */ f32(i32(1250)) + fn_iistd_math_ts_40744_rand2(vec2<f32>(f32(_i_in.globalId.x) / f32(1452), _in_uniforms._ext_uniform_global_env.time / f32(i32(4512)))) * f32(i32(200))
+
+));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+struct str_i_main_ts_2739_Particle {
+//   vec2 position;
+//   float angle;
+//   float velocity;
+  float age;
+  int alive;
+  float goal;
+  float timeline;
+
+};
+str_i_main_ts_2739_Particle _make_struct_str_i_main_ts_2739_Particle(float age, int alive, float goal, float timeline) {
+str_i_main_ts_2739_Particle _s;  _s.age = age;
+  _s.alive = alive;
+  _s.goal = goal;
+  _s.timeline = timeline;
+  return _s;
+}
+struct str_i_iistd_native_ts_387_FrameContext {
+//   float deltaTime;
+  float time;
+//   vec2 screenSize;
+  int frame;
+//   str_i_iistd_native_ts_1719_MouseInputState mouse;
+//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
+//   str_i_iistd_common_ts_10681_Camera camera;
+//   str_i_iistd_common_ts_9656_Camera2d camera2d;
+
+};
+str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(float time, int frame) {
+str_i_iistd_native_ts_387_FrameContext _s;  _s.time = time;
+  _s.frame = frame;
+  return _s;
+}
+uniform atomic_int[0] _ext_uniform_global_deadCounter;
+uniform uint[0] _ext_uniform_global_dead;
+uniform str_i_main_ts_2739_Particle[0] _ext_uniform_global_particles;
+uniform vec2 _ext_uniform_local_emitter;
+uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
+uniform float _ext_uniform_global_PI;
+float fn_iistd_math_ts_40744_rand2(vec2 seed) {
+return fract(sin(dot(seed, vec2(12.9898, 4.1414))) * float(43758.5453));
+
+}
+
+void fn_iimain_ts_6181_spawnParticle(str_i_main_ts_2739_Particle p) {
+int idx = atomicAdd(&_ext_uniform_global_deadCounter[int(0)], -(int(1)));
+atomicMax(&_ext_uniform_global_deadCounter[int(0)], int(0));
+if ((float(idx) < float(int(0)))){
+return;
+
+}uint realIndex = _ext_uniform_global_dead[idx];
+_ext_uniform_global_dead[idx] = uint(0);
+p.alive = int(1);
+p.age = int(0);
+p.goal = int(0);
+p.timeline = -(int(1));
+_ext_uniform_global_particles[realIndex] = p;
+
+}
+
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+fn_iimain_ts_6181_spawnParticle(_make_struct_str_i_main_ts_2739_Particle(
+/* age: */ float(0.0)
+, /* alive: */ int(0)
+, /* angle: */ float(int(0)) * fn_iistd_math_ts_40744_rand2(vec2(float(_i_in.globalId.x) / float(1452), _ext_uniform_global_env.time)) * _ext_uniform_global_PI / float(int(14))
+, /* goal: */ float(0.0)
+, /* position: */ _ext_uniform_local_emitter + vec2(int(0), fn_iistd_math_ts_40744_rand2(vec2(float(_i_in.globalId.x) / float(103), _ext_uniform_global_env.frame)) * float(20) - float(30))
+, /* timeline: */ float(0.0)
+, /* velocity: */ float(int(1250)) + fn_iistd_math_ts_40744_rand2(vec2(float(_i_in.globalId.x) / float(1452), _ext_uniform_global_env.time / float(int(4512)))) * float(int(200))
+
+));
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[3283,3310,321,341],[3312,3335,341,359],[3337,3363,359,380],[3365,3386,380,393],[3388,3409,393,406],[3411,3433,406,420],[3435,3461,420,438],[2739,3748,284,442],[2739,3748,442,689],[493,510,737,759],[577,589,759,773],[623,642,773,795],[674,685,795,808],[745,792,808,863],[842,898,863,924],[972,1002,924,972],[1007,1043,972,1023],[387,1715,689,1027],[387,1715,1027,1238],[4237,4403,1238,1293],[4559,4693,1293,1335],[4058,4231,1335,1405],[7564,7635,1405,1446],[16316,16333,1446,1518],[1922,2070,1518,1556],[0,0,1591,1600],[40798,40802,1611,1616],[40807,40810,1617,1620],[40811,40814,1621,1624],[0,0,1625,1629],[0,0,1636,1643],[0,0,1645,1651],[0,0,1631,1652],[0,0,1621,1653],[0,0,1617,1654],[40848,40853,1657,1662],[0,0,1663,1673],[0,0,1657,1674],[0,0,1617,1674],[0,0,1611,1675],[0,0,1604,1677],[0,0,1556,1681],[0,0,1718,1747],[0,0,1772,1803],[0,0,1772,1803],[6247,6253,1804,1807],[0,0,1808,1809],[0,0,1804,1810],[0,0,1772,1811],[6272,6278,1815,1818],[0,0,1819,1820],[0,0,1815,1821],[0,0,1813,1822],[0,0,1761,1823],[0,0,1751,1823],[0,0,1751,1825],[0,0,1836,1867],[0,0,1836,1867],[6305,6311,1868,1871],[0,0,1872,1873],[0,0,1868,1874],[0,0,1836,1875],[6320,6326,1877,1880],[0,0,1881,1882],[0,0,1877,1883],[0,0,1825,1884],[0,0,1825,1886],[0,0,1897,1900],[0,0,1891,1901],[6348,6354,1910,1913],[0,0,1914,1915],[0,0,1910,1916],[0,0,1904,1917],[0,0,1890,1918],[0,0,1921,1929],[0,0,1919,1931],[0,0,1931,1931],[0,0,1886,1931],[0,0,1948,1972],[0,0,1948,1972],[0,0,1973,1976],[0,0,1948,1977],[0,0,1931,1977],[0,0,1931,1979],[0,0,1979,2003],[0,0,2004,2007],[6429,6436,2011,2015],[0,0,2016,2017],[0,0,2011,2018],[0,0,2011,2018],[0,0,1979,2018],[0,0,1979,2020],[0,0,2020,2021],[0,0,2022,2027],[0,0,2020,2027],[6452,6458,2030,2033],[0,0,2034,2035],[0,0,2030,2036],[0,0,2020,2036],[0,0,2020,2038],[0,0,2038,2039],[0,0,2040,2043],[0,0,2038,2043],[6471,6477,2046,2049],[0,0,2050,2051],[0,0,2046,2052],[0,0,2038,2052],[0,0,2038,2054],[0,0,2054,2055],[0,0,2056,2060],[0,0,2054,2060],[6491,6497,2063,2066],[0,0,2067,2068],[0,0,2063,2069],[0,0,2054,2069],[0,0,2054,2071],[0,0,2071,2072],[0,0,2073,2081],[0,0,2071,2081],[6525,6531,2086,2089],[0,0,2090,2091],[0,0,2086,2092],[0,0,2084,2093],[0,0,2071,2093],[0,0,2071,2095],[0,0,2095,2124],[0,0,2125,2134],[0,0,2138,2139],[0,0,2138,2139],[0,0,2095,2139],[0,0,2095,2141],[1654,1917,1681,2145],[8244,8257,2247,2278],[0,0,2321,2343],[0,0,2345,2365],[8675,8681,2386,2389],[0,0,2390,2391],[0,0,2386,2392],[0,0,2380,2393],[8686,8691,2396,2424],[0,0,2436,2441],[0,0,2442,2450],[0,0,2436,2450],[0,0,2436,2452],[0,0,2430,2453],[8746,8754,2456,2461],[0,0,2462,2466],[0,0,2456,2467],[0,0,2430,2467],[0,0,2469,2492],[0,0,2493,2497],[0,0,2469,2497],[0,0,2425,2498],[0,0,2396,2499],[0,0,2380,2499],[0,0,2502,2524],[0,0,2380,2524],[8786,8792,2533,2536],[0,0,2537,2539],[0,0,2533,2540],[0,0,2527,2541],[0,0,2380,2541],[0,0,2367,2542],[0,0,2544,2567],[0,0,2585,2611],[8313,8319,2619,2622],[0,0,2623,2624],[0,0,2619,2625],[8340,8345,2627,2655],[0,0,2667,2672],[0,0,2673,2681],[0,0,2667,2681],[0,0,2667,2683],[0,0,2661,2684],[8400,8408,2687,2692],[0,0,2693,2696],[0,0,2687,2697],[0,0,2661,2697],[0,0,2699,2722],[0,0,2723,2728],[0,0,2699,2728],[0,0,2656,2729],[0,0,2627,2730],[8432,8440,2733,2738],[0,0,2739,2741],[0,0,2733,2742],[0,0,2627,2742],[8450,8458,2745,2750],[0,0,2751,2753],[0,0,2745,2754],[0,0,2627,2754],[0,0,2614,2755],[0,0,2585,2755],[0,0,2569,2756],[0,0,2758,2785],[8489,8495,2809,2812],[0,0,2813,2817],[0,0,2809,2818],[0,0,2803,2819],[8511,8516,2822,2850],[0,0,2862,2867],[0,0,2868,2876],[0,0,2862,2876],[0,0,2862,2878],[0,0,2856,2879],[8571,8579,2882,2887],[0,0,2888,2892],[0,0,2882,2893],[0,0,2856,2893],[0,0,2895,2918],[0,0,2919,2923],[0,0,2895,2923],[8609,8615,2932,2935],[0,0,2936,2940],[0,0,2932,2941],[0,0,2926,2942],[0,0,2895,2942],[0,0,2851,2943],[0,0,2822,2944],[8627,8633,2953,2956],[0,0,2957,2960],[0,0,2953,2961],[0,0,2947,2962],[0,0,2822,2962],[0,0,2803,2962],[0,0,2787,2963],[0,0,2279,2965],[0,0,2247,2966],[0,0,2247,2968],[2815,3104,2145,3012],[8209,8804,0,3012]]);
+
+__shadeup_gen_shader("shd_000202361802900000310029009614880000071542498", {
+					webgl: {_ext_uniform_global_dead: {"type":"array","element":{"type":"primitive","name":"uint"}}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[["dead",{"fileName":"/main.ts","structure":{"type":"buffer","element":{"type":"primitive","name":"uint"},"staticSize":1,"access":"write"}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_global_dead_size: i32,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var<storage, read_write> _ext_uniform_global_dead: array<u32>;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+@compute @workgroup_size(32, 1, 1)
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/){
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_ext_uniform_global_dead[_i_in.globalId.x] = u32(_i_in.globalId.x);
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
+
+};
+uniform uint[0] _ext_uniform_global_dead;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+_ext_uniform_global_dead[_i_in.globalId.x] = uint(_i_in.globalId.x);
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4559,4693,284,326],[0,0,428,452],[0,0,453,458],[0,0,459,467],[0,0,453,467],[0,0,453,469],[5972,5979,473,477],[0,0,478,483],[0,0,484,492],[0,0,478,492],[0,0,478,494],[0,0,473,495],[0,0,473,495],[0,0,428,495],[0,0,428,497],[1512,1579,326,541],[5885,6015,0,541]]);
+
+__shadeup_gen_shader("shd_1000000400760000600950170270320255400369800", {
+					webgl: {_ext_uniform_global_tex: {"type":"primitive","name":"texture2d"}, _ext_uniform_global_tex2: {"type":"primitive","name":"texture2d"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[["tex",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"read"}}],["tex2",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"read"}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_global_tex_size: vec2<f32>,
+@align(16) _ext_uniform_global_tex2_size: vec2<f32>,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_tex2_texture: texture_2d<f32>;
+@group(%GROUP_INDEX%) @binding(4) var _ext_uniform_global_tex2: sampler;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
 fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-_i_out.position = _in_uniforms._ext_uniform_local_sunViewProjMatrix * vec4<f32>(fn_iimain_ts_2866_calcPosition(_i_in.instanceIndex, _i_in.position), f32(i32(1)));
+if (((_i_in.screen.x < vec2<f32>(textureDimensions(_ext_uniform_global_tex_texture)).x) && (_i_in.screen.y < vec2<f32>(textureDimensions(_ext_uniform_global_tex_texture)).y))) 
+{
+_i_out.color = textureLoad(_ext_uniform_global_tex2_texture, vec2<u32>(_i_in.screen), 0).xyzw;
+
+}
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
 }
@@ -1081,132 +2089,122 @@ struct ShaderOutput {
   vec4 color;
 
 };
-struct str_i_iistd_native_ts_387_FrameContext {
-//   float deltaTime;
-  float time;
-//   vec2 screenSize;
-//   int frame;
-//   str_i_iistd_native_ts_1719_MouseInputState mouse;
-//   str_i_iistd_native_ts_3334_KeyboardInputState keyboard;
-//   str_i_iistd_common_ts_10663_Camera camera;
-//   str_i_iistd_common_ts_9656_Camera2d camera2d;
-
-};
-str_i_iistd_native_ts_387_FrameContext _make_struct_str_i_iistd_native_ts_387_FrameContext(float time) {
-str_i_iistd_native_ts_387_FrameContext _s;  _s.time = time;
-  return _s;
-}
-uniform mat4 _ext_uniform_local_sunViewProjMatrix;
-uniform int _ext_uniform_global_sqNum;
-uniform str_i_iistd_native_ts_387_FrameContext _ext_uniform_global_env;
-uniform int _ext_uniform_global_perlin_octaves;
-uniform int _ext_uniform_global_PERLIN_YWRAPB;
-uniform int _ext_uniform_global_PERLIN_ZWRAPB;
-uniform float _ext_uniform_global_PI;
-uniform float[0] _ext_uniform_global_perlin;
-uniform int _ext_uniform_global_PERLIN_SIZE;
-uniform int _ext_uniform_global_PERLIN_YWRAP;
-uniform int _ext_uniform_global_PERLIN_ZWRAP;
-uniform float _ext_uniform_global_perlin_amp_falloff;
-float fn_ii_std_common_ts_42195_scaled_cosine(float i) {
-return float(0.5) * (float(1) - cos(i * _ext_uniform_global_PI));
-
-}
-
-float fn_ii_std_common_ts_32873_noise_static_perlin2(vec2 v) {
-float x = v.x;
-float y = v.y;
-float z = float(0);
-if ((x < float(float(int(0))))){
-x = -(x);
-
-}if ((y < float(float(int(0))))){
-y = -(y);
-
-}if ((z < float(float(int(0))))){
-z = -(z);
-
-}int xi = int(floor(x));
-int yi = int(floor(y));
-int zi = int(floor(z));
-float xf = x - float(xi);
-float yf = y - float(yi);
-float zf = z - float(zi);
-float rxf = float(0);
-float ryf = float(0);
-float r = float(0);
-float ampl = float(0.5);
-float n1 = float(0);
-float n2 = float(0);
-float n3 = float(0);
-for (int o = int(0);(float(o) < float(_ext_uniform_global_perlin_octaves));o++){
-int of1 = xi + (yi << _ext_uniform_global_PERLIN_YWRAPB) + (zi << _ext_uniform_global_PERLIN_ZWRAPB);
-;rxf = fn_ii_std_common_ts_42195_scaled_cosine(xf);
-;ryf = fn_ii_std_common_ts_42195_scaled_cosine(yf);
-;n1 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n1 = n1 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n1);
-;n2 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n1 = n1 + ryf * (n2 - n1);
-;of1 = of1 + _ext_uniform_global_PERLIN_ZWRAP;
-;n2 = _ext_uniform_global_perlin[of1 & _ext_uniform_global_PERLIN_SIZE];
-;n2 = n2 + rxf * (_ext_uniform_global_perlin[(of1 + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n2);
-;n3 = _ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP) & _ext_uniform_global_PERLIN_SIZE];
-;n3 = n3 + rxf * (_ext_uniform_global_perlin[(of1 + _ext_uniform_global_PERLIN_YWRAP + int(1)) & _ext_uniform_global_PERLIN_SIZE] - n3);
-;n2 = n2 + ryf * (n3 - n2);
-;n1 = n1 + fn_ii_std_common_ts_42195_scaled_cosine(zf) * (n2 - n1);
-;r = r + n1 * ampl;
-;ampl = ampl * _ext_uniform_global_perlin_amp_falloff;
-;xi = xi << int(1);
-;xf = xf * float(2);
-;yi = yi << int(1);
-;yf = yf * float(2);
-;zi = zi << int(1);
-;zf = zf * float(2);
-;if ((xf >= float(1))){
-xi++;
-;xf = xf - float(1);
-
-};if ((yf >= float(1))){
-yi++;
-;yf = yf - float(1);
-
-};if ((zf >= float(1))){
-zi++;
-;zf = zf - float(1);
-
-}
-}return r;
-
-}
-
-vec3 fn_iimain_ts_2866_calcPosition(int instanceIndex, vec3 inPos) {
-float yFrac = float(instanceIndex) / float(_ext_uniform_global_sqNum);
-float x = float(instanceIndex) - float(floor(yFrac) * float(_ext_uniform_global_sqNum));
-float y = floor(yFrac);
-float t = _ext_uniform_global_env.time / float(200);
-float h = fn_ii_std_common_ts_32873_noise_static_perlin2(vec2(x, y) / float(30));
-if ((h > float(0.6))){
-h = h + (h - float(0.6)) * float(1.5);
-
-}vec3 p = inPos * vec3(int(1), float(1), int(1)) + vec3(x * float(int(100)), round((h * float(int(3000))) / float(100)) * float(100), y * float(int(100)));
-if ((inPos.y < float(float(int(0))))){
-p = p * vec3(vec3(ivec3(int(1), int(0), int(1))));
-
-}return p;
-
-}
-
+uniform sampler2D _ext_uniform_global_tex;
+uniform vec2 _ext_uniform_global_tex_size;
+uniform sampler2D _ext_uniform_global_tex2;
+uniform vec2 _ext_uniform_global_tex2_size;
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
 void main() {
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
-_i_out.position = _ext_uniform_local_sunViewProjMatrix * vec4(fn_iimain_ts_2866_calcPosition(_i_in.instanceIndex, _i_in.position), int(1));
+if (((_i_in.screen.x < _ext_uniform_global_tex_size.x) && (_i_in.screen.y < _ext_uniform_global_tex_size.y))){
+_i_out.color = texelFetch(_ext_uniform_global_tex2, ivec2(_i_in.screen), 0).xyzw;
+
+}
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[3753,3898,401,444],[3753,3898,444,487],[3904,4052,487,531],[3904,4052,531,575],[0,0,683,688],[0,0,689,695],[0,0,683,695],[0,0,683,697],[0,0,700,723],[0,0,700,728],[0,0,700,730],[0,0,682,731],[0,0,736,741],[0,0,742,748],[0,0,736,748],[0,0,736,750],[0,0,753,776],[0,0,753,781],[0,0,753,783],[0,0,735,784],[0,0,681,785],[0,0,788,794],[0,0,795,800],[0,0,788,800],[0,0,814,838],[0,0,846,851],[0,0,852,858],[0,0,846,858],[0,0,803,868],[0,0,788,868],[0,0,788,870],[0,0,786,872],[0,0,872,872],[0,0,677,872],[1267,1384,575,916],[5427,5634,0,916]]);
+
+__shadeup_gen_shader("shd_00900000000740000460000000035000000", {
+					webgl: {_ext_uniform_global_tex: {"type":"primitive","name":"texture2d"}},
+					webgpu: {"attributeInput":"","attributeOutput":"","locals":[],"globals":[["tex",{"fileName":"/main.ts","structure":{"type":"primitive","name":"texture2d","access":"read"}}]]}
+				}, {webgpu: `struct ShaderInput {
+ @align(16)  position: vec3<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  clipPosition: vec4<f32>,
+ @align(16)  realPosition: vec4<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  screen: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+ @align(16)  groupId: vec3<i32>,
+ @align(16)  groupSize: vec3<i32>,
+ @align(16)  globalId: vec3<i32>,
+ @align(16)  localId: vec3<i32>,
+ @align(16)  instanceIndex: i32,
+ @align(16)  vertexIndex: i32,
+};
+struct ShaderOutput {
+ @align(16)  position: vec4<f32>,
+ @align(16)  normal: vec3<f32>,
+ @align(16)  tangent: vec3<f32>,
+ @align(16)  bitangent: vec3<f32>,
+ @align(16)  uv: vec2<f32>,
+ @align(16)  color: vec4<f32>,
+// %SHADER_ShaderOutput%
+};
+struct _InUniformsStruct {
+/*SHADEUP_UNIFORM_STRUCT_START*/
+@align(16) _ext_uniform_global_tex_size: vec2<f32>,
+};
+@group(%GROUP_INDEX%) @binding(1) var<uniform> _in_uniforms: _InUniformsStruct;
+@group(%GROUP_INDEX%) @binding(2) var _ext_uniform_global_tex_texture: texture_2d<f32>;
+@group(%GROUP_INDEX%) @binding(3) var _ext_uniform_global_tex: sampler;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+fn main(/*__SHADEUP_TEMPLATE_INPUT*/)-> /*__SHADEUP_TEMPLATE_OUTPUT*/{
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+if (((_i_in.screen.x < vec2<f32>(textureDimensions(_ext_uniform_global_tex_texture)).x) && (_i_in.screen.y < vec2<f32>(textureDimensions(_ext_uniform_global_tex_texture)).y))) 
+{
+_i_out.color = textureLoad(_ext_uniform_global_tex_texture, vec2<u32>(_i_in.screen), 0).xyzw;
+
+}
 
 /*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
 }
-`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[493,510,449,471],[577,589,471,485],[623,642,485,507],[674,685,507,523],[745,792,523,578],[842,898,578,639],[972,1002,639,687],[1007,1043,687,738],[387,1715,401,742],[387,1715,742,922],[5436,5500,922,973],[2721,2834,973,1012],[16316,16333,1012,1084],[41825,41971,1084,1132],[41033,41176,1132,1179],[41356,41499,1179,1226],[1922,2070,1226,1264],[42328,42500,1264,1309],[41679,41819,1309,1354],[41182,41350,1354,1400],[41505,41673,1400,1446],[42006,42168,1446,1500],[0,0,1546,1553],[42257,42265,1564,1569],[0,0,1570,1573],[0,0,1564,1574],[42281,42289,1578,1583],[0,0,1584,1585],[0,0,1578,1586],[42296,42299,1589,1592],[0,0,1593,1594],[0,0,1597,1619],[0,0,1593,1619],[0,0,1589,1620],[0,0,1578,1620],[0,0,1577,1621],[0,0,1564,1621],[0,0,1557,1623],[19720,19799,1500,1627],[0,0,1680,1686],[0,0,1700,1701],[0,0,1700,1703],[0,0,1690,1703],[0,0,1690,1705],[0,0,1715,1716],[0,0,1715,1718],[0,0,1705,1718],[0,0,1705,1720],[32966,32974,1730,1735],[0,0,1736,1737],[0,0,1730,1738],[0,0,1720,1738],[0,0,1720,1740],[0,0,1745,1746],[32995,33001,1761,1764],[0,0,1765,1766],[0,0,1761,1767],[0,0,1755,1768],[0,0,1749,1769],[0,0,1744,1770],[0,0,1773,1774],[0,0,1779,1780],[0,0,1777,1781],[0,0,1773,1781],[0,0,1773,1783],[0,0,1771,1785],[0,0,1785,1785],[0,0,1740,1785],[0,0,1790,1791],[33041,33047,1806,1809],[0,0,1810,1811],[0,0,1806,1812],[0,0,1800,1813],[0,0,1794,1814],[0,0,1789,1815],[0,0,1818,1819],[0,0,1824,1825],[0,0,1822,1826],[0,0,1818,1826],[0,0,1818,1828],[0,0,1816,1830],[0,0,1830,1830],[0,0,1785,1830],[0,0,1835,1836],[33087,33093,1851,1854],[0,0,1855,1856],[0,0,1851,1857],[0,0,1845,1858],[0,0,1839,1859],[0,0,1834,1860],[0,0,1863,1864],[0,0,1869,1870],[0,0,1867,1871],[0,0,1863,1871],[0,0,1863,1873],[0,0,1861,1875],[0,0,1875,1875],[0,0,1830,1875],[33128,33134,1884,1887],[33135,33140,1888,1893],[0,0,1894,1895],[0,0,1888,1896],[0,0,1884,1897],[0,0,1875,1897],[0,0,1875,1899],[33155,33161,1908,1911],[33162,33167,1912,1917],[0,0,1918,1919],[0,0,1912,1920],[0,0,1908,1921],[0,0,1899,1921],[0,0,1899,1923],[33182,33188,1932,1935],[33189,33194,1936,1941],[0,0,1942,1943],[0,0,1936,1944],[0,0,1932,1945],[0,0,1923,1945],[0,0,1923,1947],[0,0,1958,1959],[0,0,1968,1970],[0,0,1962,1971],[0,0,1958,1971],[0,0,1947,1971],[0,0,1947,1973],[0,0,1984,1985],[0,0,1994,1996],[0,0,1988,1997],[0,0,1984,1997],[0,0,1973,1997],[0,0,1973,1999],[0,0,2010,2011],[0,0,2020,2022],[0,0,2014,2023],[0,0,2010,2023],[0,0,1999,2023],[0,0,1999,2025],[33288,33296,2037,2042],[0,0,2043,2044],[0,0,2037,2045],[0,0,2025,2045],[0,0,2025,2047],[33313,33321,2059,2064],[0,0,2065,2066],[0,0,2059,2067],[0,0,2047,2067],[0,0,2047,2069],[33336,33344,2079,2084],[0,0,2085,2086],[0,0,2079,2087],[0,0,2069,2087],[0,0,2069,2089],[33362,33370,2102,2107],[0,0,2108,2111],[0,0,2102,2112],[0,0,2089,2112],[0,0,2089,2114],[33386,33394,2125,2130],[0,0,2131,2132],[0,0,2125,2133],[0,0,2114,2133],[0,0,2114,2135],[33410,33418,2146,2151],[0,0,2152,2153],[0,0,2146,2154],[0,0,2135,2154],[0,0,2135,2156],[33434,33442,2167,2172],[0,0,2173,2174],[0,0,2167,2175],[0,0,2156,2175],[0,0,2156,2177],[33462,33468,2190,2193],[0,0,2194,2195],[0,0,2190,2196],[0,0,2182,2196],[0,0,2204,2205],[0,0,2198,2206],[0,0,2215,2249],[0,0,2209,2250],[0,0,2197,2251],[0,0,2252,2253],[0,0,2252,2255],[0,0,2268,2270],[0,0,2274,2276],[0,0,2280,2313],[0,0,2274,2313],[0,0,2273,2314],[0,0,2268,2314],[0,0,2318,2320],[0,0,2324,2357],[0,0,2318,2357],[0,0,2317,2358],[0,0,2268,2358],[0,0,2258,2358],[0,0,2258,2360],[0,0,2361,2364],[33625,33638,2367,2406],[0,0,2407,2409],[0,0,2367,2410],[0,0,2361,2410],[0,0,2361,2412],[0,0,2413,2416],[33650,33663,2419,2458],[0,0,2459,2461],[0,0,2419,2462],[0,0,2413,2462],[0,0,2413,2464],[0,0,2465,2467],[0,0,2470,2496],[0,0,2470,2496],[0,0,2497,2500],[0,0,2503,2534],[0,0,2497,2534],[0,0,2470,2535],[0,0,2465,2535],[0,0,2465,2537],[0,0,2538,2540],[0,0,2543,2545],[0,0,2548,2551],[0,0,2555,2581],[0,0,2555,2581],[0,0,2583,2586],[33799,33805,2589,2592],[0,0,2593,2594],[0,0,2589,2595],[0,0,2583,2595],[0,0,2582,2596],[0,0,2599,2630],[0,0,2582,2630],[0,0,2555,2631],[0,0,2634,2636],[0,0,2555,2636],[0,0,2554,2637],[0,0,2548,2637],[0,0,2543,2637],[0,0,2538,2637],[0,0,2538,2639],[0,0,2640,2642],[0,0,2645,2671],[0,0,2645,2671],[0,0,2673,2676],[0,0,2679,2711],[0,0,2673,2711],[0,0,2672,2712],[0,0,2715,2746],[0,0,2672,2746],[0,0,2645,2747],[0,0,2640,2747],[0,0,2640,2749],[0,0,2750,2752],[0,0,2755,2757],[0,0,2760,2763],[0,0,2767,2793],[0,0,2767,2793],[0,0,2795,2798],[0,0,2801,2833],[0,0,2795,2833],[34019,34025,2836,2839],[0,0,2840,2841],[0,0,2836,2842],[0,0,2795,2842],[0,0,2794,2843],[0,0,2846,2877],[0,0,2794,2877],[0,0,2767,2878],[0,0,2881,2883],[0,0,2767,2883],[0,0,2766,2884],[0,0,2760,2884],[0,0,2755,2884],[0,0,2750,2884],[0,0,2750,2886],[0,0,2887,2889],[0,0,2892,2894],[0,0,2897,2900],[0,0,2904,2906],[0,0,2909,2911],[0,0,2904,2911],[0,0,2903,2912],[0,0,2897,2912],[0,0,2892,2912],[0,0,2887,2912],[0,0,2887,2914],[0,0,2915,2918],[0,0,2921,2924],[0,0,2927,2959],[0,0,2921,2959],[0,0,2915,2959],[0,0,2915,2961],[0,0,2962,2964],[0,0,2967,2993],[0,0,2967,2993],[0,0,2994,2997],[0,0,3000,3031],[0,0,2994,3031],[0,0,2967,3032],[0,0,2962,3032],[0,0,2962,3034],[0,0,3035,3037],[0,0,3040,3042],[0,0,3045,3048],[0,0,3052,3078],[0,0,3052,3078],[0,0,3080,3083],[34274,34280,3086,3089],[0,0,3090,3091],[0,0,3086,3092],[0,0,3080,3092],[0,0,3079,3093],[0,0,3096,3127],[0,0,3079,3127],[0,0,3052,3128],[0,0,3131,3133],[0,0,3052,3133],[0,0,3051,3134],[0,0,3045,3134],[0,0,3040,3134],[0,0,3035,3134],[0,0,3035,3136],[0,0,3137,3139],[0,0,3142,3168],[0,0,3142,3168],[0,0,3170,3173],[0,0,3176,3208],[0,0,3170,3208],[0,0,3169,3209],[0,0,3212,3243],[0,0,3169,3243],[0,0,3142,3244],[0,0,3137,3244],[0,0,3137,3246],[0,0,3247,3249],[0,0,3252,3254],[0,0,3257,3260],[0,0,3264,3290],[0,0,3264,3290],[0,0,3292,3295],[0,0,3298,3330],[0,0,3292,3330],[34494,34500,3333,3336],[0,0,3337,3338],[0,0,3333,3339],[0,0,3292,3339],[0,0,3291,3340],[0,0,3343,3374],[0,0,3291,3374],[0,0,3264,3375],[0,0,3378,3380],[0,0,3264,3380],[0,0,3263,3381],[0,0,3257,3381],[0,0,3252,3381],[0,0,3247,3381],[0,0,3247,3383],[0,0,3384,3386],[0,0,3389,3391],[0,0,3394,3397],[0,0,3401,3403],[0,0,3406,3408],[0,0,3401,3408],[0,0,3400,3409],[0,0,3394,3409],[0,0,3389,3409],[0,0,3384,3409],[0,0,3384,3411],[0,0,3412,3414],[0,0,3417,3419],[34610,34623,3422,3461],[0,0,3462,3464],[0,0,3422,3465],[0,0,3469,3471],[0,0,3474,3476],[0,0,3469,3476],[0,0,3468,3477],[0,0,3422,3477],[0,0,3417,3477],[0,0,3412,3477],[0,0,3412,3479],[0,0,3480,3481],[0,0,3484,3485],[0,0,3488,3490],[0,0,3493,3497],[0,0,3488,3497],[0,0,3484,3497],[0,0,3480,3497],[0,0,3480,3499],[0,0,3500,3504],[0,0,3507,3511],[0,0,3514,3552],[0,0,3507,3552],[0,0,3500,3552],[0,0,3500,3554],[0,0,3555,3557],[0,0,3560,3562],[34748,34754,3566,3569],[0,0,3570,3571],[0,0,3566,3572],[0,0,3560,3572],[0,0,3555,3572],[0,0,3555,3574],[0,0,3575,3577],[0,0,3580,3582],[34777,34785,3585,3590],[0,0,3591,3592],[0,0,3585,3593],[0,0,3580,3593],[0,0,3575,3593],[0,0,3575,3595],[0,0,3596,3598],[0,0,3601,3603],[34813,34819,3607,3610],[0,0,3611,3612],[0,0,3607,3613],[0,0,3601,3613],[0,0,3596,3613],[0,0,3596,3615],[0,0,3616,3618],[0,0,3621,3623],[34842,34850,3626,3631],[0,0,3632,3633],[0,0,3626,3634],[0,0,3621,3634],[0,0,3616,3634],[0,0,3616,3636],[0,0,3637,3639],[0,0,3642,3644],[34878,34884,3648,3651],[0,0,3652,3653],[0,0,3648,3654],[0,0,3642,3654],[0,0,3637,3654],[0,0,3637,3656],[0,0,3657,3659],[0,0,3662,3664],[34907,34915,3667,3672],[0,0,3673,3674],[0,0,3667,3675],[0,0,3662,3675],[0,0,3657,3675],[0,0,3657,3677],[0,0,3683,3685],[34939,34947,3689,3694],[0,0,3695,3696],[0,0,3689,3697],[0,0,3682,3698],[0,0,3701,3703],[0,0,3701,3705],[0,0,3701,3707],[0,0,3708,3710],[0,0,3713,3715],[34978,34986,3718,3723],[0,0,3724,3725],[0,0,3718,3726],[0,0,3713,3726],[0,0,3708,3726],[0,0,3708,3728],[0,0,3699,3730],[0,0,3730,3730],[0,0,3678,3730],[0,0,3736,3738],[35011,35019,3742,3747],[0,0,3748,3749],[0,0,3742,3750],[0,0,3735,3751],[0,0,3754,3756],[0,0,3754,3758],[0,0,3754,3760],[0,0,3761,3763],[0,0,3766,3768],[35050,35058,3771,3776],[0,0,3777,3778],[0,0,3771,3779],[0,0,3766,3779],[0,0,3761,3779],[0,0,3761,3781],[0,0,3752,3783],[0,0,3783,3783],[0,0,3731,3783],[0,0,3789,3791],[35083,35091,3795,3800],[0,0,3801,3802],[0,0,3795,3803],[0,0,3788,3804],[0,0,3807,3809],[0,0,3807,3811],[0,0,3807,3813],[0,0,3814,3816],[0,0,3819,3821],[35122,35130,3824,3829],[0,0,3830,3831],[0,0,3824,3832],[0,0,3819,3832],[0,0,3814,3832],[0,0,3814,3834],[0,0,3805,3836],[0,0,3836,3836],[0,0,3784,3836],[0,0,2256,3838],[0,0,2177,3838],[0,0,3845,3846],[0,0,3838,3848],[19421,19436,1627,3852],[0,0,3888,3905],[0,0,3907,3917],[0,0,3941,3954],[0,0,3935,3955],[2976,2984,3958,3963],[0,0,3964,3989],[0,0,3958,3990],[0,0,3935,3990],[0,0,3921,3990],[0,0,3921,3992],[0,0,4008,4021],[0,0,4002,4022],[3026,3034,4025,4030],[3043,3048,4031,4036],[0,0,4037,4042],[0,0,4031,4043],[0,0,4052,4077],[0,0,4046,4078],[0,0,4031,4078],[0,0,4025,4079],[0,0,4002,4079],[0,0,3992,4079],[0,0,3992,4081],[3077,3082,4091,4096],[0,0,4097,4102],[0,0,4091,4103],[0,0,4081,4103],[0,0,4081,4105],[0,0,4115,4138],[0,0,4139,4143],[0,0,4115,4143],[3117,3125,4146,4151],[0,0,4152,4155],[0,0,4146,4156],[0,0,4115,4156],[0,0,4105,4156],[0,0,4105,4158],[3144,3157,4168,4214],[0,0,4220,4221],[0,0,4223,4224],[0,0,4215,4225],[3187,3195,4228,4233],[0,0,4234,4236],[0,0,4228,4237],[0,0,4215,4237],[0,0,4168,4238],[0,0,4158,4238],[0,0,4158,4240],[0,0,4245,4246],[3220,3228,4249,4254],[0,0,4255,4258],[0,0,4249,4259],[0,0,4244,4260],[0,0,4263,4264],[0,0,4267,4268],[0,0,4272,4273],[3271,3279,4276,4281],[0,0,4282,4285],[0,0,4276,4286],[0,0,4272,4286],[0,0,4271,4287],[3289,3297,4290,4295],[0,0,4296,4299],[0,0,4290,4300],[0,0,4271,4300],[0,0,4267,4300],[0,0,4263,4300],[0,0,4263,4302],[0,0,4261,4304],[0,0,4304,4304],[0,0,4240,4304],[0,0,4313,4318],[3353,3359,4326,4329],[0,0,4330,4331],[0,0,4326,4332],[3364,3372,4334,4339],[0,0,4340,4341],[0,0,4334,4342],[3379,3385,4344,4347],[0,0,4348,4349],[0,0,4344,4350],[0,0,4321,4351],[0,0,4313,4351],[0,0,4359,4360],[3418,3424,4369,4372],[0,0,4373,4376],[0,0,4369,4377],[0,0,4363,4378],[0,0,4359,4378],[3441,3446,4380,4385],[0,0,4387,4388],[3467,3473,4397,4400],[0,0,4401,4405],[0,0,4397,4406],[0,0,4391,4407],[0,0,4387,4407],[0,0,4386,4408],[3484,3492,4411,4416],[0,0,4417,4420],[0,0,4411,4421],[0,0,4386,4421],[0,0,4380,4422],[3504,3512,4425,4430],[0,0,4431,4434],[0,0,4425,4435],[0,0,4380,4435],[0,0,4437,4438],[3534,3540,4447,4450],[0,0,4451,4454],[0,0,4447,4455],[0,0,4441,4456],[0,0,4437,4456],[0,0,4354,4457],[0,0,4313,4457],[0,0,4304,4457],[0,0,4304,4459],[0,0,4464,4469],[0,0,4464,4471],[3587,3593,4486,4489],[0,0,4490,4491],[0,0,4486,4492],[0,0,4480,4493],[0,0,4474,4494],[0,0,4463,4495],[0,0,4498,4499],[0,0,4502,4503],[3628,3634,4522,4525],[0,0,4526,4527],[0,0,4522,4528],[3639,3645,4530,4533],[0,0,4534,4535],[0,0,4530,4536],[3650,3656,4538,4541],[0,0,4542,4543],[0,0,4538,4544],[0,0,4516,4545],[0,0,4511,4546],[0,0,4506,4547],[0,0,4502,4547],[0,0,4498,4547],[0,0,4498,4549],[0,0,4496,4551],[0,0,4551,4551],[0,0,4459,4551],[0,0,4558,4559],[0,0,4551,4561],[419,890,3852,4565],[0,0,4667,4673],[0,0,4674,4682],[0,0,4667,4682],[0,0,4685,4721],[5875,5887,4729,4759],[0,0,4760,4765],[0,0,4766,4779],[0,0,4760,4779],[0,0,4781,4786],[0,0,4787,4795],[0,0,4781,4795],[0,0,4729,4796],[5924,5930,4798,4801],[0,0,4802,4803],[0,0,4798,4804],[0,0,4724,4805],[0,0,4685,4805],[0,0,4667,4805],[0,0,4667,4807],[2113,2215,4565,4851],[5799,5939,0,4851]]);
+`,webgl:`struct ShaderInput {
+  vec3 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec4 clipPosition;
+  vec4 realPosition;
+  vec2 uv;
+  vec2 screen;
+  vec4 color;
+  ivec3 groupId;
+  ivec3 groupSize;
+  ivec3 globalId;
+  ivec3 localId;
+  int instanceIndex;
+  int vertexIndex;
 
+};
+struct ShaderOutput {
+  vec4 position;
+  vec3 normal;
+  vec3 tangent;
+  vec3 bitangent;
+  vec2 uv;
+  vec4 color;
+
+};
+uniform sampler2D _ext_uniform_global_tex;
+uniform vec2 _ext_uniform_global_tex_size;
+
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_BEFORE__*/
+void main() {
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_START__*/
+if (((_i_in.screen.x < _ext_uniform_global_tex_size.x) && (_i_in.screen.y < _ext_uniform_global_tex_size.y))){
+_i_out.color = texelFetch(_ext_uniform_global_tex, ivec2(_i_in.screen), 0).xyzw;
+
+}
+/*__SHADEUP_TEMPLATE_INSERT_MAIN_END__*/
+}
+`, software: () => {}}, [[2830,2865,21,38],[2939,2972,38,53],[3048,3082,53,69],[3162,3198,69,87],[3242,3284,87,108],[3289,3331,108,129],[3400,3426,129,140],[3502,3532,140,155],[3609,3644,155,169],[3690,3720,169,186],[3768,3800,186,205],[3879,3910,205,223],[3956,3986,223,240],[4051,4074,240,261],[4123,4144,261,280],[2728,4283,0,284],[4371,4409,306,323],[4444,4477,323,338],[4513,4547,338,354],[4585,4621,354,372],[4655,4681,372,383],[4714,4749,383,397],[4309,4869,284,401],[3753,3898,401,444],[3753,3898,444,487],[0,0,595,600],[0,0,601,607],[0,0,595,607],[0,0,595,609],[0,0,612,635],[0,0,612,640],[0,0,612,642],[0,0,594,643],[0,0,648,653],[0,0,654,660],[0,0,648,660],[0,0,648,662],[0,0,665,688],[0,0,665,693],[0,0,665,695],[0,0,647,696],[0,0,593,697],[0,0,700,706],[0,0,707,712],[0,0,700,712],[0,0,726,749],[0,0,757,762],[0,0,763,769],[0,0,757,769],[0,0,715,779],[0,0,700,779],[0,0,700,781],[0,0,698,783],[0,0,783,783],[0,0,589,783],[1130,1246,487,827],[5107,5313,0,827]]);
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -1266,120 +2264,374 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "/std_math", "/std_math", "/std___std_all", "/_std/drawIndexed", "/_std/common", "/_std/mesh"], function (require, exports, __, std_math_1, std___std_all_1, drawIndexed_1, common_1, mesh_1) {
+define(["require", "exports", "/std_math", "/std_math", "/std___std_all", "/_std/drawIndexed", "/_std/common", "/_std/mesh", "./logoPath"], function (require, exports, __, std_math_1, std___std_all_1, drawIndexed_1, common_1, mesh_1, logoPath_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.main = void 0;
     __ = __importStar(__);
     var globalVarGet = std___std_all_1.globalVarGet;
-    env.configureCamera({ spinning: false, orbitDistance: (10000 | 0), orbitTarget: __.intifyVector(__.makeVector((5000 | 0), (0 | 0), (5000 | 0))) });
-    var shadowMapSize = ((0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "shadowMapSize", function () { return (8192 | 0); }, function () { return shadowMapSize; }) | 0);
-    var albedo = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "albedo", function () { return (0, common_1.texture2d)(env.screenSize, "16bit", "float4"); }, function () { return albedo; });
-    var normal = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "normal", function () { return (0, common_1.texture2d)(env.screenSize, "16bit", "float4"); }, function () { return normal; });
-    var shadow = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "shadow", function () { var _a; return (0, common_1.texture2d)((_a = shadowMapSize, [_a, _a]), "depth-32", "float"); }, function () { return shadow; });
-    var num = ((0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "num", function () { return (30000 | 0); }, function () { return num; }) | 0);
-    var m = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "m", function () { var _a, _b; return mesh_1.mesh.box((_a = (0 | 0), [_a, _a, _a]), (_b = (100 | 0), [_b, _b, _b])); }, function () { return m; });
-    var sqNum = ((0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "sqNum", function () { return Math.floor(Math.sqrt(num)); }, function () { return sqNum; }) | 0);
-    num = sqNum * sqNum;
-    function calcPosition(instanceIndex, inPos) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
-        var yFrac = instanceIndex / sqNum;
-        var x = instanceIndex - __.mul(Math.floor(yFrac), sqNum);
-        var y = Math.floor(yFrac);
-        var t = env.time / 200.0;
-        var h = common_1.noise.perlin2((_a = __.makeVector(x, y), _b = 30.0, [_a[0] / _b, _a[1] / _b]));
-        if (h > 0.6) {
-            h = h + (h - 0.6) * 1.5;
-        }
-        var p = (_c = (_e = inPos, _f = __.makeVector((1 | 0), 1.0, (1 | 0)), [_e[0] * _f[0], _e[1] * _f[1], _e[2] * _f[2]]), _d = __.makeVector(x * (100 | 0), Math.round((h * (3000 | 0)) / 100.0) * 100.0, y * (100 | 0)), [_c[0] + _d[0], _c[1] + _d[1], _c[2] + _d[2]]);
-        if (inPos[1] < (0 | 0)) {
-            p = (_g = p, _h = __.intifyVector(__.makeVector((1 | 0), (0 | 0), (1 | 0))), [_g[0] * _h[0], _g[1] * _h[1], _g[2] * _h[2]]);
-        }
-        return p;
+    var logoBuf = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "logoBuf", function () { return (0, common_1.buffer)((logoPath_1.logoPath.len() | 0), "float2", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"float2\"}"))); }, function () { return logoBuf; });
+    var logoBuf2 = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "logoBuf2", function () { return (0, common_1.buffer)((logoPath_1.logoPath2.len() | 0), "float2", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"float2\"}"))); }, function () { return logoBuf2; });
+    //let xy = "abc" + 124;
+    var deathNear = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "deathNear", function () { return 6.9; }, function () { return deathNear; });
+    for (var i = (0 | 0); i < (logoBuf.len() | 0); i++) {
+        logoBuf.__index_assign(i, logoPath_1.logoPath[i]);
     }
-    function calcColor(instanceIndex, inNormal) {
-        var _a, _b, _c, _d, _e;
-        var yFrac = instanceIndex / sqNum;
-        var x = instanceIndex - __.mul(Math.floor(yFrac), sqNum);
-        var y = Math.floor(yFrac);
-        var h = common_1.noise.perlin2((_a = __.makeVector(x, y), _b = 30.0, [_a[0] / _b, _a[1] / _b]));
-        var c = __.makeVector(0.0, (0 | 0), (1 | 0), (1 | 0));
-        if (h > 0.2) {
-            c = __.makeVector(0.9, 0.7, 0.7, (1 | 0));
-        }
-        if (h > 0.25) {
-            c = __.makeVector(0.1, 0.7, 0.1, (1 | 0));
-        }
-        if (h > 0.6) {
-            c = __.makeVector(0.6, 0.6, 0.6, (1 | 0));
-        }
-        if (h > 0.7) {
-            c = __.makeVector(0.9, 0.9, 0.9, (1 | 0));
-        }
-        return _c = __.makeVector((_e = (((1 | 0) + (0, std_math_1.dot)(inNormal, __.intifyVector(__.makeVector((0 | 0), (1 | 0), (0 | 0))))) / 2.0), [_e, _e, _e]), (1 | 0)), _d = c, [_c[0] * _d[0], _c[1] * _d[1], _c[2] * _d[2], _c[3] * _d[3]];
+    for (var i = (0 | 0); i < (logoBuf2.len() | 0); i++) {
+        logoBuf2.__index_assign(i, logoPath_1.logoPath2[i]);
     }
-    var sunDist = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "sunDist", function () { return 39.0; }, function () { return sunDist; });
-    var sunAngle = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "sunAngle", function () { return common_1.PI / (4 | 0); }, function () { return sunAngle; });
+    logoBuf.upload();
+    var numLogoPoints = ((0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "numLogoPoints", function () { return (logoBuf.len() | 0); }, function () { return numLogoPoints; }) | 0);
+    logoBuf2.upload();
+    var numLogoPoints2 = ((0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "numLogoPoints2", function () { return (logoBuf2.len() | 0); }, function () { return numLogoPoints2; }) | 0);
+    /**@shadeup=struct*/ var Particle = /** @class */ (function () {
+        function Particle(data) {
+            var _a, _b, _c, _d, _e, _f, _g;
+            this.position = ((_a = data.position) !== null && _a !== void 0 ? _a : __.FM.float_2_1_1(0.0, 0.0));
+            this.angle = ((_b = data.angle) !== null && _b !== void 0 ? _b : 0.0);
+            this.velocity = ((_c = data.velocity) !== null && _c !== void 0 ? _c : 0.0);
+            this.age = ((_d = data.age) !== null && _d !== void 0 ? _d : 0.0);
+            this.alive = ((_e = data.alive) !== null && _e !== void 0 ? _e : (0 | 0));
+            this.goal = ((_f = data.goal) !== null && _f !== void 0 ? _f : 0.0);
+            this.timeline = ((_g = data.timeline) !== null && _g !== void 0 ? _g : 0.0);
+        }
+        Particle.prototype.clone = function () {
+            return new Particle({
+                position: (0, std___std_all_1.__deepClone)(this.position),
+                angle: (0, std___std_all_1.__deepClone)(this.angle),
+                velocity: (0, std___std_all_1.__deepClone)(this.velocity),
+                age: (0, std___std_all_1.__deepClone)(this.age),
+                alive: (0, std___std_all_1.__deepClone)(this.alive),
+                goal: (0, std___std_all_1.__deepClone)(this.goal),
+                timeline: (0, std___std_all_1.__deepClone)(this.timeline),
+            });
+        };
+        Particle.prototype._getStructure = function () {
+            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_main_ts_2739_Particle\",\"fields\":[[\"position\",{\"type\":\"primitive\",\"name\":\"float2\"}],[\"angle\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"velocity\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"age\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"alive\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"goal\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"timeline\",{\"type\":\"primitive\",\"name\":\"float\"}]]}");
+        };
+        return Particle;
+    }());
+    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_main_ts_2739_Particle\",\"fields\":[[\"position\",{\"type\":\"primitive\",\"name\":\"float2\"}],[\"angle\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"velocity\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"age\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"alive\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"goal\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"timeline\",{\"type\":\"primitive\",\"name\":\"float\"}]]}"), Particle)
+    var tex = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "tex", function () { return (0, common_1.texture2d)(env.screenSize, "auto", "float4"); }, function () { return tex; });
+    var tex2 = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "tex2", function () { return (0, common_1.texture2d)(env.screenSize, "auto", "float4"); }, function () { return tex2; });
+    var particles = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "particles", function () { return (0, common_1.buffer)((1024 | 0) * (32 | 0), "Particle", __assign(__assign({}, JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_main_ts_2739_Particle\",\"fields\":[[\"position\",{\"type\":\"primitive\",\"name\":\"float2\"}],[\"angle\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"velocity\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"age\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"alive\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"goal\",{\"type\":\"primitive\",\"name\":\"float\"}],[\"timeline\",{\"type\":\"primitive\",\"name\":\"float\"}]]}")), { __type: Particle })); }, function () { return particles; });
+    var deadCounter = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "deadCounter", function () { return (0, common_1.buffer)((1 | 0), "atomic<int>", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"atomic\",\"element\":\"i32\"}"))); }, function () { return deadCounter; });
+    var deadReader = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "deadReader", function () { return (0, common_1.buffer)((1 | 0), "int", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"int\"}"))); }, function () { return deadReader; });
+    var dead = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "dead", function () { return (0, common_1.buffer)((particles.len() | 0), "uint", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"uint\"}"))); }, function () { return dead; });
+    function checkTex() {
+        var _this = this;
+        if (__.or(tex.size[0] != env.screenSize[0], tex.size[1] != env.screenSize[1])) {
+            var newTex = (0, common_1.texture2d)(env.screenSize, "auto", "float4");
+            var newTex2 = (0, common_1.texture2d)(env.screenSize, "auto", "float4");
+            newTex.draw(__shadeup_make_shader_inst("shd_00900000000740000460000000035000000", { _ext_uniform_global_tex: globalVarGet("_slash_main_dot_ts", "tex") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    if (__.and(__in.screen[0] < tex.size[0], __in.screen[1] < tex.size[1])) {
+                        __out.color = tex.__index(__in.screen);
+                    }
+                    return [2 /*return*/];
+                });
+            }); }));
+            newTex2.draw(__shadeup_make_shader_inst("shd_1000000400760000600950170270320255400369800", { _ext_uniform_global_tex: globalVarGet("_slash_main_dot_ts", "tex"), _ext_uniform_global_tex2: globalVarGet("_slash_main_dot_ts", "tex2") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    if (__.and(__in.screen[0] < tex.size[0], __in.screen[1] < tex.size[1])) {
+                        __out.color = tex2.__index(__in.screen);
+                    }
+                    return [2 /*return*/];
+                });
+            }); }));
+            tex.destroy();
+            tex = newTex;
+            tex2.destroy();
+            tex2 = newTex2;
+        }
+    }
+    (0, std___std_all_1.compute)(__.intifyVector(__.makeVector((particles.len() | 0) / (32 | 0), (1 | 0), (1 | 0))), __shadeup_make_shader_inst("shd_000202361802900000310029009614880000071542498", { _ext_uniform_global_dead: globalVarGet("_slash_main_dot_ts", "dead") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            dead.__index_assign(__in.globalId[0], (__.swizzle(__in.globalId, 'x') >>> 0));
+            return [2 /*return*/];
+        });
+    }); }));
+    deadCounter.__index((0 | 0)).store((particles.len() | 0) - (1 | 0));
+    deadCounter.upload();
+    function spawnParticle(p) {
+        var idx = (deadCounter.__index((0 | 0)).add((__.FM.negate_1((1 | 0)))) | 0);
+        (deadCounter.__index((0 | 0)).max((0 | 0)) | 0);
+        if (idx < (0 | 0)) {
+            return;
+        }
+        var realIndex = dead.uintArray[idx];
+        dead.__index_assign(idx, (0 >>> 0));
+        p.alive = (1 | 0);
+        p.age = (0 | 0);
+        p.goal = (0 | 0);
+        p.timeline = (__.FM.negate_1((1 | 0)));
+        particles.__index_assign(realIndex, p);
+    }
+    function lerpAngle(a, b, t) {
+        var av = __.makeVector(Math.cos(a), Math.sin(a));
+        var bv = __.makeVector(Math.cos(b), Math.sin(b));
+        var cv = (0, std_math_1.normalize)((0, std_math_1.lerp)(av, bv, t));
+        return (0, std_math_1.atan2)(cv[1], cv[0]);
+    }
+    var totalToSpawn = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "totalToSpawn", function () { return 0.0; }, function () { return totalToSpawn; });
+    var lastScroll = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "lastScroll", function () { return 0.0; }, function () { return lastScroll; });
+    var targetsBuf = (0, std___std_all_1.globalVarInit)("_slash_main_dot_ts", "targetsBuf", function () { return (0, common_1.buffer)((100 | 0), "float2", __assign({}, JSON.parse("{\"type\":\"primitive\",\"name\":\"float2\"}"))); }, function () { return targetsBuf; });
     function main() {
         var _this = this;
-        var _a, _b, _c;
-        common_1.ui.label("Sun angle");
-        //sunAngle = ui::slider(sunAngle, 0, PI * 2);
-        var sun = (_a = __.FM.float_3_1_1_1(__.mul(Math.cos(sunAngle), (500 | 0)), __.int(300), __.mul(Math.sin(sunAngle), (500 | 0))), _b = sunDist, [_a[0] * _b, _a[1] * _b, _a[2] * _b]);
-        env.camera.near = 20.0;
-        env.camera.far = 200000.0;
-        var sunProjectionMatrix = common_1.matrix.perspective(90.0, 1.0, env.camera.near, env.camera.far);
-        var sunViewMatrix = common_1.matrix.lookAt(sun, (_c = (0 | 0), [_c, _c, _c]), __.makeVector((0 | 0), 1.0, (0 | 0)));
-        var sunViewProjMatrix = __.mul(sunProjectionMatrix, sunViewMatrix);
-        var viewProjMatrix = __.mul(env.camera.getPerspectiveMatrix(), env.camera.getWorldToViewMatrix());
-        var t = env.time;
-        (0, drawIndexed_1.drawAdvanced)({ mesh: m, depth: shadow, depthOnly: true, instances: num, vertex: __shadeup_make_shader_inst("shd_6700026809507899063930060096151892028000990000", { _ext_uniform_local_sunViewProjMatrix: sunViewProjMatrix, _ext_uniform_global_sqNum: globalVarGet("_slash_main_dot_ts", "sqNum"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env"), _ext_uniform_global_perlin_octaves: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_octaves"), _ext_uniform_global_PERLIN_YWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAPB"), _ext_uniform_global_PERLIN_ZWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAPB"), _ext_uniform_global_PI: globalVarGet("_slash__std_slash_common_dot_ts", "PI"), _ext_uniform_global_perlin: globalVarGet("_slash__std_slash_common_dot_ts", "perlin"), _ext_uniform_global_PERLIN_SIZE: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_SIZE"), _ext_uniform_global_PERLIN_YWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAP"), _ext_uniform_global_PERLIN_ZWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAP"), _ext_uniform_global_perlin_amp_falloff: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_amp_falloff") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_d) {
-                    __out.position = __.mul(sunViewProjMatrix, __.makeVector(calcPosition(__in.instanceIndex, __in.position), (1 | 0)));
-                    return [2 /*return*/];
-                });
-            }); }), fragment: __shadeup_make_shader_inst("shd_44130055067011460160064094000000831006000000", {}, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () { return __generator(this, function (_d) {
-                return [2 /*return*/];
-            }); }); }) });
-        (0, drawIndexed_1.drawAdvanced)({ mesh: m, instances: num, vertex: __shadeup_make_shader_inst("shd_00006405900710000000088000759302300086039", { _ext_uniform_local_viewProjMatrix: viewProjMatrix, _ext_uniform_global_sqNum: globalVarGet("_slash_main_dot_ts", "sqNum"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env"), _ext_uniform_global_perlin_octaves: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_octaves"), _ext_uniform_global_PERLIN_YWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAPB"), _ext_uniform_global_PERLIN_ZWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAPB"), _ext_uniform_global_PI: globalVarGet("_slash__std_slash_common_dot_ts", "PI"), _ext_uniform_global_perlin: globalVarGet("_slash__std_slash_common_dot_ts", "perlin"), _ext_uniform_global_PERLIN_SIZE: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_SIZE"), _ext_uniform_global_PERLIN_YWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAP"), _ext_uniform_global_PERLIN_ZWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAP"), _ext_uniform_global_perlin_amp_falloff: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_amp_falloff") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
-                var realPosition;
-                return __generator(this, function (_d) {
-                    realPosition = calcPosition(__in.instanceIndex, __in.position);
-                    __out.attr((0 | 0), realPosition);
-                    __out.position = __.mul(viewProjMatrix, __.makeVector(realPosition, (1 | 0)));
-                    return [2 /*return*/];
-                });
-            }); }), fragment: __shadeup_make_shader_inst("shd_468600940132506707176461900000000951000670000", { _ext_uniform_local_sunViewProjMatrix: sunViewProjMatrix, _ext_uniform_local_sun: sun, _ext_uniform_global_shadowMapSize: globalVarGet("_slash_main_dot_ts", "shadowMapSize"), _ext_uniform_global_shadow: globalVarGet("_slash_main_dot_ts", "shadow"), _ext_uniform_global_sqNum: globalVarGet("_slash_main_dot_ts", "sqNum"), _ext_uniform_global_perlin_octaves: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_octaves"), _ext_uniform_global_PERLIN_YWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAPB"), _ext_uniform_global_PERLIN_ZWRAPB: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAPB"), _ext_uniform_global_PI: globalVarGet("_slash__std_slash_common_dot_ts", "PI"), _ext_uniform_global_perlin: globalVarGet("_slash__std_slash_common_dot_ts", "perlin"), _ext_uniform_global_PERLIN_SIZE: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_SIZE"), _ext_uniform_global_PERLIN_YWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_YWRAP"), _ext_uniform_global_PERLIN_ZWRAP: globalVarGet("_slash__std_slash_common_dot_ts", "PERLIN_ZWRAP"), _ext_uniform_global_perlin_amp_falloff: globalVarGet("_slash__std_slash_common_dot_ts", "perlin_amp_falloff") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
-                var realPosition, posFromLight, shadowPos, visibility, y, x, offset, sampVal, compVal, lambertFactor, lightingFactor;
-                var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
-                return __generator(this, function (_x) {
-                    realPosition = __in.attr((0 | 0));
-                    posFromLight = __.mul(sunViewProjMatrix, __.makeVector(realPosition, 1.0));
-                    posFromLight = (_d = posFromLight, _e = posFromLight[3], [_d[0] / _e, _d[1] / _e, _d[2] / _e, _d[3] / _e]);
-                    shadowPos = __.makeVector((_f = (_h = (_k = posFromLight, [_k[0], _k[1]]), _j = __.makeVector(0.5, (__.FM.negate_1(0.5))), [_h[0] * _j[0], _h[1] * _j[1]]), _g = (_l = 0.5, [_l, _l]), [_f[0] + _g[0], _f[1] + _g[1]]), posFromLight[2]);
-                    visibility = 0.0;
-                    for (y = (__.FM.negate_1((1 | 0))); y <= (1 | 0); y++) {
-                        for (x = (__.FM.negate_1((1 | 0))); x <= (1 | 0); x++) {
-                            offset = (_m = __.FM.float_2_1_1(x, y), _o = (1.0 / shadowMapSize), [_m[0] * _o, _m[1] * _o]);
-                            sampVal = shadow.sample((_p = (_r = shadowPos, [_r[0], _r[1]]), _q = offset, [_p[0] + _q[0], _p[1] + _q[1]]))[0];
-                            compVal = shadowPos[2] - 0.000003;
-                            visibility = visibility + (compVal < sampVal ? (1 | 0) : (0 | 0));
-                        }
-                    }
-                    visibility = visibility / 9.0;
-                    lambertFactor = (0, std_math_1.max)((0, std_math_1.dot)((0, std_math_1.normalize)((_s = sun, _t = __in.position, [_s[0] - _t[0], _s[1] - _t[1], _s[2] - _t[2]])), __in.normal), 0.0);
-                    lightingFactor = (0, std_math_1.min)(0.2 + visibility * lambertFactor, 1.0);
-                    return [2 /*return*/, __.makeVector((_u = (_v = calcColor(__in.instanceIndex, __in.normal), _w = lightingFactor, [_v[0] * _w, _v[1] * _w, _v[2] * _w, _v[3] * _w]), [_u[0], _u[1], _u[2]]), (1 | 0))];
-                });
-            }); }) });
-        (0, drawIndexed_1.draw)(__shadeup_make_shader_inst("shd_026080640000000011000000097066000024020", {}, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_d) {
+        var _a, _b, _c, _d;
+        var deltaTime = env.deltaTime;
+        if (deltaTime > ((1 | 0) / (60 | 0))) {
+            deltaTime = (1 | 0) / (60 | 0);
+        }
+        checkTex();
+        var mouse = env.input("mouse", env.mouse.screen);
+        var scroll = env.input("scroll", 0.0);
+        var targets = env.input("targets", []);
+        var emitter = __.makeVector(0.0, env.screenSize[1]);
+        var overrideColor = env.input("color", __.intifyVector(__.makeVector((0 | 0), (0 | 0), (0 | 0), (0 | 0))));
+        var numTargets = (targets.len() | 0);
+        if (numTargets > (0 | 0)) {
+            for (var i = (0 | 0); i < numTargets; i++) {
+                targetsBuf.__index_assign(i, targets[i]);
+            }
+        }
+        totalToSpawn = totalToSpawn + (4 | 0) * (144 | 0) * deltaTime;
+        var thisFrame = Math.floor(totalToSpawn);
+        (0, std___std_all_1.compute)(__.intifyVector(__.makeVector((2 | 0), (1 | 0), (1 | 0))), __shadeup_make_shader_inst("shd_585386095968817081280000007085053678100007900028", { _ext_uniform_local_emitter: emitter, _ext_uniform_global_deadCounter: globalVarGet("_slash_main_dot_ts", "deadCounter"), _ext_uniform_global_dead: globalVarGet("_slash_main_dot_ts", "dead"), _ext_uniform_global_particles: globalVarGet("_slash_main_dot_ts", "particles"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env"), _ext_uniform_global_PI: globalVarGet("_slash__std_slash_common_dot_ts", "PI") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            var _e, _f;
+            return __generator(this, function (_g) {
+                spawnParticle(new Particle({ position: (_e = emitter, _f = __.makeVector((0 | 0), (0, std_math_1.rand2)(__.makeVector(__in.globalId[0] / 103.0, env.frame)) * 20.0 - 30.0), [_e[0] + _f[0], _e[1] + _f[1]]), velocity: (1250 | 0) + (0, std_math_1.rand2)(__.makeVector(__in.globalId[0] / 1452.0, env.time / (4512 | 0))) * (200 | 0), angle: (0 | 0) * (0, std_math_1.rand2)(__.makeVector(__in.globalId[0] / 1452.0, env.time)) * common_1.PI / (14 | 0) }));
                 return [2 /*return*/];
             });
         }); }));
-        albedo.clear();
-        normal.clear();
-        shadow.clear();
+        totalToSpawn = totalToSpawn - thisFrame;
+        (0, std___std_all_1.compute)((_a = (1 | 0), [_a, _a, _a]), __shadeup_make_shader_inst("shd_5749083002000000000000006242000000005772", { _ext_uniform_global_deadReader: globalVarGet("_slash_main_dot_ts", "deadReader"), _ext_uniform_global_deadCounter: globalVarGet("_slash_main_dot_ts", "deadCounter") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_e) {
+                deadReader.__index_assign((0 | 0), (deadCounter.__index((0 | 0)).load() | 0));
+                return [2 /*return*/];
+            });
+        }); }));
+        //deadReader.download();
+        //stat("pool", deadReader[0]);
+        var mat2 = env.camera.getCombinedMatrix();
+        (0, std___std_all_1.compute)(__.intifyVector(__.makeVector((particles.len() | 0) / (32 | 0), (1 | 0), (1 | 0))), __shadeup_make_shader_inst("shd_08708500520000900005000007802065008012", { _ext_uniform_local_numTargets: numTargets, _ext_uniform_local_scroll: scroll, _ext_uniform_local_deltaTime: deltaTime, _ext_uniform_local_mouse: mouse, _ext_uniform_global_particles: globalVarGet("_slash_main_dot_ts", "particles"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env"), _ext_uniform_global_logoBuf: globalVarGet("_slash_main_dot_ts", "logoBuf"), _ext_uniform_global_logoBuf2: globalVarGet("_slash_main_dot_ts", "logoBuf2"), _ext_uniform_global_targetsBuf: globalVarGet("_slash_main_dot_ts", "targetsBuf"), _ext_uniform_global_numLogoPoints2: globalVarGet("_slash_main_dot_ts", "numLogoPoints2"), _ext_uniform_global_numLogoPoints: globalVarGet("_slash_main_dot_ts", "numLogoPoints"), _ext_uniform_global_deathNear: globalVarGet("_slash_main_dot_ts", "deathNear"), _ext_uniform_global_deadCounter: globalVarGet("_slash_main_dot_ts", "deadCounter"), _ext_uniform_global_dead: globalVarGet("_slash_main_dot_ts", "dead") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            function trans(p) {
+                var _a, _b, _c, _d;
+                var tt = scroll / 500.0;
+                var mat3 = __.float2x2(Math.cos(tt), (__.FM.negate_1(Math.sin(tt))), Math.sin(tt), Math.cos(tt));
+                return _a = __.mul((_c = p, _d = 0.5, [_c[0] - _d, _c[1] - _d]), mat3), _b = 0.5, [_a[0] + _b, _a[1] + _b];
+            }
+            var p, deathOffset, targetPos, hit, angleAmount, basePos, size, use2, logoSize, firstPos, t, index, sub, a, b, d, targetVelocity, deltaPos, targetAngle, shouldKill, idx;
+            var _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14;
+            return __generator(this, function (_15) {
+                p = particles.__index(__in.globalId[0]);
+                if (p.alive == (0 | 0)) {
+                    return [2 /*return*/];
+                }
+                if (numTargets > (0 | 0)) {
+                    p.goal = p.goal + 0.5;
+                }
+                deathOffset = (0, std_math_1.rand)(__in.globalId[0] / 15325.0) * (1 | 0);
+                p.age = p.age + deltaTime;
+                p.position = (_e = p.position, _f = (_g = (_j = __.makeVector(Math.cos(p.angle), Math.sin(p.angle)), _k = p.velocity, [_j[0] * _k, _j[1] * _k]), _h = deltaTime, [_g[0] * _h, _g[1] * _h]), [_e[0] + _f[0], _e[1] + _f[1]]);
+                targetPos = mouse;
+                hit = false;
+                angleAmount = 7.5;
+                if (p.goal >= 0.5) {
+                    targetPos = env.screenSize;
+                    angleAmount = 10.0;
+                    basePos = __.makeVector(env.screenSize[0] / 1.5, env.screenSize[1] / (8 | 0));
+                    size = (_l = (env.screenSize[1] / 1.2), [_l, _l]);
+                    __.swizzle(basePos, 'x', env.screenSize[0] - size[0] - (150 | 0));
+                    use2 = (0, std_math_1.rand)(__in.globalId[0] / 105320.0) < 0.67;
+                    logoSize = __.intifyVector(__.makeVector((675 | 0), (675 | 0)));
+                    firstPos = (_m = basePos, _o = (_p = trans((_r = (_t = logoBuf.__index((0 | 0)), [_t[0], _t[1]]), _s = logoSize, [_r[0] / _s[0], _r[1] / _s[1]])), _q = size, [_p[0] * _q[0], _p[1] * _q[1]]), [_m[0] + _o[0], _m[1] + _o[1]]);
+                    if (use2) {
+                        firstPos = (_u = basePos, _v = (_w = trans((_y = (_0 = logoBuf2.__index((0 | 0)), [_0[0], _0[1]]), _z = logoSize, [_y[0] / _z[0], _y[1] / _z[1]])), _x = size, [_w[0] * _x[0], _w[1] * _x[1]]), [_u[0] + _v[0], _u[1] + _v[1]]);
+                    }
+                    if (numTargets > (0 | 0)) {
+                        firstPos = targetsBuf.__index((0 | 0));
+                    }
+                    if (p.timeline < (0 | 0)) {
+                        targetPos = firstPos;
+                        targetPos = (_1 = targetPos, _2 = (_3 = __.makeVector((0, std_math_1.rand3)(__.makeVector(__in.globalId[0] / 14502.4, 132.52, (55 | 0))), (0, std_math_1.rand3)(__.makeVector(__in.globalId[0] / 5325.3, 5123.2, (234 | 0)))), _4 = (50 | 0), [_3[0] * _4, _3[1] * _4]), [_1[0] + _2[0], _1[1] + _2[1]]);
+                        if ((0, std_math_1.dist)(targetPos, p.position) < (100 | 0)) {
+                            p.timeline = 1.0;
+                        }
+                        if (numTargets == (0 | 0)) {
+                            if (use2) {
+                                p.angle = p.angle + (Math.cos((__in.globalId[0] + p.age) / 5000.0) * deltaTime * 10.0);
+                            }
+                            else {
+                                p.angle = p.angle + (Math.sin((__in.globalId[0] + p.age) / 2400.0) * deltaTime * 6.0);
+                            }
+                        }
+                    }
+                    else { //p.timeline += deltaTime * 5.0;
+                        t = (0, std_math_1.wrap)(p.timeline, (0 | 0), use2 ? numLogoPoints2 : numLogoPoints);
+                        if (numTargets > (0 | 0)) {
+                            t = (0, std_math_1.wrap)(p.timeline, (0 | 0), numTargets);
+                        }
+                        index = (__.mul(t, 1.0) | 0);
+                        sub = t * 1.0 - index;
+                        a = logoBuf.__index(index);
+                        b = logoBuf.__index((index + (1 | 0)) % numLogoPoints);
+                        if (use2) {
+                            a = logoBuf2.__index(index);
+                            b = logoBuf2.__index((index + (1 | 0)) % numLogoPoints2);
+                        }
+                        targetPos = (_5 = basePos, _6 = (_7 = trans((_9 = (_11 = (0, std_math_1.lerp)(a, b, sub), [_11[0], _11[1]]), _10 = logoSize, [_9[0] / _10[0], _9[1] / _10[1]])), _8 = size, [_7[0] * _8[0], _7[1] * _8[1]]), [_5[0] + _6[0], _5[1] + _6[1]]);
+                        if (numTargets > (0 | 0)) {
+                            angleAmount = 20.0;
+                            a = targetsBuf.__index(index);
+                            b = targetsBuf.__index((index + (1 | 0)) % numTargets);
+                            targetPos = (_12 = (0, std_math_1.lerp)(a, b, sub), [_12[0], _12[1]]);
+                            if (p.timeline >= (6 | 0)) {
+                                angleAmount = 7.0;
+                            } //if (p.timeline >= numTargets * rand(in.globalId.x / 100.0) * 1.5) {
+                            if (p.timeline >= numTargets) {
+                                targetPos = __.makeVector(env.screenSize[0] + (400 | 0), (__.FM.negate_1((400 | 0))) + scroll);
+                            }
+                        } //p.velocity += (1 + dot(normalize(b - a), (cos(p.angle), sin(p.angle)))) * deltaTime * 100.0;
+                        //p.velocity += deltaTime * 1000.0;
+                        if ((0, std_math_1.dist)(targetPos, p.position) < (100 | 0)) {
+                            p.timeline = p.timeline + 1.0;
+                        } //p.angle += (rand2((in.globalId.x / 100.0, env.time)) * 2 - 1) * deltaTime * p.timeline * 2.0;
+                        if (numTargets == (0 | 0)) {
+                            if (p.age < deathNear + deathOffset) {
+                                p.angle = p.angle + (Math.cos(__in.globalId[0] + p.timeline)) * deltaTime * 1.0;
+                                p.angle = p.angle + (Math.sin(__in.globalId[0] + env.time)) * deltaTime * 10.0;
+                            }
+                        }
+                        else {
+                            p.angle = p.angle + (Math.sin(__in.globalId[0] + env.time)) * deltaTime * 4.0;
+                        }
+                    }
+                }
+                d = (0, std_math_1.dist)(targetPos, p.position);
+                if (d < 200.0) {
+                    p.goal = p.goal + deltaTime;
+                }
+                targetVelocity = d * 6.0;
+                if (hit) {
+                    targetVelocity = 100.0;
+                    //p.velocity = lerp(p.velocity, targetVelocity, deltaTime * 2.0);
+                }
+                deltaPos = (_13 = targetPos, _14 = p.position, [_13[0] - _14[0], _13[1] - _14[1]]);
+                targetAngle = (0, std_math_1.atan2)(deltaPos[1], deltaPos[0]);
+                if (p.age < deathNear + deathOffset) {
+                    p.angle = lerpAngle(p.angle, targetAngle, deltaTime * angleAmount * p.age / 2.0);
+                }
+                else {
+                    p.velocity = p.velocity * (1.0 - deltaTime * (2 | 0));
+                }
+                shouldKill = false;
+                if (p.age > 7.0 + deathOffset) {
+                    shouldKill = true;
+                }
+                if (__.or(__.or(__.or(p.position[0] > env.screenSize[0], p.position[0] < (0 | 0)), p.position[1] > env.screenSize[1]), p.position[1] < (0 | 0))) { //shouldKill = true;
+                }
+                if (shouldKill) {
+                    p.alive = (0 | 0);
+                    idx = (deadCounter.__index((0 | 0)).add((1 | 0)) | 0);
+                    dead.__index_assign(idx, (__.swizzle(__in.globalId, 'x') >>> 0));
+                }
+                particles.__index_assign(__in.globalId[0], p);
+                return [2 /*return*/];
+            });
+        }); }));
+        tex.draw(__shadeup_make_shader_inst("shd_6900259035000093023000000095000000001196", { _ext_uniform_local_scroll: scroll, _ext_uniform_local_deltaTime: deltaTime, _ext_uniform_global_tex2: globalVarGet("_slash_main_dot_ts", "tex2"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env"), _ext_uniform_global_PI: globalVarGet("_slash__std_slash_common_dot_ts", "PI"), _ext_uniform_global_lastScroll: globalVarGet("_slash_main_dot_ts", "lastScroll") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            var pixelDist, angle, dir, off, val1, val2;
+            var _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y;
+            return __generator(this, function (_z) {
+                pixelDist = (_e = (_g = 1.0, [_g, _g]), _f = tex2.size, [_e[0] / _f[0], _e[1] / _f[1]]);
+                angle = (0, std_math_1.rand3)(__.makeVector(__in.screen, env.time)) * common_1.PI * (2 | 0);
+                dir = __.makeVector(Math.cos(angle), Math.sin(angle));
+                off = (_h = __.makeVector((0 | 0), (scroll - lastScroll)), _j = pixelDist, [_h[0] * _j[0], _h[1] * _j[1]]);
+                val1 = tex2.sample((_k = (_m = __in.uv, _o = off, [_m[0] + _o[0], _m[1] + _o[1]]), _l = (_p = dir, _q = pixelDist, [_p[0] * _q[0], _p[1] * _q[1]]), [_k[0] + _l[0], _k[1] + _l[1]]));
+                val2 = tex2.sample((_r = __in.uv, _s = off, [_r[0] + _s[0], _r[1] + _s[1]]));
+                __out.color = (_t = (_v = (_x = val1, _y = val2, [_x[0] + _y[0], _x[1] + _y[1], _x[2] + _y[2], _x[3] + _y[3]]), _w = 2.0, [_v[0] / _w, _v[1] / _w, _v[2] / _w, _v[3] / _w]), _u = (1.0 - deltaTime * 8.0), [_t[0] * _u, _t[1] * _u, _t[2] * _u, _t[3] * _u]);
+                return [2 /*return*/];
+            });
+        }); }));
+        lastScroll = scroll;
+        (0, drawIndexed_1.drawAdvanced)({ instances: (particles.len() | 0), mesh: mesh_1.mesh.box((_b = (0 | 0), [_b, _b, _b]), __.intifyVector(__.makeVector((15 | 0), (1 | 0), (1 | 0)))), attachments: [tex], vertex: __shadeup_make_shader_inst("shd_00821606432096000132571910900898440480000000", { _ext_uniform_local_scroll: scroll, _ext_uniform_global_particles: globalVarGet("_slash_main_dot_ts", "particles"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+                var p, mat_1;
+                var _e, _f, _g, _h, _j, _k;
+                return __generator(this, function (_l) {
+                    p = particles.__index(__in.instanceIndex);
+                    if (p.alive == (0 | 0)) {
+                        __out.position = (_e = (0 | 0), [_e, _e, _e, _e]);
+                    }
+                    else {
+                        mat_1 = __.float2x2(Math.cos(p.angle), Math.sin((__.FM.negate_1(p.angle))), Math.sin(p.angle), Math.cos(p.angle));
+                        __out.position = __.makeVector((0, common_1.pixelToClip)((_f = (_h = p.position, _j = __.makeVector((0 | 0), (__.FM.negate_1(scroll))), [_h[0] + _j[0], _h[1] + _j[1]]), _g = __.mul((_k = __in.position, [_k[0], _k[1]]), mat_1), [_f[0] + _g[0], _f[1] + _g[1]])), (0 | 0), (1 | 0));
+                    }
+                    return [2 /*return*/];
+                });
+            }); }), fragment: __shadeup_make_shader_inst("shd_0005900044000151533001000000860800600000", { _ext_uniform_local_overrideColor: overrideColor, _ext_uniform_global_particles: globalVarGet("_slash_main_dot_ts", "particles"), _ext_uniform_global_tex2: globalVarGet("_slash_main_dot_ts", "tex2"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+                var p, c1, c2, c, base;
+                var _e, _f, _g, _h, _j, _k, _l, _m;
+                return __generator(this, function (_o) {
+                    p = particles.__index(__in.instanceIndex);
+                    c1 = __.makeVector(0.2, 0.3, 0.6, (1 | 0));
+                    c2 = __.makeVector(0.6, 0.2, 0.9, (1 | 0));
+                    c = (0, std_math_1.lerp)(c1, c2, (0, std_math_1.min)(p.age / 5.0, (0, std_math_1.rand)(__in.instanceIndex / 10526.0) * (2 | 0)));
+                    if ((0, std_math_1.length)(overrideColor) > 0.01) {
+                        c = (0, std_math_1.lerp)(c1, overrideColor, p.age / 3.0);
+                    }
+                    base = tex2.sample((_e = __in.screen, _f = env.screenSize, [_e[0] / _f[0], _e[1] / _f[1]]));
+                    __out.attachment0 = __.makeVector((_g = (_j = (_l = base, [_l[0], _l[1], _l[2]]), _k = 1.5, [_j[0] / _k, _j[1] / _k, _j[2] / _k]), _h = (_m = c, [_m[0], _m[1], _m[2]]), [_g[0] + _h[0], _g[1] + _h[1], _g[2] + _h[2]]), base[3] + 0.1);
+                    return [2 /*return*/];
+                });
+            }); }), depthTest: false });
+        var cam = new common_1.Camera({ position: __.makeVector((0 | 0), (0 | 0), env.screenSize[1] / ((2 | 0) * Math.tan(common_1.PI / (2 | 0) / 2.0))), rotation: common_1.quat.fromEulerAngles(__.intifyVector(__.makeVector((0 | 0), (0 | 0), (0 | 0)))), width: env.screenSize[0], height: env.screenSize[1], fov: (90 | 0), near: 0.1, far: (100009 | 0) });
+        var refLen = 2.0;
+        var mat = cam.getCombinedMatrix();
+        (0, drawIndexed_1.draw)(mesh_1.mesh.plane(__.makeVector((0 | 0), (__.FM.negate_1(env.screenSize[1])) / (2 | 0), (__.FM.negate_1((env.screenSize[1] / (2 | 0)))) * refLen), __.makeVector(env.screenSize[0], env.screenSize[1] * refLen), (_c = (4 | 0), [_c, _c])), __shadeup_make_shader_inst("shd_070320052000028790087932500120013360204818950", { _ext_uniform_local_mat: mat }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_e) {
+                __out.position = __.mul(mat, __.makeVector(__in.position, (1 | 0)));
+                return [2 /*return*/];
+            });
+        }); }), __shadeup_make_shader_inst("shd_0045010050110268436008600090058007300880000", {}, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_e) {
+                return [2 /*return*/];
+            });
+        }); }));
+        var tv = mesh_1.mesh.plane(__.intifyVector(__.makeVector((0 | 0), (0 | 0), (0 | 0))), (env.screenSize), (_d = (4 | 0), [_d, _d]));
+        tv.rotate(common_1.quat.fromEulerAngles(__.makeVector(common_1.PI / (2 | 0), (0 | 0), (0 | 0))));
+        var instances = (7 | 0);
+        (0, drawIndexed_1.drawInstanced)(tv, instances, __shadeup_make_shader_inst("shd_06000000951000000000000780140000900940", { _ext_uniform_local_mat: mat, _ext_uniform_local_instances: instances }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            var _e, _f;
+            return __generator(this, function (_g) {
+                __out.position = __.mul(mat, __.makeVector((_e = __in.position, _f = __.makeVector((0 | 0), (0 | 0), (__.FM.negate_1((50.0))) * ((instances - (1 | 0)) - __in.instanceIndex)), [_e[0] + _f[0], _e[1] + _f[1], _e[2] + _f[2]]), (1 | 0)));
+                return [2 /*return*/];
+            });
+        }); }), __shadeup_make_shader_inst("shd_00890360012200000000600490212005400000", { _ext_uniform_local_instances: instances, _ext_uniform_local_numTargets: numTargets, _ext_uniform_global_tex: globalVarGet("_slash_main_dot_ts", "tex"), _ext_uniform_global_env: globalVarGet("_slash__std_slash_native_dot_ts", "env") }, /**@shadeup=shader*/ function (__in, __out) { return __awaiter(_this, void 0, void 0, function () {
+            var c, sc, fac;
+            var _e, _f, _g, _h;
+            return __generator(this, function (_j) {
+                c = tex.sample(__in.uv);
+                sc = (_e = __in.uv, _f = env.screenSize, [_e[0] * _f[0], _e[1] * _f[1]]);
+                fac = 1.0;
+                //saturate(sdf::boxFrame((sc, 0), (env.screenSize / 2, 0), (env.screenSize, 0), 200.0) / 200.0);
+                fac = fac * (((__in.instanceIndex / instances)) / 2.0);
+                if (c[0] < c[2] * 0.6) {
+                    fac = 0.0;
+                }
+                if (numTargets > (0 | 0)) {
+                    fac = 0.0;
+                }
+                if (__in.instanceIndex == instances - (1 | 0)) {
+                    fac = 1.0;
+                }
+                __out.color = (_g = c, _h = fac, [_g[0] * _h, _g[1] * _h, _g[2] * _h, _g[3] * _h]);
+                return [2 /*return*/];
+            });
+        }); }));
+        var swap = tex;
+        tex = tex2;
+        tex2 = swap;
     }
     exports.main = main;
 });
