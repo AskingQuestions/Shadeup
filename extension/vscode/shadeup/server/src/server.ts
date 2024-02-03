@@ -313,10 +313,7 @@ connection.onInitialized(() => {
   }
 });
 
-connection.onDidChangeConfiguration((change) => {
-  // Revalidate all open text documents
-  documents.all().forEach(validateTextDocument);
-});
+connection.onDidChangeConfiguration((change) => {});
 
 // Only keep settings for open documents
 documents.onDidClose((e) => {});
@@ -461,80 +458,114 @@ documents.onDidChangeContent(async (change) => {
   // });
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-  // In this simple example we get the settings for every validate run.
+connection.onDidChangeWatchedFiles(async (_change) => {});
 
-  // The validator creates diagnostics for all uppercase words length 2 and more
-  const text = textDocument.getText();
-  const pattern = /\b[A-Z]{2,}\b/g;
-  let m: RegExpExecArray | null;
-
-  let problems = 0;
-  const diagnostics: Diagnostic[] = [];
-  while ((m = pattern.exec(text)) && problems < 100) {
-    problems++;
-    const diagnostic: Diagnostic = {
-      severity: DiagnosticSeverity.Warning,
-      range: {
-        start: textDocument.positionAt(m.index),
-        end: textDocument.positionAt(m.index + m[0].length),
-      },
-      message: `${m[0]} is all uppercase.`,
-      source: "ex",
-    };
-    if (hasDiagnosticRelatedInformationCapability) {
-      diagnostic.relatedInformation = [
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: "Spelling matters",
-        },
-        {
-          location: {
-            uri: textDocument.uri,
-            range: Object.assign({}, diagnostic.range),
-          },
-          message: "Particularly for names",
-        },
-      ];
+function displayPartsToString(parts?: ts.SymbolDisplayPart[]): string {
+  if (parts) {
+    let content = "";
+    for (let p of parts) {
+      content += p.text;
     }
-    diagnostics.push(diagnostic);
+    return content
+      .replace(/__\./g, "")
+      .replace(/\(property\)/g, "")
+      .replace(/\(method\)/g, "");
+  } else {
+    return "";
   }
-
-  // Send the computed diagnostics to VSCode.
-  connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 }
 
-connection.onDidChangeWatchedFiles(async (_change) => {
-  // Monitored files have change in VSCode
-  connection.console.log("We received a file change event");
-});
-
-// connection.on(async (params) => {
-//   console.log(env.classifications(cleanPath(params.textDocument.uri)));
-//   return env.classifications(cleanPath(params.textDocument.uri));
-// });
-
-// This handler provides the initial list of the completion items.
 connection.onCompletion(
-  (_textDocumentPosition: TextDocumentPositionParams): CompletionItem[] => {
-    // The pass parameter contains the position of the text document in
-    // which code complete got requested. For the example we ignore this
-    // info and always provide the same completion items.
-    return [
-      {
-        label: "TypeScript",
-        kind: CompletionItemKind.Text,
-        data: 1,
-      },
-      {
-        label: "JavaScript",
-        kind: CompletionItemKind.Text,
-        data: 2,
-      },
-    ];
+  async (
+    _textDocumentPosition: TextDocumentPositionParams
+  ): Promise<CompletionItem[]> => {
+    const doc = documents.get(_textDocumentPosition.textDocument.uri);
+    if (!doc) return [];
+    let offset = doc.offsetAt(_textDocumentPosition.position);
+    const path = cleanPath(_textDocumentPosition.textDocument.uri);
+    let completions = await env.completions(path, offset);
+
+    let items: CompletionItem[] = [];
+
+    for (let completion of completions) {
+      let c = completion.completion;
+      let kind =
+        (
+          {
+            [ts.ScriptElementKind.functionElement]: CompletionItemKind.Function,
+
+            [ts.ScriptElementKind.memberVariableElement]:
+              CompletionItemKind.Field,
+            [ts.ScriptElementKind.memberGetAccessorElement]:
+              CompletionItemKind.Field,
+            [ts.ScriptElementKind.memberSetAccessorElement]:
+              CompletionItemKind.Field,
+            [ts.ScriptElementKind.variableElement]: CompletionItemKind.Variable,
+            [ts.ScriptElementKind.constElement]: CompletionItemKind.Variable,
+            [ts.ScriptElementKind.localVariableElement]:
+              CompletionItemKind.Variable,
+            [ts.ScriptElementKind.classElement]: CompletionItemKind.Class,
+            [ts.ScriptElementKind.interfaceElement]:
+              CompletionItemKind.Interface,
+            [ts.ScriptElementKind.typeElement]: CompletionItemKind.Class,
+            [ts.ScriptElementKind.enumElement]: CompletionItemKind.Enum,
+            [ts.ScriptElementKind.moduleElement]: CompletionItemKind.Module,
+            [ts.ScriptElementKind.keyword]: CompletionItemKind.Keyword,
+            [ts.ScriptElementKind.scriptElement]: CompletionItemKind.File,
+            [ts.ScriptElementKind.alias]: CompletionItemKind.File,
+            [ts.ScriptElementKind.letElement]: CompletionItemKind.Variable,
+            [ts.ScriptElementKind.directory]: CompletionItemKind.Folder,
+            [ts.ScriptElementKind.string]: CompletionItemKind.Text,
+          } as any
+        )[c.kind.toString()] ?? CompletionItemKind.Property;
+
+      let parts = displayPartsToString(completion.details?.displayParts);
+      if (c.kind.toString() == ts.ScriptElementKind.alias) {
+        if (parts.startsWith("(alias) class")) {
+          kind = CompletionItemKind.Class;
+        } else if (parts.startsWith("(alias) enum")) {
+          kind = CompletionItemKind.Enum;
+        } else if (parts.startsWith("(alias) interface")) {
+          kind = CompletionItemKind.Interface;
+        } else if (parts.startsWith("(alias) type")) {
+          kind = CompletionItemKind.Class;
+        } else if (parts.startsWith("(alias) namespace")) {
+          kind = CompletionItemKind.Module;
+        } else if (parts.startsWith("(alias) function")) {
+          kind = CompletionItemKind.Function;
+        } else if (
+          parts.startsWith("(alias) var") ||
+          parts.startsWith("(alias) let")
+        ) {
+          kind = CompletionItemKind.Variable;
+        } else if (parts.startsWith("(alias) const")) {
+          kind = CompletionItemKind.Variable;
+        }
+      }
+
+      if (c.kind.toString() == ts.ScriptElementKind.string) {
+        c.name = `"${c.name.replace(/"/g, "")}"`;
+      }
+
+      let documentation =
+        completion.details?.documentation?.map((p: any) => ({
+          value: p.text,
+        })) ?? [];
+
+      if (!c.name.startsWith("__"))
+        items.push({
+          label: c.name,
+          sortText: c.sortText,
+          kind,
+          insertText: c.name,
+          detail: parts,
+          documentation: documentation[0] ?? undefined,
+          // range: (completion as any).range,
+        });
+    }
+
+    console.log(items);
+    return items;
   }
 );
 
