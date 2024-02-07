@@ -5,6 +5,98 @@ import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(new URL(import.meta.url));
 
+function filterDTS(files) {
+  return `import * as __ from "shadeup/math";
+
+export declare function makeShadeupInstance(
+  canvas: HTMLCanvasElement
+): Promise<{
+  engine: {
+    /**
+     * Set to false to pause
+     */
+    playing: boolean;
+
+    canvas: HTMLCanvasElement;
+
+    adapter: any;
+    hooks: {
+      beforeFrame?: () => {};
+      afterFrame?: () => {};
+      reset?: () => {};
+    }[];
+    start: () => void;
+
+    env: {
+      camera: {
+        position: __.float3;
+        rotation: __.float4;
+        width: __.float;
+        height: __.float;
+        fov: __.float;
+        near: __.float;
+        far: __.float;
+      };
+      camera2d: {
+        position: __.float2;
+        zoom: __.float;
+      };
+      deltaTime: __.float;
+      frame: __.int;
+      keyboard: any;
+      mouse: any;
+      screenSize: __.float2;
+      time: __.float;
+    };
+
+    /**
+     * Used to pass values into the shadeup env (accessed as env.input("name") inside)
+     */
+    inputValues: Map<string, any>;
+  };
+
+  files: {
+${[...files.entries()]
+  .map(
+    ([name, dts]) =>
+      `    ${name}: {\n${dts
+        .replaceAll("export declare let", "")
+        .replaceAll("export declare function", "")
+        .split("\n")
+        .map((s) => `     ${s}`)
+        .join("\n")
+        .trimEnd()}\n    };`
+  )
+  .join("\n")}
+  };
+}>;
+`;
+}
+
+const prefixConst = (files) => {
+  let str = `import { bindShadeupEngine } from "shadeup";
+
+export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
+  const __shadeup_gen_shader =
+    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
+  const __shadeup_make_shader_inst =
+    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
+  const __shadeup_register_struct =
+    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
+  const env = localEngineContext.env;\n`;
+
+  str += `((defineFunc) => {
+    let define = (deps, func) => defineFunc("/__meta.js", deps, func);
+  define(["require", "exports"], function (require, exports, __, std___std_all_1) {
+      "use strict";
+      Object.defineProperty(exports, "__esModule", { value: true });
+      exports.files = [${files.map((f) => JSON.stringify(f)).join(",")}];
+  });
+})(define);`;
+
+  return str;
+};
+
 export async function makeCompiler() {
   await Parser.init();
   const parser = new Parser();
@@ -50,6 +142,7 @@ export async function makeCompiler() {
       let output = await env.regenerate();
       let finalOutput = "";
       let dts = "";
+      let fileDts = new Map();
       let errors = await env.errors();
       if (errors.length > 0) {
         item.callback({
@@ -73,7 +166,13 @@ export async function makeCompiler() {
           continue;
 
         if (o.path.endsWith(".d.ts")) {
-          dts += o.contents;
+          fileDts.set(
+            o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", ""),
+            o.contents
+              .split("\n")
+              .filter((l) => !l.startsWith("import"))
+              .join("\n")
+          );
         } else {
           if (item.files.length == 1 && item.files[0].name == "__lib") {
             finalOutput += `
@@ -92,20 +191,8 @@ export async function makeCompiler() {
           }
         }
       }
-
       let final =
-        `import { bindShadeupEngine } from "shadeup";
-
-export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
-  const __shadeup_gen_shader =
-    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
-  const __shadeup_make_shader_inst =
-    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
-  const __shadeup_register_struct =
-    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
-  const env = localEngineContext.env;\n` +
-        finalOutput +
-        `\n});`;
+        prefixConst(item.files.map((f) => f.name)) + finalOutput + `\n});`;
       let doMinify = false;
 
       if (doMinify) {
@@ -116,7 +203,7 @@ export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext
 
       item.callback({
         output: final,
-        dts,
+        dts: filterDTS(fileDts),
       });
 
       envPool.push(env);
@@ -134,7 +221,7 @@ export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext
 
   return async function compile(data) {
     return new Promise((resolve, reject) => {
-      queue.push({ ...data, callback: resolve });
+      queue.push({ ...data, files: data.files, callback: resolve });
       consumeQueue();
     });
   };
@@ -240,18 +327,7 @@ export async function makeIncrementalCompiler() {
       }
 
       let final =
-        `import { bindShadeupEngine } from "shadeup";
-
-export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext) => {
-  const __shadeup_gen_shader =
-    localEngineContext.__shadeup_gen_shader.bind(localEngineContext);
-  const __shadeup_make_shader_inst =
-    localEngineContext.__shadeup_make_shader_inst.bind(localEngineContext);
-  const __shadeup_register_struct =
-    localEngineContext.__shadeup_register_struct.bind(localEngineContext);
-  const env = localEngineContext.env;\n` +
-        finalOutput +
-        `\n});`;
+        prefixConst(item.files.map((f) => f.name)) + finalOutput + `\n});`;
 
       console.log("Generated in " + (performance.now() - start) + "ms");
 

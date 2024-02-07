@@ -23,7 +23,7 @@ function findCommonPath(paths) {
   if (paths.length == 0) return "";
   if (paths.length == 1) return path.dirname(paths[0]);
 
-  paths = paths.sort((a, b) => b.length - a.length);
+  paths = paths.map((p) => p).sort((a, b) => b.length - a.length);
   let longest = paths[0];
   for (let i = 0; i < longest.length; i++) {
     let char = longest[i];
@@ -125,7 +125,10 @@ const buildFiles = async (files, options) => {
     fs.writeFileSync(outPath, out.output);
 
     if (out.dts) {
-      let dtsPath = options.output || file.replace(".shadeup", ".d.ts");
+      let dtsPath = file.replace(".shadeup", ".d.ts");
+      if (options.output) {
+        dtsPath = options.output.replace(".js", ".d.ts");
+      }
       console.log(`Writing ${dtsPath}`);
       fs.writeFileSync(dtsPath, out.dts);
     }
@@ -145,9 +148,15 @@ program
     }
 
     let fileSet = scanImports(file);
-    let files = Array.from(fileSet);
+    let files = [...fileSet.values()];
 
-    await buildFiles(files, options);
+    if (!options.output) {
+      delete options.output;
+    }
+    await buildFiles(files, {
+      output: file.replace(".shadeup", ".js"),
+      ...options,
+    });
   });
 
 const debounce = (fn, time) => {
@@ -170,7 +179,7 @@ program
     let rebuild = debounce(async () => {
       let fileSet = scanImports(file);
 
-      let files = Array.from(fileSet);
+      let files = [...fileSet.values()];
       let common = normalizePath(findCommonPath(files));
       let start = performance.now();
 

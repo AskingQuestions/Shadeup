@@ -4,7 +4,7 @@ const logoBuf = buffer<float2>(logoPath.len());
 const logoBuf2 = buffer<float2>(logoPath2.len());
 //let xy = "abc" + 124;
 
-const deathNear = 0.5;
+const deathNear = 6.5;
 
 for (let i = 0; i < logoBuf.len(); i++) {
 	logoBuf[i] = logoPath[i];
@@ -282,7 +282,7 @@ fn main() {
 		
 		const targetAngle = atan2(deltaPos.y, deltaPos.x);
 		if (p.age < deathNear + deathOffset) {
-			p.angle = lerpAngle(p.angle, targetAngle, deltaTime * angleAmount * p.age / 2.0);
+			p.angle = lerpAngle(p.angle, targetAngle, 10.0 * deltaTime * angleAmount * p.age / 2.0);
 		}else{
 			p.velocity *= (1.0 - deltaTime *2 );
 		}
