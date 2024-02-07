@@ -153,28 +153,45 @@ export async function makeIncrementalCompiler() {
   };
 
   const env = await makeSimpleShadeupEnvironment(true);
+  const fileCache = new Map();
+  const fileEmitCache = new Map();
 
   return async function compile(item) {
     try {
       let start = performance.now();
+      let itemsToRegen = [];
+      let dirtyFiles = new Set();
       for (let i = 0; i < item.files.length; i++) {
         const file = item.files[i];
-        if (i == item.files.length - 1) {
-          await env.writeFile("/" + file.name + ".ts", file.body);
+        let fileKey = "/" + file.name + ".ts";
+        let didChange = false;
+
+        if (fileCache.has(fileKey)) {
+          if (fileCache.get(fileKey) != file.body) {
+            didChange = true;
+          }
         } else {
-          env.writeFile("/" + file.name + ".ts", file.body);
+          didChange = true;
+        }
+        if (didChange) {
+          itemsToRegen.push(fileKey);
+          fileCache.set(fileKey, file.body);
+          dirtyFiles.add(fileKey);
         }
       }
+      let dirtyFilesArray = Array.from(dirtyFiles);
 
-      let errors = await env.errors();
-      if (errors.length > 0) {
-        return [
-          {
-            errors: errors,
-          },
-        ];
+      for (let i = 0; i < dirtyFilesArray.length; i++) {
+        const fileKey = dirtyFilesArray[i];
+        const file = item.files.find((f) => "/" + f.name + ".ts" == fileKey);
+        if (i == dirtyFilesArray.length - 1) {
+          await env.writeFile(fileKey, file.body, true);
+        } else {
+          env.writeFile(fileKey, file.body, true);
+        }
       }
-      let output = await env.regenerate();
+      let output = await env.regenerate(itemsToRegen);
+      console.log("Regen took " + (performance.now() - start) + "ms");
       let finalOutput = "";
       let dts = "";
 
@@ -190,7 +207,7 @@ export async function makeIncrementalCompiler() {
           continue;
 
         if (o.path.endsWith(".d.ts")) {
-          dts += o.contents;
+          // dts += o.contents;
         } else {
           if (item.files.length == 1 && item.files[0].name == "__lib") {
             finalOutput += `
@@ -201,14 +218,24 @@ export async function makeIncrementalCompiler() {
 `;
             return finalOutput;
           } else {
-            finalOutput += `
+            fileEmitCache.set(
+              o.path,
+              `
 
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
 	${o.contents}
 })(define);
-`;
+`
+            );
           }
+        }
+      }
+
+      for (let file of item.files) {
+        let fileKey = "/" + file.name + ".js";
+        if (fileEmitCache.has(fileKey)) {
+          finalOutput += fileEmitCache.get(fileKey);
         }
       }
 
@@ -227,7 +254,11 @@ export const makeShadeupInstance = bindShadeupEngine((define, localEngineContext
         `\n});`;
 
       console.log("Generated in " + (performance.now() - start) + "ms");
-      return final;
+
+      return {
+        output: final,
+        // errors: env.errors(),
+      };
     } catch (e) {
       console.error(e);
     }

@@ -175,7 +175,7 @@ program
       let start = performance.now();
 
       let orig = console.log;
-      console.log = () => {};
+      // console.log = () => {};
       let outs = await comp({
         files: files.map((f) => {
           f = normalizePath(f).replace(common, "");
@@ -185,19 +185,17 @@ program
         }),
       });
       console.log = orig;
-      for (let out of outs) {
-        if (out.errors) {
-          printErrors(out.errors, common);
-          return;
-        }
-      }
+      (async () => {
+        // let errs = await outs.errors;
+        // printErrors(errs, common);
+      })();
       let outPath = options.output || file.replace(".shadeup", ".js");
       console.log(
         `\x1b[32mCompiled in ${Math.round(
           performance.now() - start
         )}ms\x1b[0m: writing out to ${outPath}`
       );
-      fs.writeFileSync(outPath, outs);
+      fs.writeFileSync(outPath, outs.output);
     }, 100);
     rebuild();
 

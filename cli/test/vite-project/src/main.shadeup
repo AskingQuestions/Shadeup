@@ -4,7 +4,7 @@ const logoBuf = buffer<float2>(logoPath.len());
 const logoBuf2 = buffer<float2>(logoPath2.len());
 //let xy = "abc" + 124;
 
-const deathNear = 6.9;
+const deathNear = 0.5;
 
 for (let i = 0; i < logoBuf.len(); i++) {
 	logoBuf[i] = logoPath[i];

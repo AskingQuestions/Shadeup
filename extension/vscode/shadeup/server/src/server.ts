@@ -377,85 +377,88 @@ connection.languages.semanticTokens.on(async (params) => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(async (change) => {
-  const contents = change.document.getText();
-  let path = cleanPath(change.document.uri);
 
-  const ignoreErrors = false;
+let currentContentChange: NodeJS.Timeout | null = null;
 
-  await env.writeFile(path, contents, ignoreErrors);
-  // let filesToGenerate = [e.data.message.path];
-  // for (let dirty of dirtyFiles) {
-  // 	if (dirty !== e.data.message.path) filesToGenerate.push(dirty);
-  // }
+documents.onDidChangeContent((change) => {
+  if (currentContentChange) clearTimeout(currentContentChange);
+  currentContentChange = setTimeout(async () => {
+    const contents = change.document.getText();
+    let path = cleanPath(change.document.uri);
 
-  let output: {
-    path: string;
-    contents: string;
-  }[] = [];
-  // if (e.data.message.emit) output = await env.regenerate(filesToGenerate);
+    const ignoreErrors = false;
 
-  await env.regenerate();
-  let errors: {
-    error: ts.Diagnostic;
-    file: string;
-    message: string;
-  }[] = [];
+    await env.writeFile(path, contents, ignoreErrors);
+    // let filesToGenerate = [e.data.message.path];
+    // for (let dirty of dirtyFiles) {
+    // 	if (dirty !== e.data.message.path) filesToGenerate.push(dirty);
+    // }
 
-  if (!ignoreErrors) {
-    errors = await env.errors([path]);
-  }
+    let output: {
+      path: string;
+      contents: string;
+    }[] = [];
+    // if (e.data.message.emit) output = await env.regenerate(filesToGenerate);
 
-  let file = findFile(path);
+    //await env.regenerate();
+    let errors: {
+      error: ts.Diagnostic;
+      file: string;
+      message: string;
+    }[] = [];
 
-  let diags: Diagnostic[] = [];
+    if (!ignoreErrors) {
+      errors = await env.errors([path]);
+    }
 
-  for (let parseError of file?.parseDiagnostics ?? []) {
-    if (parseError.path !== path) continue;
-    let diag = genericDiagnosticToShadeupDiagnostic(path, parseError);
-    if (diag) diags.push(diag);
-  }
+    let file = findFile(path);
 
-  console.log("Errors", errors, file?.parseDiagnostics);
+    let diags: Diagnostic[] = [];
 
-  for (let error of errors) {
-    if (error.file !== path) continue;
-    let diag = tsDiagnosticToShadeupDiagnostic(error);
-    if (diag) diags.push(diag);
-  }
+    for (let parseError of file?.parseDiagnostics ?? []) {
+      if (parseError.path !== path) continue;
+      let diag = genericDiagnosticToShadeupDiagnostic(path, parseError);
+      if (diag) diags.push(diag);
+    }
 
-  // let output: ShadeupRenderedFile[] = [];
+    for (let error of errors) {
+      if (error.file !== path) continue;
+      let diag = tsDiagnosticToShadeupDiagnostic(error);
+      if (diag) diags.push(diag);
+    }
 
-  if (errors.length == 0) {
-    dirtyFiles.clear();
-    // console.log('Output', e.data.message.path, output);
-  } else {
-    dirtyFiles.add(path);
-    // console.log('Errors', e.data.message.path, errors);
-  }
-  // connection.console.log(JSON.stringify(env.classifications(path)));
+    // let output: ShadeupRenderedFile[] = [];
 
-  const diagnostics: Diagnostic[] = diags.map((d) => d);
+    if (errors.length == 0) {
+      dirtyFiles.clear();
+      // console.log('Output', e.data.message.path, output);
+    } else {
+      dirtyFiles.add(path);
+      // console.log('Errors', e.data.message.path, errors);
+    }
+    // connection.console.log(JSON.stringify(env.classifications(path)));
 
-  // Send the computed diagnostics to VSCode.
-  connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
-  console.log(env.files.map((f: any) => f.path));
+    const diagnostics: Diagnostic[] = diags.map((d) => d);
 
-  // console.log('Sending writefile nonce', e.data.nonce);
-  // postMessage({
-  // 	nonce: e.data.nonce,
-  // 	classifications: {
-  // 		path: e.data.message.path,
-  // 		encoded: env.classifications(e.data.message.path)
-  // 	},
-  // 	files: env.files.map((f) => ({
-  // 		path: f.path,
-  // 		contents: f.content,
-  // 		mapping: f.mapping
-  // 	})),
-  // 	diagnostics: diags,
-  // 	output
-  // });
+    // Send the computed diagnostics to VSCode.
+    connection.sendDiagnostics({ uri: change.document.uri, diagnostics });
+
+    // console.log('Sending writefile nonce', e.data.nonce);
+    // postMessage({
+    // 	nonce: e.data.nonce,
+    // 	classifications: {
+    // 		path: e.data.message.path,
+    // 		encoded: env.classifications(e.data.message.path)
+    // 	},
+    // 	files: env.files.map((f) => ({
+    // 		path: f.path,
+    // 		contents: f.content,
+    // 		mapping: f.mapping
+    // 	})),
+    // 	diagnostics: diags,
+    // 	output
+    // });
+  }, 400);
 });
 
 connection.onDidChangeWatchedFiles(async (_change) => {});
@@ -483,7 +486,9 @@ connection.onCompletion(
     if (!doc) return [];
     let offset = doc.offsetAt(_textDocumentPosition.position);
     const path = cleanPath(_textDocumentPosition.textDocument.uri);
+    let start = Date.now();
     let completions = await env.completions(path, offset);
+    console.log("Completions took", Date.now() - start);
 
     let items: CompletionItem[] = [];
 
@@ -564,7 +569,6 @@ connection.onCompletion(
         });
     }
 
-    console.log(items);
     return items;
   }
 );
