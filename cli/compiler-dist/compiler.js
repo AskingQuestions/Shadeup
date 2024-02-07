@@ -8,67 +8,73 @@ const __filename = fileURLToPath(new URL(import.meta.url));
 function filterDTS(files) {
   return `import * as __ from "shadeup/math";
 
-export declare function makeShadeupInstance(
-  canvas: HTMLCanvasElement
-): Promise<{
-  engine: {
-    /**
-     * Set to false to pause
-     */
-    playing: boolean;
-
-    canvas: HTMLCanvasElement;
-
-    adapter: any;
-    hooks: {
-      beforeFrame?: () => {};
-      afterFrame?: () => {};
-      reset?: () => {};
-    }[];
-    start: () => void;
-
-    env: {
-      camera: {
-        position: __.float3;
-        rotation: __.float4;
-        width: __.float;
-        height: __.float;
-        fov: __.float;
-        near: __.float;
-        far: __.float;
-      };
-      camera2d: {
-        position: __.float2;
-        zoom: __.float;
-      };
-      deltaTime: __.float;
-      frame: __.int;
-      keyboard: any;
-      mouse: any;
-      screenSize: __.float2;
-      time: __.float;
-    };
-
-    /**
-     * Used to pass values into the shadeup env (accessed as env.input("name") inside)
-     */
-    inputValues: Map<string, any>;
-  };
-
-  files: {
+declare namespace ShadeupFiles {
 ${[...files.entries()]
   .map(
     ([name, dts]) =>
-      `    ${name}: {\n${dts
-        .replaceAll("export declare let", "")
-        .replaceAll("export declare function", "")
+      `  declare namespace ${name} {\n${dts
         .split("\n")
-        .map((s) => `     ${s}`)
+        .map((s) => `    ${s}`)
         .join("\n")
-        .trimEnd()}\n    };`
+        .trimEnd()}\n  }`
   )
   .join("\n")}
+}
+
+export declare function makeShadeupInstance(
+  canvas: HTMLCanvasElement
+): Promise<{
+  /**
+   * Set to false to pause
+   */
+  playing: boolean;
+
+  canvas: HTMLCanvasElement;
+
+  adapter: any;
+  hooks: {
+    beforeFrame?: () => {};
+    afterFrame?: () => {};
+    reset?: () => {};
+  }[];
+  start: () => void;
+
+  env: {
+    camera: {
+      position: __.float3;
+      rotation: __.float4;
+      width: __.float;
+      height: __.float;
+      fov: __.float;
+      near: __.float;
+      far: __.float;
+    };
+    camera2d: {
+      position: __.float2;
+      zoom: __.float;
+    };
+    deltaTime: __.float;
+    frame: __.int;
+    keyboard: any;
+    mouse: any;
+    screenSize: __.float2;
+    time: __.float;
   };
+
+  /**
+   * Used to pass values into the shadeup env (accessed as env.input("name") inside)
+   */
+  inputValues: Map<string, any>;
+
+  enableUI: () => Promise<void>;
+
+  loadTextureFromImageLike: (
+		img: HTMLImageElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | HTMLVideoElement
+	) => Promise<__.texture2d<__.float4>>;
+	loadTexture2dFromURL: (url: string) =? Promise<__.texture2d<__.float4>>;
+	loadModelFromURL(urlGltf: string) => Promise<__.texture2d<__.float4>>;
+
+  files: typeof ShadeupFiles;
 }>;
 `;
 }
@@ -281,6 +287,7 @@ export async function makeIncrementalCompiler() {
       console.log("Regen took " + (performance.now() - start) + "ms");
       let finalOutput = "";
       let dts = "";
+      const fileDts = new Map();
 
       for (let o of output) {
         if (
@@ -295,6 +302,13 @@ export async function makeIncrementalCompiler() {
 
         if (o.path.endsWith(".d.ts")) {
           // dts += o.contents;
+          fileDts.set(
+            o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", ""),
+            o.contents
+              .split("\n")
+              .filter((l) => !l.startsWith("import"))
+              .join("\n")
+          );
         } else {
           if (item.files.length == 1 && item.files[0].name == "__lib") {
             finalOutput += `
@@ -333,6 +347,7 @@ export async function makeIncrementalCompiler() {
 
       return {
         output: final,
+        dts: filterDTS(fileDts),
         // errors: env.errors(),
       };
     } catch (e) {

@@ -21,7 +21,7 @@ if (typeof __dirname == "undefined") {
 function findCommonPath(paths) {
   // Find the common path without the filename or extension
   if (paths.length == 0) return "";
-  if (paths.length == 1) return path.dirname(paths[0]);
+  if (paths.length == 1) return path.dirname(paths[0]) + "/";
 
   paths = paths.map((p) => p).sort((a, b) => b.length - a.length);
   let longest = paths[0];
@@ -205,6 +205,7 @@ program
         )}ms\x1b[0m: writing out to ${outPath}`
       );
       fs.writeFileSync(outPath, outs.output);
+      fs.writeFileSync(outPath.replace(/\.js$/, ".d.ts"), outs.dts);
     }, 100);
     rebuild();
 

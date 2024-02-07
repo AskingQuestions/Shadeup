@@ -8,7 +8,7 @@ export const bindShadeupEngine = (fn) => {
   return async (canvas) => {
     const engine = await import("./engine");
     const localEngineContext = await makeShadeupEngine(canvas);
-    linkIntoEngine(localEngineContext, (def) => {
+    await linkIntoEngine(localEngineContext, (def) => {
       linkShadeupLibrary(def, localEngineContext);
       fn(def, localEngineContext);
     });

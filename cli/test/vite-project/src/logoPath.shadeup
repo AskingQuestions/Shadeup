@@ -1,5 +1,7 @@
 
 
+pub const testVal = 12;
+
 pub const logoPath = [
 
 (331.8819682214535,309.37499982761074),
