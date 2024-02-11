@@ -1,10 +1,22 @@
 {
-  "name": "shadeup",
-  "displayName": "shadeup",
+  "name": "shadeup-vscode",
+  "displayName": "Shadeup for VS Code",
   "description": "Shadeup language server and tools",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.85.0"
+  },
+  "publisher": "Shadeup",
+  "keywords": [
+    "shadeup",
+    "language",
+    "syntax",
+    "highlighting"
+  ],
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AskingQuestions/shadeup"
   },
   "main": "./client/out/extension",
   "categories": [

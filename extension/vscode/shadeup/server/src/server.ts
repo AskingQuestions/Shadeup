@@ -278,6 +278,7 @@ connection.onInitialize(async (params: InitializeParams) => {
       completionProvider: {
         resolveProvider: true,
       },
+      hoverProvider: true,
       semanticTokensProvider: {
         legend: {
           tokenTypes: TOKEN_TYPES,
@@ -340,8 +341,14 @@ function getTokenBuilder(document: TextDocument): SemanticTokensBuilder {
   return result;
 }
 
+let docChangePromise: Map<string, Promise<void>> = new Map();
+
 connection.languages.semanticTokens.on(async (params) => {
   let path = cleanPath(params.textDocument.uri);
+
+  let docChange =
+    docChangePromise.get(params.textDocument.uri) ?? Promise.resolve();
+  await Promise.race([docChange, delay(400)]);
 
   const document = documents.get(params.textDocument.uri);
   let file = findFile(path);
@@ -349,7 +356,8 @@ connection.languages.semanticTokens.on(async (params) => {
   if (document === undefined) {
     return { data: [] };
   }
-  const builder = new SemanticTokensBuilder();
+  // const builder = getTokenBuilder(document);
+  let builder = new SemanticTokensBuilder();
   let toks = env.classifications(path);
   toks.ranges.sort((a: any, b: any) => a[0] - b[0]);
   for (let tok of toks.ranges) {
@@ -371,7 +379,7 @@ connection.languages.semanticTokens.on(async (params) => {
       0
     );
   }
-  // console.log("Sending semantic tokens", path, builder);
+
   return builder.build();
 });
 
@@ -381,6 +389,11 @@ connection.languages.semanticTokens.on(async (params) => {
 let currentContentChange: NodeJS.Timeout | null = null;
 
 documents.onDidChangeContent((change) => {
+  let outResolve = () => {};
+  let resolveable = new Promise<void>((resolve) => {
+    outResolve = resolve;
+  });
+  docChangePromise.set(change.document.uri, resolveable);
   if (currentContentChange) clearTimeout(currentContentChange);
   currentContentChange = setTimeout(async () => {
     const contents = change.document.getText();
@@ -410,6 +423,8 @@ documents.onDidChangeContent((change) => {
     if (!ignoreErrors) {
       errors = await env.errors([path]);
     }
+
+    outResolve();
 
     let file = findFile(path);
 
@@ -488,7 +503,6 @@ connection.onCompletion(
     const path = cleanPath(_textDocumentPosition.textDocument.uri);
     let start = Date.now();
     let completions = await env.completions(path, offset);
-    console.log("Completions took", Date.now() - start);
 
     let items: CompletionItem[] = [];
 
@@ -572,6 +586,34 @@ connection.onCompletion(
     return items;
   }
 );
+
+connection.onHover(async (params) => {
+  const doc = documents.get(params.textDocument.uri);
+  if (!doc) return null;
+  let offset = doc.offsetAt(params.position);
+  const path = cleanPath(params.textDocument.uri);
+  let hover = await env.hover(path, offset);
+
+  if (hover) {
+    return {
+      contents:
+        "```ts\n" +
+        hover.displayParts.map((p: any) => p.text).join("") +
+        "\n```",
+      range: {
+        start: {
+          line: hover.range.startLineNumber,
+          character: hover.range.startColumn,
+        },
+        end: {
+          line: hover.range.endLineNumber,
+          character: hover.range.endColumn,
+        },
+      },
+    };
+  }
+  return null;
+});
 
 // This handler resolves additional information for the item selected in
 // the completion list.

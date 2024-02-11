@@ -13,8 +13,8 @@ const canvas = document.querySelector<HTMLCanvasElement>("#canvas")!;
   let model = await engine.loadModelFromURL(
     "https://s3-eu-west-1.amazonaws.com/fetchcfd/original/file-1571050371399.glb"
   );
-  console.log(model);
-  engine.files.main.setModel(model);
+  // console.log(model);
+  // engine.files.main.setModel(model);
   // engine.files.main.setSpawning(true);
   // engine.files.main.useTex(await engine);
 })();
