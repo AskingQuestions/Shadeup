@@ -10,7 +10,6 @@ import templates from "./src/types/template.js";
 
 import { program } from "commander";
 
-import { parse } from "./src/parse.js";
 import * as url from "url";
 
 if (typeof __dirname == "undefined") {
@@ -322,55 +321,6 @@ program
 			);
 		} catch (e) {
 			console.error(e);
-		}
-	});
-
-program
-	.command("build")
-	.description("Build files")
-	.option("-o, --output <path>", "Output path", "")
-	.argument("<files...>", "List of files to watch")
-	.action((files, options) => {
-		console.log(
-			`Building ${files.length} file${files.length > 1 ? "s" : ""}`
-		);
-		for (let file of files) {
-			try {
-				let parsed = parse(file);
-
-				if (parsed) {
-					if (!options.path) {
-						let pluginData = FindPluginData(path.dirname(file));
-						if (pluginData) {
-							parsed.outputDir = pluginData.dir;
-						} else {
-							console.error(
-								`Could not find the parent plugin for ${file}. Make sure that this file is placed under a uplugin.`
-							);
-						}
-					} else {
-						parsed.outputDir = options.path;
-					}
-
-					let realPluginData = FindPluginData(parsed.outputDir);
-
-					if (realPluginData) {
-						parsed.plugin = realPluginData.name;
-					} else {
-						console.error(
-							`Output dir is not a .uplugin directory. Please point to a directory containing a .uplugin file.`
-						);
-					}
-
-					parsed.generate();
-				}
-			} catch (e) {
-				if (e.message == "Exiting") {
-					console.log("Failed to build " + file);
-				} else {
-					console.error(e);
-				}
-			}
 		}
 	});
 

@@ -1,176 +1,178 @@
 // import { SourceNode } from 'source-map';
-import sha256 from 'fast-sha256';
-import { SyntaxNode } from 'web-tree-sitter';
-import { AstContext } from '../parser/AstContext';
-import { cleanName, resolveNodeName } from './util';
-import ts from 'typescript';
-import { UniformKeyValuePair, getWGSLTypeInfo } from './wgsl';
+import sha256 from "fast-sha256";
+import { SyntaxNode } from "web-tree-sitter";
+import { AstContext } from "../parser/AstContext";
+import { cleanName, resolveNodeName } from "./util";
+import ts from "typescript";
+import { UniformKeyValuePair, getWGSLTypeInfo } from "./wgsl";
 
 let rootSymbolsFromMath = [
-	'abs',
-	'floor',
-	'ceil',
-	'round',
-	'sign',
-	'cos',
-	'sin',
-	'tan',
-	'acos',
-	'asin',
-	'atan',
-	'atan2',
-	'cosh',
-	'sinh',
-	'tanh',
-	'acosh',
-	'asinh',
-	'atanh',
-	'exp',
-	'log',
-	'pow',
-	'log2',
-	'log10',
-	'sqrt',
-	'inversesqrt',
-	'frac',
-	'min',
-	'max',
-	'step',
-	'clamp',
-	'saturate',
-	'smoothstep',
-	'lerp',
-	'bilerp',
-	'length',
-	'distance',
-	'dist',
-	'normalize',
-	'dot',
-	'reflect',
-	'refract',
-	'cross',
-	'degrees',
-	'radians',
-	'wrap',
-	'rand',
-	'rand2',
-	'rand3',
-	'float2x2',
-	'float3x3',
-	'float4x4',
-	'inverse',
-	'transpose',
-	'pingpong',
-	'atomic',
-	'mod',
-	'workgroupBarrier',
-	'storageBarrier',
-	'workgroupUniformLoad',
-	'discard',
-	'ddx',
-	'ddy',
-	'ddxFine',
-	'ddyFine',
-	'ddxCoarse',
-	'ddyCoarse',
-	'bitcast'
+  "abs",
+  "floor",
+  "ceil",
+  "round",
+  "sign",
+  "cos",
+  "sin",
+  "tan",
+  "acos",
+  "asin",
+  "atan",
+  "atan2",
+  "cosh",
+  "sinh",
+  "tanh",
+  "acosh",
+  "asinh",
+  "atanh",
+  "exp",
+  "log",
+  "pow",
+  "log2",
+  "log10",
+  "sqrt",
+  "inversesqrt",
+  "frac",
+  "min",
+  "max",
+  "step",
+  "clamp",
+  "saturate",
+  "smoothstep",
+  "lerp",
+  "bilerp",
+  "length",
+  "distance",
+  "dist",
+  "normalize",
+  "dot",
+  "reflect",
+  "refract",
+  "cross",
+  "degrees",
+  "radians",
+  "wrap",
+  "rand",
+  "rand2",
+  "rand3",
+  "float2x2",
+  "float3x3",
+  "float4x4",
+  "inverse",
+  "transpose",
+  "pingpong",
+  "atomic",
+  "mod",
+  "workgroupBarrier",
+  "storageBarrier",
+  "workgroupUniformLoad",
+  "discard",
+  "ddx",
+  "ddy",
+  "ddxFine",
+  "ddyFine",
+  "ddxCoarse",
+  "ddyCoarse",
+  "bitcast",
 ];
 let rootSymbolsFromAll = [
-	'print',
-	'stat',
-	'statGraph',
-	'time',
-	'compute',
-	// 'type shader',
-	'flush',
-	// 'addressWorkgroup',
-	// 'drawAlt',
-	// 'shader_start_shd_',
+  "print",
+  "stat",
+  "statGraph",
+  "time",
+  "compute",
+  // 'type shader',
+  "flush",
+  // 'addressWorkgroup',
+  // 'drawAlt',
+  // 'shader_start_shd_',
 
-	'globalVarInit',
-	// 'type ShaderInput',
-	// 'type ShaderOutput',
+  "globalVarInit",
+  // 'type ShaderInput',
+  // 'type ShaderOutput',
 
-	'sleep',
-	'__makeMap',
-	'__deepClone',
-	'map',
-	'array'
+  "sleep",
+  "__makeMap",
+  "__deepClone",
+  "map",
+  "array",
 ];
 let rootSymbolsFromDraw = [
-	'drawIndexed',
-	'drawInstanced',
-	'draw',
-	'makeShader',
-	'ShaderInput',
-	'ShaderOutput',
-	'shader',
-	'drawAlt2',
-	// 'drawIndexedIndirect',
-	// 'drawInstancedIndexed',
-	// 'drawIndirect',
-	'drawCount',
-	'drawAttributes',
-	'drawAdvanced',
-	'computeIndirect',
-	'drawFullscreen',
-	'shader_start_shd_'
+  "drawIndexed",
+  "drawInstanced",
+  "draw",
+  "makeShader",
+  "ShaderInput",
+  "ShaderOutput",
+  "shader",
+  "drawAlt2",
+  // 'drawIndexedIndirect',
+  // 'drawInstancedIndexed',
+  // 'drawIndirect',
+  "drawCount",
+  "drawAttributes",
+  "drawAdvanced",
+  "computeIndirect",
+  "drawFullscreen",
+  "shader_start_shd_",
 ];
 let rootSymbolsFromCommon = [
-	'pixelToClip',
-	'PI',
-	'quat',
-	'noise',
-	'spatial',
-	// 'mat4',
-	'Camera',
-	'Camera2d',
-	'buffer',
-	'matrix',
-	'texture2d',
-	'texture3d',
-	'ui',
-	'screenAA',
-	'randColor',
-	'randColor2',
+  "pixelToClip",
+  "PI",
+  "quat",
+  "noise",
+  "spatial",
+  // 'mat4',
+  "Camera",
+  "Camera2d",
+  "buffer",
+  "matrix",
+  "texture2d",
+  "texture3d",
+  "ui",
+  "screenAA",
+  "randColor",
+  "randColor2",
 
-	'hsl',
-	'hsla',
-	'rgb',
-	'rgba',
-	'hslFromColor',
-	'hslaFromColor',
-	'rgbFromColor',
-	'rgbaFromColor',
-	'hsv',
-	'hsva',
-	'hsvFromColor',
-	'hsvaFromColor',
-	'cmyk',
-	'cmykFromColor',
-	'hex',
-	'hexFromColor',
+  "hsl",
+  "hsla",
+  "rgb",
+  "rgba",
+  "hslFromColor",
+  "hslaFromColor",
+  "rgbFromColor",
+  "rgbaFromColor",
+  "hsv",
+  "hsva",
+  "hsvFromColor",
+  "hsvaFromColor",
+  "cmyk",
+  "cmykFromColor",
+  "hex",
+  "hexFromColor",
 
-	'sin1',
-	'cos1',
-	'tan1',
+  "sin1",
+  "cos1",
+  "tan1",
 
-	'remap',
-	'remap1',
-	'color',
-	'wrap2',
-	'wrap3',
-	'wrap4',
+  "remap",
+  "remap1",
+  "color",
+  "wrap2",
+  "wrap3",
+  "wrap4",
 
-	'bezier'
+  "bezier",
 ];
-let rootSymbolsFromMesh = ['mesh', 'Mesh', 'Model', 'ModelPart', 'Material'];
+let rootSymbolsFromMesh = ["mesh", "Mesh", "Model", "ModelPart", "Material"];
 
 const header = `// This file was generated by Shadeup.
 import * as __ from "/std_math";
-import {${rootSymbolsFromMath.join(', ')}} from "/std_math";
-import {${rootSymbolsFromAll.join(', ')}, globalVarGet as __globalVarGet} from "/std___std_all";
-import {${rootSymbolsFromDraw.join(', ')}} from "/_std/drawIndexed";
+import {${rootSymbolsFromMath.join(", ")}} from "/std_math";
+import {${rootSymbolsFromAll.join(
+  ", "
+)}, globalVarGet as __globalVarGet} from "/std___std_all";
+import {${rootSymbolsFromDraw.join(", ")}} from "/_std/drawIndexed";
 import { physics, PhysicsRigidBody2d, PhysicsCollider2d, PhysicsEngine2d } from "/_std/physics";
 let globalVarGet = __globalVarGet;
 /**__SHADEUP_STRUCT_INJECTION_HOOK__*/
@@ -178,1471 +180,1583 @@ let globalVarGet = __globalVarGet;
 
 export type IndexMapping = [number, number, number, number][];
 export type SourceString = {
-	str: string;
-	indexMapping: IndexMapping;
+  str: string;
+  indexMapping: IndexMapping;
 };
 
 export class SourceNode {
-	public startIndex: number;
-	public endIndex: number;
-	public children: (SourceNode | string)[];
+  public startIndex: number;
+  public endIndex: number;
+  public children: (SourceNode | string)[];
 
-	constructor(
-		startIndex: number,
-		endIndex: number,
-		children: (SourceNode | string)[] | SourceNode | string
-	) {
-		this.startIndex = startIndex;
-		this.endIndex = endIndex;
+  constructor(
+    startIndex: number,
+    endIndex: number,
+    children: (SourceNode | string)[] | SourceNode | string
+  ) {
+    this.startIndex = startIndex;
+    this.endIndex = endIndex;
 
-		if (Array.isArray(children)) {
-			this.children = children;
-		} else {
-			this.children = [children];
-		}
-	}
+    if (Array.isArray(children)) {
+      this.children = children;
+    } else {
+      this.children = [children];
+    }
+  }
 
-	public toString(s: SourceString) {
-		let start = s.str.length;
-		for (const child of this.children) {
-			if (typeof child === 'string') {
-				s.str += child;
-			} else if (child instanceof SourceNode) {
-				child.toString(s);
-			}
-		}
-		s.indexMapping.push([this.startIndex, this.endIndex, start, s.str.length]);
-	}
+  public toString(s: SourceString) {
+    let start = s.str.length;
+    for (const child of this.children) {
+      if (typeof child === "string") {
+        s.str += child;
+      } else if (child instanceof SourceNode) {
+        child.toString(s);
+      }
+    }
+    s.indexMapping.push([this.startIndex, this.endIndex, start, s.str.length]);
+  }
 
-	public print(): string {
-		const s: SourceString = { str: '', indexMapping: [] };
-		this.toString(s);
-		return s.str;
-	}
+  public print(): string {
+    const s: SourceString = { str: "", indexMapping: [] };
+    this.toString(s);
+    return s.str;
+  }
 }
 
 function getTypeFallback(checker: ts.TypeChecker, t: ts.Type) {
-	let n = (t.aliasSymbol || t.getSymbol())?.escapedName;
-	if (!n && (t as any).intrinsicName) n = (t as any).intrinsicName;
+  let n = (t.aliasSymbol || t.getSymbol())?.escapedName;
+  if (!n && (t as any).intrinsicName) n = (t as any).intrinsicName;
 
-	if (typeof n !== 'string') {
-		let props = t.getApparentProperties();
-		if (props.length > 0) {
-			for (let p of props) {
-				if (p.escapedName.toString() === '_opaque_int') return 'int';
-				if (p.escapedName.toString() === '_opaque_float') return 'float';
-			}
-		}
+  if (typeof n !== "string") {
+    let props = t.getApparentProperties();
+    if (props.length > 0) {
+      for (let p of props) {
+        if (p.escapedName.toString() === "_opaque_int") return "int";
+        if (p.escapedName.toString() === "_opaque_float") return "float";
+      }
+    }
 
-		let btype = t.getBaseTypes();
-		if (btype && btype.length > 0) {
-			for (let b of btype) {
-				let tn = getTypeFallback(checker, b);
-				if (tn) return tn;
-			}
+    let btype = t.getBaseTypes();
+    if (btype && btype.length > 0) {
+      for (let b of btype) {
+        let tn = getTypeFallback(checker, b);
+        if (tn) return tn;
+      }
 
-			return null;
-		}
-	} else {
-		return n;
-	}
+      return null;
+    }
+  } else {
+    return n;
+  }
 }
 
 function followTypeReferences(t: ts.Type) {
-	if (t.flags & ts.TypeFlags.Object && (t as any).objectFlags & ts.ObjectFlags.Reference) {
-		if ((t as ts.TypeReference).target === t) {
-			return t;
-		}
-		return followTypeReferences((t as ts.TypeReference).target);
-	} else {
-		return t;
-	}
+  if (
+    t.flags & ts.TypeFlags.Object &&
+    (t as any).objectFlags & ts.ObjectFlags.Reference
+  ) {
+    if ((t as ts.TypeReference).target === t) {
+      return t;
+    }
+    return followTypeReferences((t as ts.TypeReference).target);
+  } else {
+    return t;
+  }
 }
 
 function removeDoubleUnderscores(str: string) {
-	return str.replace(/__/g, '_ii');
+  return str.replace(/__/g, "_ii");
 }
 
 function resolveStructName(c: ts.ClassDeclaration) {
-	// These are special names that we need to preserve
-	if (c.name?.text == 'ShaderInput') return 'ShaderInput';
-	if (c.name?.text == 'ShaderOutput') return 'ShaderOutput';
+  // These are special names that we need to preserve
+  if (c.name?.text == "ShaderInput") return "ShaderInput";
+  if (c.name?.text == "ShaderOutput") return "ShaderOutput";
 
-	return removeDoubleUnderscores(
-		`str_${c.getSourceFile().fileName.replaceAll('/', '_').replaceAll('.', '_')}_${c.getStart()}_${
-			c.name?.text ?? 'unknown'
-		}`.replaceAll('__', '_i_')
-	);
+  return removeDoubleUnderscores(
+    `str_${c
+      .getSourceFile()
+      .fileName.replaceAll("/", "_")
+      .replaceAll(".", "_")}_${c.getStart()}_${
+      c.name?.text ?? "unknown"
+    }`.replaceAll("__", "_i_")
+  );
 }
 
-function translateType(checker: ts.TypeChecker, t: ts.Type, templateFormat = false) {
-	let n = getTypeFallback(checker, t);
+function translateType(
+  checker: ts.TypeChecker,
+  t: ts.Type,
+  templateFormat = false
+) {
+  let n = getTypeFallback(checker, t);
 
-	let originalType = t;
-	if (n === undefined) {
-		t = followTypeReferences(t);
-	}
-	if (templateFormat) {
-		let name = n?.toString() ?? 'unknown';
+  let originalType = t;
+  if (n === undefined) {
+    t = followTypeReferences(t);
+  }
+  if (templateFormat) {
+    let name = n?.toString() ?? "unknown";
 
-		if (
-			name === 'Array' ||
-			name === 'buffer' ||
-			(t.flags & ts.TypeFlags.Object &&
-				((t as any).objectFlags & ts.ObjectFlags.Tuple ||
-					(t as any).objectFlags & ts.ObjectFlags.ArrayLiteral ||
-					(t as any).objectFlags & ts.ObjectFlags.EvolvingArray))
-		) {
-			let typeRef = originalType as ts.TypeReference;
+    if (
+      name === "Array" ||
+      name === "buffer" ||
+      (t.flags & ts.TypeFlags.Object &&
+        ((t as any).objectFlags & ts.ObjectFlags.Tuple ||
+          (t as any).objectFlags & ts.ObjectFlags.ArrayLiteral ||
+          (t as any).objectFlags & ts.ObjectFlags.EvolvingArray))
+    ) {
+      let typeRef = originalType as ts.TypeReference;
 
-			let args = typeRef.typeArguments || checker.getTypeArguments(typeRef);
-			return {
-				type: 'array',
-				element: translateType(checker, args[0], true),
-				staticSize: args.length
-			};
-		}
+      let args = typeRef.typeArguments || checker.getTypeArguments(typeRef);
+      return {
+        type: "array",
+        element: translateType(checker, args[0], true),
+        staticSize: args.length,
+      };
+    }
 
-		if (name == 'boolean' || name == 'false' || name == 'true') name = 'bool';
+    if (name == "boolean" || name == "false" || name == "true") name = "bool";
 
-		if (
-			name.startsWith('float') ||
-			name.startsWith('int') ||
-			name == 'bool' ||
-			name == 'texture2d' ||
-			name == 'texture3d'
-		)
-			return { type: 'primitive', name };
+    if (
+      name.startsWith("float") ||
+      name.startsWith("int") ||
+      name == "bool" ||
+      name == "texture2d" ||
+      name == "texture3d"
+    )
+      return { type: "primitive", name };
 
-		let symbol = t.aliasSymbol || t.getSymbol();
-		if (symbol && symbol.declarations && symbol.declarations.length > 0) {
-			if (ts.isClassDeclaration(symbol.declarations[0])) {
-				let fields: UniformKeyValuePair[] = [];
-				let decl = symbol.declarations[0] as ts.ClassDeclaration;
-				for (let member of decl.members) {
-					if (ts.isPropertyDeclaration(member)) {
-						let name = member.name.getText();
-						let type = checker.getTypeFromTypeNode(member.type!);
-						fields.push([name, translateType(checker, type, true)]);
-					}
-				}
-				return {
-					type: 'struct',
-					name: resolveStructName(decl),
-					fields
-				};
-			} else {
-				return {
-					type: 'unknown'
-				};
-			}
-		}
-	} else {
-		if (
-			n === 'Array' ||
-			n === 'buffer' ||
-			(t.flags & ts.TypeFlags.Object &&
-				((t as any).objectFlags & ts.ObjectFlags.Tuple ||
-					(t as any).objectFlags & ts.ObjectFlags.ArrayLiteral ||
-					(t as any).objectFlags & ts.ObjectFlags.EvolvingArray))
-		) {
-			let typeRef = originalType as ts.TypeReference;
+    let symbol = t.aliasSymbol || t.getSymbol();
+    if (symbol && symbol.declarations && symbol.declarations.length > 0) {
+      if (ts.isClassDeclaration(symbol.declarations[0])) {
+        let fields: UniformKeyValuePair[] = [];
+        let decl = symbol.declarations[0] as ts.ClassDeclaration;
+        for (let member of decl.members) {
+          if (ts.isPropertyDeclaration(member)) {
+            let name = member.name.getText();
+            let type = checker.getTypeFromTypeNode(member.type!);
+            fields.push([name, translateType(checker, type, true)]);
+          }
+        }
+        return {
+          type: "struct",
+          name: resolveStructName(decl),
+          fields,
+        };
+      } else {
+        return {
+          type: "unknown",
+        };
+      }
+    }
+  } else {
+    if (
+      n === "Array" ||
+      n === "buffer" ||
+      (t.flags & ts.TypeFlags.Object &&
+        ((t as any).objectFlags & ts.ObjectFlags.Tuple ||
+          (t as any).objectFlags & ts.ObjectFlags.ArrayLiteral ||
+          (t as any).objectFlags & ts.ObjectFlags.EvolvingArray))
+    ) {
+      let typeRef = originalType as ts.TypeReference;
 
-			let args = typeRef.typeArguments || checker.getTypeArguments(typeRef);
-			let translated = translateType(checker, args[0]);
+      let args = typeRef.typeArguments || checker.getTypeArguments(typeRef);
+      let translated = translateType(checker, args[0]);
 
-			let typeInfo = getWGSLTypeInfo(translated);
-			let arraySize = args.length;
-			let toStringed = checker.typeToString(typeRef);
+      let typeInfo = getWGSLTypeInfo(translated);
+      let arraySize = args.length;
+      let toStringed = checker.typeToString(typeRef);
 
-			if (typeInfo.needsAlignment) {
-				translated = `vec4<${typeInfo.elementType ?? 'f32'}>`;
-			}
+      if (typeInfo.needsAlignment) {
+        translated = `vec4<${typeInfo.elementType ?? "f32"}>`;
+      }
 
-			if (toStringed.endsWith('[]')) {
-				return 'array<' + translated + '>';
-			} else {
-				return 'array<' + translated + ', ' + arraySize + '>';
-			}
-		}
+      if (toStringed.endsWith("[]")) {
+        return "array<" + translated + ">";
+      } else {
+        return "array<" + translated + ", " + arraySize + ">";
+      }
+    }
 
-		if (n === 'texture2d') return `sampler`;
-		if (n === 'texture3d') return `sampler`;
+    if (n === "texture2d") return `sampler`;
+    if (n === "texture3d") return `sampler`;
 
-		if (n === 'bool') return 'bool';
-		if (n === 'boolean') return 'bool';
-		if (n === 'float') return 'f32';
-		if (n === 'float2') return 'vec2<f32>';
-		if (n === 'float3') return 'vec3<f32>';
-		if (n === 'float4') return 'vec4<f32>';
+    if (n === "bool") return "bool";
+    if (n === "boolean") return "bool";
+    if (n === "float") return "f32";
+    if (n === "float2") return "vec2<f32>";
+    if (n === "float3") return "vec3<f32>";
+    if (n === "float4") return "vec4<f32>";
 
-		if (n === 'int') return 'i32';
-		if (n === 'int2') return 'vec2<i32>';
-		if (n === 'int3') return 'vec3<i32>';
-		if (n === 'int4') return 'vec4<i32>';
+    if (n === "int") return "i32";
+    if (n === "int2") return "vec2<i32>";
+    if (n === "int3") return "vec3<i32>";
+    if (n === "int4") return "vec4<i32>";
 
-		if (n === 'float2x2') return 'mat2x2<f32>';
-		if (n === 'float3x3') return 'mat3x3<f32>';
-		if (n === 'float4x4') return 'mat4x4<f32>';
+    if (n === "float2x2") return "mat2x2<f32>";
+    if (n === "float3x3") return "mat3x3<f32>";
+    if (n === "float4x4") return "mat4x4<f32>";
 
-		if (n === 'void') return 'void';
-		if (n === 'error') return 'void';
+    if (n === "void") return "void";
+    if (n === "error") return "void";
 
-		let symbol = t.aliasSymbol || t.getSymbol();
-		if (symbol && symbol.declarations && symbol.declarations.length > 0) {
-			if (ts.isClassDeclaration(symbol.declarations[0])) {
-				return resolveStructName(symbol.declarations[0]);
-			} else {
-				return n?.toString() ?? 'void';
-			}
-		} else {
-			return n?.toString() ?? 'void';
-		}
-	}
+    let symbol = t.aliasSymbol || t.getSymbol();
+    if (symbol && symbol.declarations && symbol.declarations.length > 0) {
+      if (ts.isClassDeclaration(symbol.declarations[0])) {
+        return resolveStructName(symbol.declarations[0]);
+      } else {
+        return n?.toString() ?? "void";
+      }
+    } else {
+      return n?.toString() ?? "void";
+    }
+  }
 }
 
 // Takes an index and returns the index in the original string
-export function lookupIndexMapping(indexMapping: IndexMapping, index: number): number {
-	for (const [start, end, newStart, newEnd] of indexMapping) {
-		if (index >= newStart && index <= newEnd) {
-			return start + (index - newStart);
-		}
-	}
-	return -1;
+export function lookupIndexMapping(
+  indexMapping: IndexMapping,
+  index: number
+): number {
+  for (const [start, end, newStart, newEnd] of indexMapping) {
+    if (index >= newStart && index <= newEnd) {
+      return start + (index - newStart);
+    }
+  }
+  return -1;
 }
 
-export function reverseLookupIndexMapping(indexMapping: IndexMapping, index: number): number {
-	for (const [start, end, newStart, newEnd] of indexMapping) {
-		if (index >= start && index <= end) {
-			return newStart + (index - start);
-		}
-	}
-	return -1;
+export function reverseLookupIndexMapping(
+  indexMapping: IndexMapping,
+  index: number
+): number {
+  for (const [start, end, newStart, newEnd] of indexMapping) {
+    if (index >= start && index <= end) {
+      return newStart + (index - start);
+    }
+  }
+  return -1;
 }
 
 // Finds the smallest range in the index mapping that contains the given range
-export function lookupIndexMappingRange(indexMapping: IndexMapping, start: number, end: number) {
-	let minStart = Infinity;
-	let maxEnd = -Infinity;
-	let size = 0;
-	for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
-		if (start >= newStart && end <= newEnd) {
-			if (oldEnd - oldStart < size || size === 0) {
-				minStart = oldStart;
-				maxEnd = oldEnd;
-				size = oldEnd - oldStart;
-			}
-		}
-	}
-	return { start: minStart, end: maxEnd };
+export function lookupIndexMappingRange(
+  indexMapping: IndexMapping,
+  start: number,
+  end: number
+) {
+  let minStart = Infinity;
+  let maxEnd = -Infinity;
+  let size = 0;
+  for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
+    if (start >= newStart && end <= newEnd) {
+      if (oldEnd - oldStart < size || size === 0) {
+        minStart = oldStart;
+        maxEnd = oldEnd;
+        size = oldEnd - oldStart;
+      }
+    }
+  }
+  return { start: minStart, end: maxEnd };
 }
 
 export function reverseLookupIndexMappingRange(
-	indexMapping: IndexMapping,
-	start: number,
-	end: number
+  indexMapping: IndexMapping,
+  start: number,
+  end: number
 ) {
-	let minStart = Infinity;
-	let maxEnd = -Infinity;
-	let size = 0;
-	for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
-		if (start >= oldStart && end <= oldEnd) {
-			if (newEnd - newStart < size || size === 0) {
-				minStart = newStart;
-				maxEnd = newEnd;
-				size = newEnd - newStart;
-			}
-		}
-	}
-	return { start: minStart, end: maxEnd };
+  let minStart = Infinity;
+  let maxEnd = -Infinity;
+  let size = 0;
+  for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
+    if (start >= oldStart && end <= oldEnd) {
+      if (newEnd - newStart < size || size === 0) {
+        minStart = newStart;
+        maxEnd = newEnd;
+        size = newEnd - newStart;
+      }
+    }
+  }
+  return { start: minStart, end: maxEnd };
 }
 
-export function reverseLookupIndexMappingCursor(indexMapping: IndexMapping, cursor: number) {
-	let minStart = Infinity;
-	let maxEnd = -Infinity;
-	let exact = -Infinity;
-	let size = 0;
-	for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
-		if (cursor >= oldStart && cursor <= oldEnd) {
-			if (newEnd - newStart < size || size === 0) {
-				minStart = newStart;
-				maxEnd = newEnd;
-				exact = cursor - oldStart + newStart;
-				size = newEnd - newStart;
-			}
-		}
-	}
-	return exact;
+export function reverseLookupIndexMappingCursor(
+  indexMapping: IndexMapping,
+  cursor: number
+) {
+  let minStart = Infinity;
+  let maxEnd = -Infinity;
+  let exact = -Infinity;
+  let size = 0;
+  for (const [oldStart, oldEnd, newStart, newEnd] of indexMapping) {
+    if (cursor >= oldStart && cursor <= oldEnd) {
+      if (newEnd - newStart < size || size === 0) {
+        minStart = newStart;
+        maxEnd = newEnd;
+        exact = cursor - oldStart + newStart;
+        size = newEnd - newStart;
+      }
+    }
+  }
+  return exact;
 }
 
 function getNamedChild(node: SyntaxNode, name: string) {
-	return node.namedChildren.find((child) => child.type === name);
+  return node.namedChildren.find((child) => child.type === name);
 }
 
 export function prePass(ctx: AstContext, ast: SyntaxNode) {
-	for (const child of ast.namedChildren) {
-		if (child.type === 'impl_declaration') {
-			let _for = child.childForFieldName('for');
-			const name = child.childForFieldName('name')!;
-			if (_for) {
-				ctx.addImplFor(name.text, child);
-			} else {
-				ctx.addImpl(name.text, child);
-			}
-		}
+  for (const child of ast.namedChildren) {
+    if (child.type === "impl_declaration") {
+      let _for = child.childForFieldName("for");
+      const name = child.childForFieldName("name")!;
+      if (_for) {
+        ctx.addImplFor(name.text, child);
+      } else {
+        ctx.addImpl(name.text, child);
+      }
+    }
 
-		if (child.type == 'lexical_declaration') {
-			let variable_declarator = child.firstNamedChild;
-			if (variable_declarator.type == 'variable_declarator') {
-				ctx.globals.push(variable_declarator.firstNamedChild.text);
-			}
-		}
-	}
+    if (child.type == "lexical_declaration") {
+      let variable_declarator = child.firstNamedChild;
+      if (variable_declarator.type == "variable_declarator") {
+        ctx.globals.push(variable_declarator.firstNamedChild.text);
+      }
+    }
+  }
 }
 
 const primitives = [
-	'atomic',
-	'uint',
-	'uint2',
-	'uint3',
-	'uint4',
-	'uint8',
-	'int',
-	'float',
-	'float2',
-	'float3',
-	'float4',
-	'int2',
-	'int3',
-	'int4',
-	'float2x2',
-	'float3x3',
-	'float4x4',
-	'bool',
-	'string'
+  "atomic",
+  "uint",
+  "uint2",
+  "uint3",
+  "uint4",
+  "uint8",
+  "int",
+  "float",
+  "float2",
+  "float3",
+  "float4",
+  "int2",
+  "int3",
+  "int4",
+  "float2x2",
+  "float3x3",
+  "float4x4",
+  "bool",
+  "string",
 ];
 const math_primitives = [
-	'atomic',
-	'uint',
-	'uint2',
-	'uint3',
-	'uint4',
-	'uint8',
-	'int',
-	'float',
-	'float2',
-	'float3',
-	'float4',
-	'int2',
-	'int3',
-	'int4',
-	'float2x2',
-	'float3x3',
-	'float4x4',
-	'bool'
+  "atomic",
+  "uint",
+  "uint2",
+  "uint3",
+  "uint4",
+  "uint8",
+  "int",
+  "float",
+  "float2",
+  "float3",
+  "float4",
+  "int2",
+  "int3",
+  "int4",
+  "float2x2",
+  "float3x3",
+  "float4x4",
+  "bool",
 ];
 
 const operators: { [key: string]: string } = {
-	'+': 'add',
-	'-': 'sub',
-	'*': 'mul',
-	'**': 'pow',
-	'/': 'div',
-	'%': 'mod',
-	'==': 'eq',
-	'!=': 'neq',
-	'<': 'lt',
-	'<=': 'lte',
-	'>': 'gt',
-	'>=': 'gte',
-	'&&': 'and',
-	'||': 'or',
-	'!': 'not',
-	'&': 'bitand',
-	'|': 'bitor',
-	'^': 'bitxor',
-	'<<': 'lshift',
-	'>>': 'rshift',
-	'~': 'bitnot'
+  "+": "add",
+  "-": "sub",
+  "*": "mul",
+  "**": "pow",
+  "/": "div",
+  "%": "mod",
+  "==": "eq",
+  "!=": "neq",
+  "<": "lt",
+  "<=": "lte",
+  ">": "gt",
+  ">=": "gte",
+  "&&": "and",
+  "||": "or",
+  "!": "not",
+  "&": "bitand",
+  "|": "bitor",
+  "^": "bitxor",
+  "<<": "lshift",
+  ">>": "rshift",
+  "~": "bitnot",
 };
 
 const keyFunctions: { [key: string]: string } = {
-	float: '__.float',
-	int: '__.int',
-	uint: '__.uint',
-	uint2: '__.uint2',
-	uint3: '__.uint3',
-	uint4: '__.uint4',
-	uint8: '__.uint8',
-	float2: '__.float2',
-	float3: '__.float3',
-	float4: '__.float4',
-	int2: '__.int2',
-	int3: '__.int3',
-	int4: '__.int4',
-	float2x2: '__.float2x2',
-	float3x3: '__.float3x3',
-	float4x4: '__.float4x4'
+  float: "__.float",
+  int: "__.int",
+  uint: "__.uint",
+  uint2: "__.uint2",
+  uint3: "__.uint3",
+  uint4: "__.uint4",
+  uint8: "__.uint8",
+  float2: "__.float2",
+  float3: "__.float3",
+  float4: "__.float4",
+  int2: "__.int2",
+  int3: "__.int3",
+  int4: "__.int4",
+  float2x2: "__.float2x2",
+  float3x3: "__.float3x3",
+  float4x4: "__.float4x4",
 };
 
 const escapeWords: { [key: string]: boolean } = {
-	in: true,
-	out: true
+  in: true,
+  out: true,
 };
 
 function generateDefaultForType(name: string) {
-	switch (name) {
-		case 'any':
-			return 'null';
-		case 'int':
-			return '__.int(0)';
-		case 'uint':
-			return '__.uint(0)';
-		case 'uint8':
-			return '__.uint8(0)';
-		case 'float':
-			return '__.float(0.0)';
-		case 'float2':
-			return '__.float2(0.0, 0.0)';
-		case 'float3':
-			return '__.float3(0.0, 0.0, 0.0)';
-		case 'float4':
-			return '__.float4(0.0, 0.0, 0.0, 0.0)';
-		case 'int2':
-			return '__.int2(0, 0)';
-		case 'int3':
-			return '__.int3(0, 0, 0)';
-		case 'int4':
-			return '__.int4(0, 0, 0, 0)';
-		case 'float2x2':
-			return '__.float2x2(0.0, 0.0, 0.0, 0.0)';
-		case 'float3x3':
-			return '__.float3x3(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)';
-		case 'float4x4':
-			return '__.float4x4(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)';
-		case 'bool':
-			return 'false';
-		case 'string':
-			return '""';
-		case 'atomic<uint>':
-			return 'atomic<__.uint>(__.uint(0))';
-		case 'atomic<int>':
-			return 'atomic<__.int>(__.int(0))';
-		default:
-			if (name.endsWith('[]')) {
-				return '[]';
-			} else if (name.endsWith(']')) {
-				let matches = name.match(/(.+)\[(\d+)\]$/);
-				if (matches && matches.length > 2) {
-					let type = matches[1];
-					let count = matches[2];
-					let args = [];
-					for (let i = 0; i < parseInt(count); i++) {
-						args.push(generateDefaultForType(type));
-					}
-					return '[' + args.join(',') + ']';
-				} else {
-					return '[]';
-				}
-			} else {
-				if (
-					name.startsWith('buffer') ||
-					name.startsWith('texture2d') ||
-					name.startsWith('texture3d')
-				) {
-					return 'null';
-				} else {
-					return 'new ' + name + '({})';
-				}
-			}
-	}
+  switch (name) {
+    case "any":
+      return "null";
+    case "int":
+      return "__.int(0)";
+    case "uint":
+      return "__.uint(0)";
+    case "uint8":
+      return "__.uint8(0)";
+    case "float":
+      return "__.float(0.0)";
+    case "float2":
+      return "__.float2(0.0, 0.0)";
+    case "float3":
+      return "__.float3(0.0, 0.0, 0.0)";
+    case "float4":
+      return "__.float4(0.0, 0.0, 0.0, 0.0)";
+    case "int2":
+      return "__.int2(0, 0)";
+    case "int3":
+      return "__.int3(0, 0, 0)";
+    case "int4":
+      return "__.int4(0, 0, 0, 0)";
+    case "float2x2":
+      return "__.float2x2(0.0, 0.0, 0.0, 0.0)";
+    case "float3x3":
+      return "__.float3x3(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)";
+    case "float4x4":
+      return "__.float4x4(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)";
+    case "bool":
+      return "false";
+    case "string":
+      return '""';
+    case "atomic<uint>":
+      return "atomic<__.uint>(__.uint(0))";
+    case "atomic<int>":
+      return "atomic<__.int>(__.int(0))";
+    default:
+      if (name.endsWith("[]")) {
+        return "[]";
+      } else if (name.endsWith("]")) {
+        let matches = name.match(/(.+)\[(\d+)\]$/);
+        if (matches && matches.length > 2) {
+          let type = matches[1];
+          let count = matches[2];
+          let args = [];
+          for (let i = 0; i < parseInt(count); i++) {
+            args.push(generateDefaultForType(type));
+          }
+          return "[" + args.join(",") + "]";
+        } else {
+          return "[]";
+        }
+      } else {
+        if (
+          name.startsWith("buffer") ||
+          name.startsWith("texture2d") ||
+          name.startsWith("texture3d")
+        ) {
+          return "null";
+        } else {
+          return "new " + name + "({})";
+        }
+      }
+  }
 }
 
 function isValidInteger(str: string) {
-	let n = parseInt(str);
-	if (n > Math.pow(2, 31) - 1 || n < -Math.pow(2, 31)) {
-		return false;
-	}
+  let n = parseInt(str);
+  if (n > Math.pow(2, 31) - 1 || n < -Math.pow(2, 31)) {
+    return false;
+  }
 
-	return true;
+  return true;
 }
 
 export function compile(ctx: AstContext, ast: SyntaxNode): SourceNode {
-	function c(myAst: SyntaxNode | undefined, errorMessage: string = 'Syntax error') {
-		if (!myAst) {
-			console.log('error');
-			ctx.report(ast, errorMessage);
-			return s(['/*', errorMessage, '*/']);
-		} else {
-			return compile(ctx, myAst);
-		}
-	}
+  function c(
+    myAst: SyntaxNode | undefined,
+    errorMessage: string = "Syntax error"
+  ) {
+    if (!myAst) {
+      console.log("error");
+      ctx.report(ast, errorMessage);
+      return s(["/*", errorMessage, "*/"]);
+    } else {
+      return compile(ctx, myAst);
+    }
+  }
 
-	/** Generates a SourceNode based on the current ast node */
-	function s(c: (SourceNode | string)[]) {
-		return new SourceNode(ast.startIndex, ast.endIndex, c);
-	}
+  /** Generates a SourceNode based on the current ast node */
+  function s(c: (SourceNode | string)[]) {
+    return new SourceNode(ast.startIndex, ast.endIndex, c);
+  }
 
-	/** Gets a named child of the current ast node */
-	function n(type: string) {
-		return ast.childForFieldName(type);
-	}
+  /** Gets a named child of the current ast node */
+  function n(type: string) {
+    return ast.childForFieldName(type);
+  }
 
-	function flat(...c: (SourceNode | string)[][]) {
-		return c.reduce((acc, cur) => {
-			return [...acc, ...cur];
-		}, [] as (SourceNode | string)[]);
-	}
+  function flat(...c: (SourceNode | string)[][]) {
+    return c.reduce((acc, cur) => {
+      return [...acc, ...cur];
+    }, [] as (SourceNode | string)[]);
+  }
 
-	function join(c: (SourceNode | string)[], sep: string) {
-		return c
-			.filter((v) => {
-				if (
-					(typeof v == 'string' && v.length == 0) ||
-					(v instanceof SourceNode && v.children.length == 0)
-				) {
-					return false;
-				}
-				return true;
-			})
-			.reduce((acc, cur) => {
-				if (acc.length === 0) {
-					return [cur];
-				}
+  function join(c: (SourceNode | string)[], sep: string) {
+    return c
+      .filter((v) => {
+        if (
+          (typeof v == "string" && v.length == 0) ||
+          (v instanceof SourceNode && v.children.length == 0)
+        ) {
+          return false;
+        }
+        return true;
+      })
+      .reduce((acc, cur) => {
+        if (acc.length === 0) {
+          return [cur];
+        }
 
-				return [...acc, sep, cur];
-			}, [] as (SourceNode | string)[]);
-	}
+        return [...acc, sep, cur];
+      }, [] as (SourceNode | string)[]);
+  }
 
-	function children() {
-		return ast.namedChildren.map((child) => c(child));
-	}
+  function children() {
+    return ast.namedChildren.map((child) => c(child));
+  }
 
-	function hasName(name: string) {
-		return ast.childForFieldName(name) !== null;
-	}
+  function hasName(name: string) {
+    return ast.childForFieldName(name) !== null;
+  }
 
-	if (!ast) {
-		return new SourceNode(0, 0, ['/*', 'Syntax error', '*/']);
-	}
+  if (!ast) {
+    return new SourceNode(0, 0, ["/*", "Syntax error", "*/"]);
+  }
 
-	switch (ast.type) {
-		case 'program':
-			// let globalAccessors = ctx.globals.map((g) => {
-			// 	return s([
-			// 		'(window as any)["global_var_',
-			// 		cleanName(ctx.fileName) + '_' + g,
-			// 		'"]',
-			// 		' = () => { return ',
-			// 		g,
-			// 		'; };\n'
-			// 	]);
-			// });
+  switch (ast.type) {
+    case "program":
+      // let globalAccessors = ctx.globals.map((g) => {
+      // 	return s([
+      // 		'(window as any)["global_var_',
+      // 		cleanName(ctx.fileName) + '_' + g,
+      // 		'"]',
+      // 		' = () => { return ',
+      // 		g,
+      // 		'; };\n'
+      // 	]);
+      // });
 
-			return s([
-				header,
-				...(ctx.fileName != 'file:////_std/common.ts'
-					? [`import {${rootSymbolsFromCommon.join(', ')}} from "/_std/common";`]
-					: []),
-				...(ctx.fileName != 'file:////_std/mesh.ts'
-					? [`import {${rootSymbolsFromMesh.join(', ')}} from "/_std/mesh";`]
-					: []),
-				...(ctx.fileName != 'file:////_std/sdf.ts' ? [`import { sdf } from "/_std/sdf";`] : []),
-				...ast.children.map((child) => c(child))
-			]);
-		case 'expression_statement':
-			if (ast.firstChild) {
-				if (ast.lastNamedChild?.type === 'ERROR') {
-					return s([c(ast.firstNamedChild), '.']);
-				}
-				if (ast.firstNamedChild.type == 'workgroup') {
-					return s([c(ast.firstNamedChild), '\n']);
-				} else {
-					return s([c(ast.firstNamedChild), ';\n']);
-				}
-			}
-		case 'binary_expression':
-			if (ast.firstChild && ast.lastChild) {
-				if (
-					ast.lastChild.text == 'null' &&
-					(ast.children[1].text == '!=' || ast.children[1].text == '==')
-				) {
-					return s([c(ast.firstChild), ast.children[1].text + '=', 'null']);
-				}
-				return s([
-					'__.',
-					operators[ast.children[1].text.trim()] ?? ast.children[1].text.trim(),
-					'( ',
-					c(ast.firstNamedChild!),
-					', ',
-					c(ast.lastNamedChild!),
-					' )'
-				]);
-			}
-		case 'identifier':
-			if (keyFunctions[ast.text]) {
-				return s([String(keyFunctions[ast.text])]);
-			} else if (escapeWords[ast.text]) {
-				return s([String('__' + ast.text)]);
-			}
-			return s([
-				String(ast.text === 'self' ? (isInShader(ast) ? 'shader_self_temp' : 'this') : ast.text)
-			]);
-		case 'number':
-			if (ast.parent?.type == 'pair' && ast.parent.firstNamedChild == ast) {
-				return s([String(ast.text)]);
-			}
+      return s([
+        header,
+        ...(ctx.fileName != "file:////_std/common.ts"
+          ? [
+              `import {${rootSymbolsFromCommon.join(
+                ", "
+              )}} from "/_std/common";`,
+            ]
+          : []),
+        ...(ctx.fileName != "file:////_std/mesh.ts"
+          ? [`import {${rootSymbolsFromMesh.join(", ")}} from "/_std/mesh";`]
+          : []),
+        ...(ctx.fileName != "file:////_std/sdf.ts"
+          ? [`import { sdf } from "/_std/sdf";`]
+          : []),
+        ...ast.children.map((child) => c(child)),
+      ]);
+    case "expression_statement":
+      if (ast.firstChild) {
+        if (ast.lastNamedChild?.type === "ERROR") {
+          return s([c(ast.firstNamedChild), "."]);
+        }
+        if (ast.firstNamedChild.type == "workgroup") {
+          return s([c(ast.firstNamedChild), "\n"]);
+        } else {
+          return s([c(ast.firstNamedChild), ";\n"]);
+        }
+      }
+    case "binary_expression":
+      if (ast.firstChild && ast.lastChild) {
+        if (
+          ast.lastChild.text == "null" &&
+          (ast.children[1].text == "!=" || ast.children[1].text == "==")
+        ) {
+          return s([c(ast.firstChild), ast.children[1].text + "=", "null"]);
+        }
+        return s([
+          "__.",
+          operators[ast.children[1].text.trim()] ?? ast.children[1].text.trim(),
+          "( ",
+          c(ast.firstNamedChild!),
+          ", ",
+          c(ast.lastNamedChild!),
+          " )",
+        ]);
+      }
+    case "identifier":
+      if (keyFunctions[ast.text]) {
+        return s([String(keyFunctions[ast.text])]);
+      } else if (escapeWords[ast.text]) {
+        return s([String("__" + ast.text)]);
+      }
+      return s([
+        String(
+          ast.text === "self"
+            ? isInShader(ast)
+              ? "shader_self_temp"
+              : "this"
+            : ast.text
+        ),
+      ]);
+    case "number":
+      if (ast.parent?.type == "pair" && ast.parent.firstNamedChild == ast) {
+        return s([String(ast.text)]);
+      }
 
-			if (ast.text.match(/.[xyzwrgba]+$/)) {
-				let swizzle = (ast.text.match(/.[xyzwrgba]+$/) ?? [''])[0];
-				swizzle = swizzle.replace('.', '');
-				let raw = ast.text.replace(/.[xyzwrgba]+$/, '');
-				let isUint = raw.indexOf('u') !== -1;
-				let isFloat = raw.indexOf('.') !== -1;
-				return s([
-					String(
-						'__.swizzle(' +
-							(isFloat ? '__.float' : isUint ? '__.uint' : '__.int') +
-							'(' +
-							raw.replace('u', '') +
-							'), "' +
-							swizzle +
-							'")'
-					)
-				]);
-			}
-			let isFloat = ast.text.indexOf('.') !== -1;
+      if (ast.text.match(/.[xyzwrgba]+$/)) {
+        let swizzle = (ast.text.match(/.[xyzwrgba]+$/) ?? [""])[0];
+        swizzle = swizzle.replace(".", "");
+        let raw = ast.text.replace(/.[xyzwrgba]+$/, "");
+        let isUint = raw.indexOf("u") !== -1;
+        let isFloat = raw.indexOf(".") !== -1;
+        return s([
+          String(
+            "__.swizzle(" +
+              (isFloat ? "__.float" : isUint ? "__.uint" : "__.int") +
+              "(" +
+              raw.replace("u", "") +
+              '), "' +
+              swizzle +
+              '")'
+          ),
+        ]);
+      }
+      let isFloat = ast.text.indexOf(".") !== -1;
 
-			let isUint = ast.text.indexOf('u') !== -1;
+      let isUint = ast.text.indexOf("u") !== -1;
 
-			if (!isFloat && !isValidInteger(ast.text) && !isUint) {
-				ctx.report(
-					ast,
-					'Invalid integer, this overflows the 32 bit integer limit, add a .0 to the end to make it a float'
-				);
-			}
+      if (!isFloat && !isValidInteger(ast.text) && !isUint) {
+        ctx.report(
+          ast,
+          "Invalid integer, this overflows the 32 bit integer limit, add a .0 to the end to make it a float"
+        );
+      }
 
-			return s([
-				(isFloat ? '__.float' : isUint ? '__.uint' : '__.int') + '(',
-				new SourceNode(ast.startIndex, ast.endIndex, ast.text.replace('u', '')),
-				')'
-			]);
-		case 'string':
-			return s([String(ast.text)]);
-		case 'function_declaration':
-			if (ast.firstChild && ast.lastChild) {
-				let funcName = n('name').text;
-				let prefix = '';
-				if (funcName === 'main') {
-					prefix += '';
-					prefix += 'export ';
-				}
-				return s([
-					prefix + 'function ',
-					c(n('name')!),
-					c(n('parameters')!),
-					...(hasName('return_type') ? [c(n('return_type')!), ' '] : []),
-					c(n('body')!),
-					'\n'
-				]);
-			}
-		case 'block' || 'statement_block':
-			return s(children());
-		case 'formal_parameters':
-			return s(['(', ...join(children(), ', '), ')']);
-		case 'required_parameter':
-			if (n('pattern')?.text === 'self') {
-				return s([]);
-			}
-			return s(
-				flat(
-					[c(n('pattern')!)],
-					hasName('type') ? [': ', c(n('type')!)] : [],
-					hasName('value') ? [' = ', c(n('value')!)] : []
-				)
-			);
-		case 'type_annotation':
-			return s([c(ast.firstNamedChild!)]);
-		case 'type_identifier':
-			if (math_primitives.indexOf(ast.text) !== -1) {
-				return s([String('__.' + ast.text)]);
-			}
-			return s([String(ast.text)]);
-		case 'predefined_type':
-			if (math_primitives.indexOf(ast.text) !== -1) {
-				return s([String('__.' + ast.text)]);
-			}
-			return s([String(ast.text)]);
-		case 'function_type':
-			return s([c(n('parameters')), ' => ', c(n('return_type'))]);
-		case 'lookup_type':
-			let len = parseInt(ast.lastNamedChild?.text ?? '0');
-			let repeats = [];
-			for (let i = 0; i < len; i++) {
-				repeats.push(c(ast.firstNamedChild!));
-			}
-			return s(['[', ...join(repeats, ', '), ']']);
-		case 'arrow_function':
-			return s([
-				c(n('parameters')!),
-				' => ',
-				...(hasName('return_type') ? [c(n('return_type')!), ' '] : []),
-				c(n('body')!)
-			]);
-		case 'literal_type':
-			return s([c(ast.firstNamedChild!)]);
-		case 'return_statement':
-			if (ast.namedChildCount === 0) {
-				return s(['return;']);
-			} else {
-				if (ast.lastNamedChild?.type === 'ERROR') {
-					return s(['return ', c(ast.firstNamedChild), '.']);
-				}
-				return s(['return ', c(ast.firstNamedChild!), ';']);
-			}
-		case 'export_statement':
-			return s(['export ', c(ast.firstNamedChild), ';']);
-		case 'export_clause':
-			return s(['{', ...join(children(), ', '), '}']);
-		case 'export_specifier':
-			return s([c(ast.firstNamedChild!)]);
-		case 'array':
-			return s(['[', ...join(children(), ', '), ']']);
-		case 'template_string':
-			return s(['`', ...join(children(), ''), '`']);
-		case 'template_substitution':
-			return s(['${', c(n('expression')!), '}']);
-		case 'template_string_segment':
-			return s([String(ast.text)]);
-		case 'type_alias_declaration':
-			ctx.report(ast, "Type aliases aren't supported yet");
-			return s(['/*error*/0']);
-		case 'import':
-			return s(['']);
-		case 'comment':
-			return s([String(ast.text), '\n']);
-		case 'call_expression':
-			if (n('type_arguments')) {
-				if (
-					n('function').text == 'buffer' ||
-					n('function').text == 'texture2d' ||
-					n('function').text == 'texture3d'
-				) {
-					let internalArgs = s([
-						'(',
-						...join(
-							[
-								...n('arguments').namedChildren.map((chi) => c(chi)),
-								...((n('arguments').namedChildren.length == 1 &&
-									n('function').text == 'texture2d') ||
-								n('function').text == 'texture3d'
-									? [s(['"auto"'])]
-									: []),
-								s(['"', n('type_arguments').namedChild(0).text, '"'])
-							],
-							', '
-						),
-						')'
-					]);
-					return s([c(n('function')!), c(n('type_arguments')), internalArgs]);
-				}
-				return s([c(n('function')!), c(n('type_arguments')), c(n('arguments')!)]);
-			} else {
-				return s([c(n('function')!), c(n('arguments')!)]);
-			}
-		case 'construct_expression':
-			return s(['new ', c(n('identifier')!), '(', c(n('body')!), ')']);
-		case 'member_expression':
-			let prop = n('property')!;
-			let p = prop.text ?? '';
-			let isParentAssignment =
-				ast.parent?.type == 'assignment_expression' ||
-				ast.parent?.type == 'augmented_assignment_expression';
-			if (isParentAssignment) {
-				let left = ast.parent.childForFieldName('left');
-				isParentAssignment = left.startIndex == ast.startIndex && left.endIndex == ast.endIndex;
-			}
-			if (p.length > 0 && p.length < 5) {
-				// Could be a swizzle
-				let isSwizzle = true;
+      return s([
+        (isFloat ? "__.float" : isUint ? "__.uint" : "__.int") + "(",
+        new SourceNode(ast.startIndex, ast.endIndex, ast.text.replace("u", "")),
+        ")",
+      ]);
+    case "string":
+      return s([String(ast.text)]);
+    case "function_declaration":
+      if (ast.firstChild && ast.lastChild) {
+        let funcName = n("name").text;
+        let prefix = "";
+        if (funcName === "main") {
+          prefix += "";
+          prefix += "export ";
+        }
+        return s([
+          prefix + "function ",
+          c(n("name")!),
+          c(n("parameters")!),
+          ...(hasName("return_type") ? [c(n("return_type")!), " "] : []),
+          c(n("body")!),
+          "\n",
+        ]);
+      }
+    case "block" || "statement_block":
+      return s(children());
+    case "formal_parameters":
+      return s(["(", ...join(children(), ", "), ")"]);
+    case "required_parameter":
+      if (n("pattern")?.text === "self") {
+        return s([]);
+      }
+      return s(
+        flat(
+          [c(n("pattern")!)],
+          hasName("type") ? [": ", c(n("type")!)] : [],
+          hasName("value") ? [" = ", c(n("value")!)] : []
+        )
+      );
+    case "type_annotation":
+      return s([c(ast.firstNamedChild!)]);
+    case "type_identifier":
+      if (math_primitives.indexOf(ast.text) !== -1) {
+        return s([String("__." + ast.text)]);
+      }
+      return s([String(ast.text)]);
+    case "predefined_type":
+      if (math_primitives.indexOf(ast.text) !== -1) {
+        return s([String("__." + ast.text)]);
+      }
+      return s([String(ast.text)]);
+    case "function_type":
+      return s([c(n("parameters")), " => ", c(n("return_type"))]);
+    case "lookup_type":
+      let len = parseInt(ast.lastNamedChild?.text ?? "0");
+      let repeats = [];
+      for (let i = 0; i < len; i++) {
+        repeats.push(c(ast.firstNamedChild!));
+      }
+      return s(["[", ...join(repeats, ", "), "]"]);
+    case "arrow_function":
+      return s([
+        c(n("parameters")!),
+        " => ",
+        ...(hasName("return_type") ? [c(n("return_type")!), " "] : []),
+        c(n("body")!),
+      ]);
+    case "literal_type":
+      return s([c(ast.firstNamedChild!)]);
+    case "return_statement":
+      if (ast.namedChildCount === 0) {
+        return s(["return;"]);
+      } else {
+        if (ast.lastNamedChild?.type === "ERROR") {
+          return s(["return ", c(ast.firstNamedChild), "."]);
+        }
+        return s(["return ", c(ast.firstNamedChild!), ";"]);
+      }
+    case "export_statement":
+      return s(["export ", c(ast.firstNamedChild), ";"]);
+    case "export_clause":
+      return s(["{", ...join(children(), ", "), "}"]);
+    case "export_specifier":
+      return s([c(ast.firstNamedChild!)]);
+    case "array":
+      return s(["[", ...join(children(), ", "), "]"]);
+    case "template_string":
+      return s(["`", ...join(children(), ""), "`"]);
+    case "template_substitution":
+      return s(["${", c(n("expression")!), "}"]);
+    case "template_string_segment":
+      return s([String(ast.text)]);
+    case "type_alias_declaration":
+      ctx.report(ast, "Type aliases aren't supported yet");
+      return s(["/*error*/0"]);
+    case "import":
+      return s([""]);
+    case "comment":
+      return s([String(ast.text), "\n"]);
+    case "call_expression":
+      if (n("type_arguments")) {
+        if (
+          n("function").text == "buffer" ||
+          n("function").text == "texture2d" ||
+          n("function").text == "texture3d"
+        ) {
+          let internalArgs = s([
+            "(",
+            ...join(
+              [
+                ...n("arguments").namedChildren.map((chi) => c(chi)),
+                ...((n("arguments").namedChildren.length == 1 &&
+                  n("function").text == "texture2d") ||
+                n("function").text == "texture3d"
+                  ? [s(['"auto"'])]
+                  : []),
+                s(['"', n("type_arguments").namedChild(0).text, '"']),
+              ],
+              ", "
+            ),
+            ")",
+          ]);
+          return s([c(n("function")!), c(n("type_arguments")), internalArgs]);
+        }
+        return s([
+          c(n("function")!),
+          c(n("type_arguments")),
+          c(n("arguments")!),
+        ]);
+      } else {
+        return s([c(n("function")!), c(n("arguments")!)]);
+      }
+    case "construct_expression":
+      return s(["new ", c(n("identifier")!), "(", c(n("body")!), ")"]);
+    case "member_expression":
+      let prop = n("property")!;
+      let p = prop.text ?? "";
+      let isParentAssignment =
+        ast.parent?.type == "assignment_expression" ||
+        ast.parent?.type == "augmented_assignment_expression";
+      if (isParentAssignment) {
+        let left = ast.parent.childForFieldName("left");
+        isParentAssignment =
+          left.startIndex == ast.startIndex && left.endIndex == ast.endIndex;
+      }
+      if (p.length > 0 && p.length < 5) {
+        // Could be a swizzle
+        let isSwizzle = true;
 
-				for (let i = 0; i < p.length; i++) {
-					let char = p[i];
-					if (
-						char !== 'x' &&
-						char !== 'y' &&
-						char !== 'z' &&
-						char !== 'w' &&
-						char !== 'r' &&
-						char !== 'g' &&
-						char !== 'b' &&
-						char !== 'a'
-					) {
-						isSwizzle = false;
-						break;
-					}
-				}
+        for (let i = 0; i < p.length; i++) {
+          let char = p[i];
+          if (
+            char !== "x" &&
+            char !== "y" &&
+            char !== "z" &&
+            char !== "w" &&
+            char !== "r" &&
+            char !== "g" &&
+            char !== "b" &&
+            char !== "a"
+          ) {
+            isSwizzle = false;
+            break;
+          }
+        }
 
-				if (isSwizzle) {
-					if (isParentAssignment) {
-						let r = ast.parent.childForFieldName('right');
-					}
-					return s([
-						`__.swizzle(`,
-						c(n('object')!),
-						`, '`,
-						new SourceNode(prop.startIndex, prop.endIndex, p),
-						`'`,
-						...(isParentAssignment ? [`, `, c(ast.parent.childForFieldName('right')!)] : []),
-						`)`
-						// new SourceNode(ast.children[1].startIndex, ast.children[1].endIndex, '.'),
-						// c(n('property')!)
-					]);
-				}
-			}
-			return s([
-				c(n('object')!),
-				new SourceNode(ast.children[1].startIndex, ast.children[1].endIndex, '.'),
-				c(n('property')!)
-			]);
+        if (isSwizzle) {
+          if (isParentAssignment) {
+            let r = ast.parent.childForFieldName("right");
+          }
+          return s([
+            `__.swizzle(`,
+            c(n("object")!),
+            `, '`,
+            new SourceNode(prop.startIndex, prop.endIndex, p),
+            `'`,
+            ...(isParentAssignment
+              ? [`, `, c(ast.parent.childForFieldName("right")!)]
+              : []),
+            `)`,
+            // new SourceNode(ast.children[1].startIndex, ast.children[1].endIndex, '.'),
+            // c(n('property')!)
+          ]);
+        }
+      }
+      return s([
+        c(n("object")!),
+        new SourceNode(
+          ast.children[1].startIndex,
+          ast.children[1].endIndex,
+          "."
+        ),
+        c(n("property")!),
+      ]);
 
-		case 'pair':
-			return s([c(n('key')!), ': ', c(n('value'), 'Expected value in pair')!]);
+    case "pair":
+      return s([c(n("key")!), ": ", c(n("value"), "Expected value in pair")!]);
 
-		case 'object':
-			let childrens = ast.namedChildren
-				.filter((subc) => subc.type !== 'comment')
-				.map((subc) => c(subc));
-			return s(['{', ...join(childrens, ', '), '}']);
-			if (ast.parent?.type === 'construct_expression') {
-			} else {
-				return s(['{', ...join(children(), ', '), '}']);
-				return s(['__makeMap({', ...join(children(), ', '), '})']);
-			}
+    case "object":
+      let childrens = ast.namedChildren
+        .filter((subc) => subc.type !== "comment")
+        .map((subc) => c(subc));
+      return s(["{", ...join(childrens, ", "), "}"]);
+      if (ast.parent?.type === "construct_expression") {
+      } else {
+        return s(["{", ...join(children(), ", "), "}"]);
+        return s(["__makeMap({", ...join(children(), ", "), "})"]);
+      }
 
-		case 'property_identifier':
-			return s([String(ast.text)]);
+    case "property_identifier":
+      return s([String(ast.text)]);
 
-		case 'arguments':
-			return s(['(', ...join(children(), ', '), ')']);
+    case "arguments":
+      return s(["(", ...join(children(), ", "), ")"]);
 
-		case 'parenthesized_expression':
-			if (ast.lastNamedChild?.type === 'ERROR') {
-				return s(['(', c(ast.firstNamedChild!), '.', ')']);
-			}
-			return s(['(', c(ast.firstNamedChild!), ')']);
-		case 'function_signature':
-			ctx.report(ast, 'Missing function body');
-			return s(['/*error*/0']);
-		case 'parenthesized_expression_vector':
-			if (ast.firstNamedChild) {
-				if (ast.firstNamedChild.type === 'sequence_expression') {
-					return s(['__.makeVector(', c(ast.firstNamedChild), ')']);
-				} else {
-					return s(['(', c(ast.firstNamedChild), ')']);
-				}
-			}
-		// console.log('Count', ast.childCount, ast.text, ast.firstNamedChild);
-		// if (ast.childCount == 1) {
-		// 	return s(['(', c(ast.firstNamedChild!), ')']);
-		// } else {
-		// 	return s(['__.makeVector(', c(ast.firstNamedChild!), ')']);
-		// }
-		case 'if_statement':
-			return s([
-				'if ',
-				c(n('condition')!),
-				c(n('consequence')!),
-				hasName('alternative') ? c(n('alternative')!) : ''
-			]);
+    case "parenthesized_expression":
+      if (ast.lastNamedChild?.type === "ERROR") {
+        return s(["(", c(ast.firstNamedChild!), ".", ")"]);
+      }
+      return s(["(", c(ast.firstNamedChild!), ")"]);
+    case "function_signature":
+      ctx.report(ast, "Missing function body");
+      return s(["/*error*/0"]);
+    case "parenthesized_expression_vector":
+      if (ast.firstNamedChild) {
+        if (ast.firstNamedChild.type === "sequence_expression") {
+          return s(["__.makeVector(", c(ast.firstNamedChild), ")"]);
+        } else {
+          return s(["(", c(ast.firstNamedChild), ")"]);
+        }
+      }
+    // console.log('Count', ast.childCount, ast.text, ast.firstNamedChild);
+    // if (ast.childCount == 1) {
+    // 	return s(['(', c(ast.firstNamedChild!), ')']);
+    // } else {
+    // 	return s(['__.makeVector(', c(ast.firstNamedChild!), ')']);
+    // }
+    case "if_statement":
+      return s([
+        "if ",
+        c(n("condition")!),
+        c(n("consequence")!),
+        hasName("alternative") ? c(n("alternative")!) : "",
+      ]);
 
-		case 'else':
-			return s([' else ', c(ast.firstNamedChild!), '\n']);
+    case "else":
+      return s([" else ", c(ast.firstNamedChild!), "\n"]);
 
-		case 'generic_type':
-			return s([c(n('name')!), c(n('type_arguments')!)]);
+    case "generic_type":
+      return s([c(n("name")!), c(n("type_arguments")!)]);
 
-		case 'type_arguments':
-			return s(['<', ...join(children(), ', '), '>']);
+    case "type_arguments":
+      return s(["<", ...join(children(), ", "), ">"]);
 
-		case 'array_type':
-			if (ast.namedChildCount == 2) {
-				return s([c(ast.firstNamedChild), '[', c(ast.lastNamedChild), ']']);
-			} else {
-				return s([c(ast.firstNamedChild), '[]']);
-			}
+    case "array_type":
+      if (ast.namedChildCount == 2) {
+        return s([c(ast.firstNamedChild), "[", c(ast.lastNamedChild), "]"]);
+      } else {
+        return s([c(ast.firstNamedChild), "[]"]);
+      }
 
-		case 'ternary_expression':
-			return s([c(n('condition')!), ' ? ', c(n('consequence')!), ' : ', c(n('alternative')!)]);
+    case "ternary_expression":
+      return s([
+        c(n("condition")!),
+        " ? ",
+        c(n("consequence")!),
+        " : ",
+        c(n("alternative")!),
+      ]);
 
-		case 'update_expression':
-			return s([c(n('argument')!), n('operator').text]);
+    case "update_expression":
+      return s([c(n("argument")!), n("operator").text]);
 
-		case 'augmented_assignment_expression':
-			let opMapping = {
-				'+=': 'add',
-				'-=': 'sub',
-				'*=': 'mul',
-				'/=': 'div',
-				'%=': 'mod'
-			};
+    case "augmented_assignment_expression":
+      let opMapping = {
+        "+=": "add",
+        "-=": "sub",
+        "*=": "mul",
+        "/=": "div",
+        "%=": "mod",
+      };
 
-			let leftAssignAug = n('left');
-			if (leftAssignAug?.type === 'subscript_expression') {
-				return s([
-					c(leftAssignAug.childForFieldName('object')),
-					'.__index_assign_op(__.',
-					opMapping[n('operator').text],
-					', ',
-					c(leftAssignAug.childForFieldName('index')),
-					', ',
-					c(n('right')!),
-					')'
-				]);
-			}
+      let leftAssignAug = n("left");
+      if (leftAssignAug?.type === "subscript_expression") {
+        return s([
+          c(leftAssignAug.childForFieldName("object")),
+          ".__index_assign_op(__.",
+          opMapping[n("operator").text],
+          ", ",
+          c(leftAssignAug.childForFieldName("index")),
+          ", ",
+          c(n("right")!),
+          ")",
+        ]);
+      }
 
-			return s([
-				c(n('left')!),
-				' = __.',
-				opMapping[n('operator').text],
-				'(',
-				c(n('left')!),
-				', ',
-				c(n('right')!),
-				')'
-			]);
+      return s([
+        c(n("left")!),
+        " = __.",
+        opMapping[n("operator").text],
+        "(",
+        c(n("left")!),
+        ", ",
+        c(n("right")!),
+        ")",
+      ]);
 
-		case 'for_statement':
-			return s([
-				'for (',
-				c(n('initializer')!),
-				' ',
-				c(n('condition')!),
-				' ',
-				c(n('increment')!),
-				') ',
-				c(n('body')!)
-			]);
+    case "for_statement":
+      return s([
+        "for (",
+        c(n("initializer")!),
+        " ",
+        c(n("condition")!),
+        " ",
+        c(n("increment")!),
+        ") ",
+        c(n("body")!),
+      ]);
 
-		case 'for_in_statement':
-			let leftFor = n('left')!;
-			let rightFor = n('right')!;
-			if (leftFor.type === 'parenthesized_expression') {
-				let forComponents = [];
-				for (let i = 0; i < leftFor.namedChildren[0].namedChildren.length; i++) {
-					let name = leftFor.namedChildren[0].namedChildren[i];
-					if (name.type != 'identifier') {
-						ctx.report(
-							leftFor.namedChild(i),
-							'Invalid for loop variable name, must be x, y, z or w'
-						);
-					}
-					let key = name.text;
-					if (!['x', 'y', 'z', 'w'].includes(key)) {
-						ctx.report(
-							leftFor.namedChild(i),
-							'Invalid for loop variable name, must be x, y, z or w'
-						);
-					}
+    case "for_in_statement":
+      let leftFor = n("left")!;
+      let rightFor = n("right")!;
+      if (leftFor.type === "parenthesized_expression") {
+        let forComponents = [];
+        for (
+          let i = 0;
+          i < leftFor.namedChildren[0].namedChildren.length;
+          i++
+        ) {
+          let name = leftFor.namedChildren[0].namedChildren[i];
+          if (name.type != "identifier") {
+            ctx.report(
+              leftFor.namedChild(i),
+              "Invalid for loop variable name, must be x, y, z or w"
+            );
+          }
+          let key = name.text;
+          if (!["x", "y", "z", "w"].includes(key)) {
+            ctx.report(
+              leftFor.namedChild(i),
+              "Invalid for loop variable name, must be x, y, z or w"
+            );
+          }
 
-					if (forComponents.includes(key)) {
-						ctx.report(leftFor.namedChild(i), 'Duplicate for loop variable name');
-					}
-					forComponents.push(key);
-				}
+          if (forComponents.includes(key)) {
+            ctx.report(
+              leftFor.namedChild(i),
+              "Duplicate for loop variable name"
+            );
+          }
+          forComponents.push(key);
+        }
 
-				forComponents = forComponents.reverse();
+        forComponents = forComponents.reverse();
 
-				let parts = [];
+        let parts = [];
 
-				parts.push(s(['let __for_iter = ', c(rightFor), ';\n']));
-				let indexes = ['x', 'y', 'z', 'w'];
-				for (let n of forComponents) {
-					parts.push(
-						s([
-							'for (let ',
-							n,
-							': __.int = __.int(0); ',
-							n,
-							' < __for_iter[',
-							indexes.indexOf(n).toString(),
-							']; ',
-							n,
-							'++) {\n'
-						])
-					);
-				}
+        parts.push(s(["let __for_iter = ", c(rightFor), ";\n"]));
+        let indexes = ["x", "y", "z", "w"];
+        for (let n of forComponents) {
+          parts.push(
+            s([
+              "for (let ",
+              n,
+              ": __.int = __.int(0); ",
+              n,
+              " < __for_iter[",
+              indexes.indexOf(n).toString(),
+              "]; ",
+              n,
+              "++) {\n",
+            ])
+          );
+        }
 
-				parts.push(s([c(n('body')!), '\n']));
+        parts.push(s([c(n("body")!), "\n"]));
 
-				for (let n of forComponents) {
-					parts.push(s(['}\n']));
-				}
+        for (let n of forComponents) {
+          parts.push(s(["}\n"]));
+        }
 
-				return s(parts);
-			}
+        return s(parts);
+      }
 
-			return s(['for (let ', c(n('left')!), ' of ', c(n('right')!), ') ', c(n('body')!)]);
+      return s([
+        "for (let ",
+        c(n("left")!),
+        " of ",
+        c(n("right")!),
+        ") ",
+        c(n("body")!),
+      ]);
 
-		case 'while_statement':
-			return s(['while (', c(n('condition')!), ') ', c(n('body')!)]);
+    case "while_statement":
+      return s(["while (", c(n("condition")!), ") ", c(n("body")!)]);
 
-		case 'break_statement':
-			return s(['break;']);
+    case "break_statement":
+      return s(["break;"]);
 
-		case 'continue_statement':
-			return s(['continue;']);
+    case "continue_statement":
+      return s(["continue;"]);
 
-		case 'new_expression':
-			return s(['new ', c(n('constructor')!), c(n('arguments')!)]);
-		case 'else_clause':
-			return s([' else ', c(ast.firstNamedChild!), '\n']);
-		case 'statement_block':
-			if (ast.parent.type == 'method_definition') {
-				let doesRefSelf = false;
-				function recur(a: SyntaxNode) {
-					if (a.type == 'identifier') {
-						if (a.text == 'self') {
-							doesRefSelf = true;
-						}
-					}
-					a.children.forEach(recur);
-				}
-				ast.children.forEach(recur);
-				if (doesRefSelf) {
-					return s(['{let shader_self_temp = this;', ...children(), '}']);
-				}
-			}
-			return s(['{', ...children(), '}']);
-		case 'import_statement':
-			let sourceString = n('source');
-			let fromString = sourceString.firstNamedChild?.text;
-			if (fromString) {
-				if (!fromString.startsWith('/') && !fromString.startsWith('@')) {
-					fromString = '/' + fromString;
-				}
-			}
-			return s([
-				'import ',
-				...(ast.namedChildCount == 2 ? [' ', c(ast.firstNamedChild!), '  from '] : []),
-				new SourceNode(sourceString.startIndex, sourceString.endIndex, [
-					JSON.stringify(fromString)
-				]),
-				';'
-			]);
-		case 'named_imports':
-			return s(['{', ...join(children(), ', '), '}']);
-		case 'import_clause':
-			return s([c(ast.firstChild!)]);
-		case 'import_specifier':
-			return hasName('alias') ? s([c(n('name')!), ' as ', c(n('alias')!)]) : c(n('name')!);
-		case 'predefined_type':
-			return s([String(ast.text)]);
-		case 'interface_declaration':
-			return s(['interface ', c(n('name')!), c(n('body')!), '\n']);
-		case 'object_method_signature_type':
-			return s(['{\n', ...children(), '\n}']);
-		case 'method_signature':
-			let isStaticSignature = n('parameters')?.firstNamedChild?.text != 'self';
-			let accessibilityMethod =
-				ast.firstNamedChild?.type === 'accessibility_modifier_member' ? 'public' : 'private';
+    case "new_expression":
+      return s(["new ", c(n("constructor")!), c(n("arguments")!)]);
+    case "else_clause":
+      return s([" else ", c(ast.firstNamedChild!), "\n"]);
+    case "statement_block":
+      if (ast.parent.type == "method_definition") {
+        let doesRefSelf = false;
+        function recur(a: SyntaxNode) {
+          if (a.type == "identifier") {
+            if (a.text == "self") {
+              doesRefSelf = true;
+            }
+          }
+          a.children.forEach(recur);
+        }
+        ast.children.forEach(recur);
+        if (doesRefSelf) {
+          return s(["{let shader_self_temp = this;", ...children(), "}"]);
+        }
+      }
+      return s(["{", ...children(), "}"]);
+    case "import_statement":
+      let sourceString = n("source");
+      let fromString = sourceString.firstNamedChild?.text;
+      if (fromString) {
+        if (!fromString.startsWith("/") && !fromString.startsWith("@")) {
+          fromString = "/" + fromString;
+        }
+      }
+      return s([
+        "import ",
+        ...(ast.namedChildCount == 2
+          ? [" ", c(ast.firstNamedChild!), "  from "]
+          : []),
+        new SourceNode(sourceString.startIndex, sourceString.endIndex, [
+          JSON.stringify(fromString),
+        ]),
+        ";",
+      ]);
+    case "named_imports":
+      return s(["{", ...join(children(), ", "), "}"]);
+    case "import_clause":
+      return s([c(ast.firstChild!)]);
+    case "import_specifier":
+      return hasName("alias")
+        ? s([c(n("name")!), " as ", c(n("alias")!)])
+        : c(n("name")!);
+    case "predefined_type":
+      return s([String(ast.text)]);
+    case "interface_declaration":
+      return s(["interface ", c(n("name")!), c(n("body")!), "\n"]);
+    case "object_method_signature_type":
+      return s(["{\n", ...children(), "\n}"]);
+    case "method_signature":
+      let isStaticSignature = n("parameters")?.firstNamedChild?.text != "self";
+      let accessibilityMethod =
+        ast.firstNamedChild?.type === "accessibility_modifier_member"
+          ? "public"
+          : "private";
 
-			if (
-				ast.parent?.type === 'object_method_signature_type' &&
-				ast.parent?.parent?.type === 'interface_declaration'
-			) {
-				accessibilityMethod = '';
-			}
-			return s([
-				accessibilityMethod,
-				' ',
-				...(isStaticSignature ? ['static '] : []),
-				c(n('name')!),
-				c(n('parameters')!),
-				c(n('return_type')!),
-				';\n'
-			]);
-		case 'type_annotation_arrow':
-			return s([': ', c(ast.firstNamedChild!)]);
-		case 'struct_declaration':
-			let impls = ctx.implsFor.get(n('name')!.text) ?? [];
+      if (
+        ast.parent?.type === "object_method_signature_type" &&
+        ast.parent?.parent?.type === "interface_declaration"
+      ) {
+        accessibilityMethod = "";
+      }
+      return s([
+        accessibilityMethod,
+        " ",
+        ...(isStaticSignature ? ["static "] : []),
+        c(n("name")!),
+        c(n("parameters")!),
+        c(n("return_type")!),
+        ";\n",
+      ]);
+    case "type_annotation_arrow":
+      return s([": ", c(ast.firstNamedChild!)]);
+    case "struct_declaration":
+      let impls = ctx.implsFor.get(n("name")!.text) ?? [];
 
-			let properties = n('body')?.namedChildren ?? [];
+      let properties = n("body")?.namedChildren ?? [];
 
-			properties = properties.filter((i) => {
-				let isStatic = false;
-				for (let child of i.children) {
-					if (child.type === 'static') {
-						isStatic = true;
-					}
-				}
+      properties = properties.filter((i) => {
+        let isStatic = false;
+        for (let child of i.children) {
+          if (child.type === "static") {
+            isStatic = true;
+          }
+        }
 
-				return !isStatic;
-			});
+        return !isStatic;
+      });
 
-			let implBodies = [
-				...(ctx.implsFor.get(n('name')!.text) ?? []).map((i) => i.childForFieldName('body')!),
-				...(ctx.impls.get(n('name')!.text) ?? []).map((i) => i.childForFieldName('body')!),
-				...properties
-			];
+      let implBodies = [
+        ...(ctx.implsFor.get(n("name")!.text) ?? []).map(
+          (i) => i.childForFieldName("body")!
+        ),
+        ...(ctx.impls.get(n("name")!.text) ?? []).map(
+          (i) => i.childForFieldName("body")!
+        ),
+        ...properties,
+      ];
 
-			let staticProperties = n('body')?.namedChildren ?? [];
+      let staticProperties = n("body")?.namedChildren ?? [];
 
-			staticProperties = staticProperties.filter((i) => {
-				let isStatic = false;
-				for (let child of i.children) {
-					if (child.type === 'static') {
-						isStatic = true;
-					}
-				}
+      staticProperties = staticProperties.filter((i) => {
+        let isStatic = false;
+        for (let child of i.children) {
+          if (child.type === "static") {
+            isStatic = true;
+          }
+        }
 
-				return isStatic;
-			});
+        return isStatic;
+      });
 
-			let props = properties.map((i) => ({
-				name: i.childForFieldName('name')?.text ?? '_unknown',
-				type: i.childForFieldName('type')?.firstNamedChild?.text ?? '',
-				renderedType: compileToString(ctx, i.childForFieldName('type')!),
-				default: i.childForFieldName('value')
-					? compileToString(ctx, i.childForFieldName('value')!)
-					: generateDefaultForType(i.childForFieldName('type')?.firstNamedChild?.text ?? '')
-			}));
+      let props = properties.map((i) => ({
+        name: i.childForFieldName("name")?.text ?? "_unknown",
+        type: i.childForFieldName("type")?.firstNamedChild?.text ?? "",
+        renderedType: compileToString(ctx, i.childForFieldName("type")!),
+        default: i.childForFieldName("value")
+          ? compileToString(ctx, i.childForFieldName("value")!)
+          : generateDefaultForType(
+              i.childForFieldName("type")?.firstNamedChild?.text ?? ""
+            ),
+      }));
 
-			let cls = s([
-				'/**@shadeup=struct*/class ',
-				c(n('name')!),
-				...(impls.length > 0
-					? [
-							' implements ',
-							...join(
-								impls.map((i) => c(i.childForFieldName('for')!)),
-								','
-							)
-					  ]
-					: []),
-				' {\n',
-				...join(
-					staticProperties.map((i) => {
-						return s([
-							'public static ',
-							c(i.childForFieldName('name')!),
-							': ',
-							c(i.childForFieldName('type')!),
-							' = ',
-							c(i.childForFieldName('value')!),
-							';\n'
-						]);
-					}),
-					''
-				),
-				`constructor(data: {`,
-				`${props
-					.map(
-						(i) =>
-							`${i.name}?: ${
-								math_primitives.includes(i.type ?? '') ? '__.' + i.type : i.renderedType
-							},`
-					)
-					.join('\n')}`,
-				`}) {\n`,
-				`${props.map((i) => `this.${i.name} = data.${i.name} ?? ${i.default};`).join('\n')}`,
-				`\n}\n`,
-				...join(
-					implBodies.map((i) => c(i)),
-					'\n'
-				),
-				'\n',
-				`clone(): `,
-				c(n('name')!),
-				` {\n`,
-				`return new `,
-				c(n('name')!),
-				`({\n`,
-				`${props
-					.map((i) => {
-						return `${i.name}: __deepClone(this.${i.name}),`;
-					})
-					.join('\n')}`,
-				`});\n`,
-				`}\n`,
-				'\n}',
-				'\n'
-			]);
+      let cls = s([
+        "/**@shadeup=struct*/class ",
+        c(n("name")!),
+        ...(impls.length > 0
+          ? [
+              " implements ",
+              ...join(
+                impls.map((i) => c(i.childForFieldName("for")!)),
+                ","
+              ),
+            ]
+          : []),
+        " {\n",
+        ...join(
+          staticProperties.map((i) => {
+            return s([
+              "public static ",
+              c(i.childForFieldName("name")!),
+              ": ",
+              c(i.childForFieldName("type")!),
+              " = ",
+              c(i.childForFieldName("value")!),
+              ";\n",
+            ]);
+          }),
+          ""
+        ),
+        `constructor(data: {`,
+        `${props
+          .map(
+            (i) =>
+              `${i.name}?: ${
+                math_primitives.includes(i.type ?? "")
+                  ? "__." + i.type
+                  : i.renderedType
+              },`
+          )
+          .join("\n")}`,
+        `}) {\n`,
+        `${props
+          .map(
+            (i) => `this.${i.name} = (data.${i.name} ?? ${i.default}) as any;`
+          )
+          .join("\n")}`,
+        `\n}\n`,
+        ...join(
+          implBodies.map((i) => c(i)),
+          "\n"
+        ),
+        "\n",
+        `clone(): `,
+        c(n("name")!),
+        ` {\n`,
+        `return new `,
+        c(n("name")!),
+        `({\n`,
+        `${props
+          .map((i) => {
+            return `${i.name}: __deepClone(this.${i.name}),`;
+          })
+          .join("\n")}`,
+        `});\n`,
+        `}\n`,
+        "\n}",
+        "\n",
+      ]);
 
-			// console.log('Class', cls.print());
-			return cls;
-		case 'object_method_type':
-			return s([...children()]);
-		case 'method_definition':
-			let isStatic = n('parameters')?.firstNamedChild?.text != 'self';
-			return s([
-				...(isStatic ? ['static '] : []),
-				c(n('name')!),
-				c(n('parameters')!),
-				c(n('body')!),
-				'\n'
-			]);
-		case 'impl_for_clause':
-			return s([ast.firstNamedChild!.text]);
-		case 'unary_expression':
-			let op = ast.firstChild?.text ?? '';
-			if (op == '-') {
-				return s(['__.negate(', c(n('argument')!), ')']);
-			} else if (op == '+') {
-				return s(['__.positive(', c(n('argument')!), ')']);
-			} else if (op == '!') {
-				return s(['__.not(', c(n('argument')!), ')']);
-			} else {
-				return s([c(n('argument')!)]);
-			}
-		case 'class_body':
-			return s(['{\n', ...children(), '\n}']);
-		case 'public_field_definition':
-			let accessibility =
-				ast.firstNamedChild?.type === 'accessibility_modifier_member' ? 'public' : 'private';
-			return s([accessibility, ' ', c(n('name')!), ': ', c(n('type')!), ';\n']);
-		case 'impl_declaration':
-			return s([`/* impl ${n('name')?.text} */\n`]);
-		case 'lexical_declaration':
-			return s([...children().map((i) => s(['let ', i, ';\n']))]);
-		case 'variable_declarator':
-			let isRoot = ast?.parent?.parent.type === 'program';
+      // console.log('Class', cls.print());
+      return cls;
+    case "object_method_type":
+      return s([...children()]);
+    case "method_definition":
+      let isStatic = n("parameters")?.firstNamedChild?.text != "self";
+      return s([
+        ...(isStatic ? ["static "] : []),
+        c(n("name")!),
+        c(n("parameters")!),
+        c(n("body")!),
+        "\n",
+      ]);
+    case "impl_for_clause":
+      return s([ast.firstNamedChild!.text]);
+    case "unary_expression":
+      let op = ast.firstChild?.text ?? "";
+      if (op == "-") {
+        return s(["__.negate(", c(n("argument")!), ")"]);
+      } else if (op == "+") {
+        return s(["__.positive(", c(n("argument")!), ")"]);
+      } else if (op == "!") {
+        return s(["__.not(", c(n("argument")!), ")"]);
+      } else {
+        return s([c(n("argument")!)]);
+      }
+    case "class_body":
+      return s(["{\n", ...children(), "\n}"]);
+    case "public_field_definition":
+      let accessibility =
+        ast.firstNamedChild?.type === "accessibility_modifier_member"
+          ? "public"
+          : "private";
+      return s([accessibility, " ", c(n("name")!), ": ", c(n("type")!), ";\n"]);
+    case "impl_declaration":
+      return s([`/* impl ${n("name")?.text} */\n`]);
+    case "lexical_declaration":
+      return s([...children().map((i) => s(["let ", i, ";\n"]))]);
+    case "variable_declarator":
+      let isRoot = ast?.parent?.parent.type === "program";
 
-			return s([
-				c(n('name')!),
-				n('type') ? s([': ', c(n('type')!)]) : '',
-				...(hasName('value')
-					? [
-							' = ',
-							...(isRoot
-								? [
-										'globalVarInit("' + cleanName(ctx.fileName) + '", "',
-										c(n('name')!),
-										'", () => { return ',
-										c(n('value')!),
-										'; }, () => { return ',
-										c(n('name')!),
-										'; })'
-								  ]
-								: [c(n('value')!)])
-					  ]
-					: [' = ', generateDefaultForType(n('type').text.replace(/^:/, '')).trim()])
-			]);
-		case 'object_type':
-			return s([
-				'{',
-				...join(
-					ast.namedChildren.map((i) => {
-						return s([c(i), ',']);
-					}),
-					''
-				),
-				'}'
-			]);
-		case 'property_signature':
-			return s([c(n('name')!), ': ', c(n('type')!)]);
-		case 'workgroup_member':
-			let typeName = ast.childForFieldName('type')?.firstNamedChild?.text ?? '';
-			if (typeName === 'atomic<uint>' || typeName === 'atomic<int>') {
-				if (hasName('value')) {
-					ctx.report(ast, 'Atomic variables cannot have a default value');
-				}
+      return s([
+        c(n("name")!),
+        n("type") ? s([": ", c(n("type")!)]) : "",
+        ...(hasName("value")
+          ? [
+              " = ",
+              ...(isRoot
+                ? [
+                    'globalVarInit("' + cleanName(ctx.fileName) + '", "',
+                    c(n("name")!),
+                    '", () => { return ',
+                    c(n("value")!),
+                    "; }, () => { return ",
+                    c(n("name")!),
+                    "; })",
+                  ]
+                : [c(n("value")!)]),
+            ]
+          : [
+              " = ",
+              generateDefaultForType(n("type").text.replace(/^:/, "")).trim(),
+            ]),
+      ]);
+    case "object_type":
+      return s([
+        "{",
+        ...join(
+          ast.namedChildren.map((i) => {
+            return s([c(i), ","]);
+          }),
+          ""
+        ),
+        "}",
+      ]);
+    case "property_signature":
+      return s([c(n("name")!), ": ", c(n("type")!)]);
+    case "workgroup_member":
+      let typeName = ast.childForFieldName("type")?.firstNamedChild?.text ?? "";
+      if (typeName === "atomic<uint>" || typeName === "atomic<int>") {
+        if (hasName("value")) {
+          ctx.report(ast, "Atomic variables cannot have a default value");
+        }
 
-				return s([
-					'\n// @workgroup\n let ',
-					c(n('name')!),
-					': ',
-					c(n('type')!),
-					' = ',
-					generateDefaultForType(typeName),
-					';\n'
-				]);
-			}
-			if (hasName('value')) {
-				return s([
-					'\n// @workgroup\n let ',
-					c(n('name')!),
-					': ',
-					c(n('type')!),
-					' = ',
-					c(n('value')),
-					';\n'
-				]);
-			} else {
-				let t = c(n('type')!);
+        return s([
+          "\n// @workgroup\n let ",
+          c(n("name")!),
+          ": ",
+          c(n("type")!),
+          " = ",
+          generateDefaultForType(typeName),
+          ";\n",
+        ]);
+      }
+      if (hasName("value")) {
+        return s([
+          "\n// @workgroup\n let ",
+          c(n("name")!),
+          ": ",
+          c(n("type")!),
+          " = ",
+          c(n("value")),
+          ";\n",
+        ]);
+      } else {
+        let t = c(n("type")!);
 
-				return s([
-					'\n// @workgroup\n let ',
-					c(n('name')!),
-					': ',
-					t,
-					' = ',
+        return s([
+          "\n// @workgroup\n let ",
+          c(n("name")!),
+          ": ",
+          t,
+          " = ",
 
-					generateDefaultForType(typeName),
-					';\n'
-				]);
-			}
-		case 'workgroup':
-			return s([...children()]);
-		case 'async_block':
-			return s([
-				'/** Runs immediately but does not block when running async code inside (e.g. downloading textures from the gpu)*/(async () => ',
-				c(n('body')!),
-				')()'
-			]);
-		case 'shader':
-			let encoder = new TextEncoder();
-			let u8a = encoder.encode(n('body')!.text);
-			let key = sha256(u8a)
-				.map((x) => x.toString(16).padStart(2, '0'))
-				.join('');
-			if (hasName('type_arguments')) {
-				let isComputeShader = n('type_arguments')?.namedChildCount == 3;
-				if (isComputeShader) {
-					let templateArgsRaw = join(
-						n(`type_arguments`).namedChildren.map((nc) => {
-							let innerString = c(nc).print();
-							return innerString.replace(/__\.int\((\d+)\)/g, '$1');
-						}),
-						', '
-					);
-					let templateArgs = join(
-						n(`type_arguments`).namedChildren.map((nc) => {
-							return c(nc);
-						}),
-						', '
-					);
-					return new SourceNode(ast.startIndex, ast.endIndex, [
-						new SourceNode(ast.startIndex, ast.startIndex, `shader_start_shd_(`),
-						new SourceNode(ast.startIndex, ast.startIndex + 'shader'.length, `makeShader(`),
-						`"${key}", /**@shadeup=shader*/(__in: ShaderInput`,
-						`, __out: {}`,
-						`) => `,
-						c(n('body')!),
-						`) as any, [`,
-						...templateArgs,
-						`]) as shader<`,
-						...templateArgsRaw,
-						'>'
-					]);
-				} else {
-					let arg1 = n('type_arguments')?.firstNamedChild;
-					let arg2 = n('type_arguments')?.lastNamedChild;
-					return new SourceNode(ast.startIndex, ast.endIndex, [
-						new SourceNode(ast.startIndex, ast.startIndex, `shader_start_shd_(`),
-						new SourceNode(ast.startIndex, ast.startIndex + 'shader'.length, `makeShader(`),
-						`"${key}", /**@shadeup=shader*/(__in:`,
-						c(arg1),
-						` & {vertexIndex: __.int}, __out: `,
-						c(arg2),
-						`) => `,
-						c(n('body')!),
-						`))`
-					]);
-				}
-			} else {
-				return new SourceNode(ast.startIndex, ast.endIndex, [
-					new SourceNode(ast.startIndex, ast.startIndex, `shader_start_shd_(`),
-					new SourceNode(ast.startIndex, ast.startIndex + 'shader'.length, `makeShader(`),
-					`"${key}", /**@shadeup=shader*/(__in, __out) => `,
-					c(n('body')!),
-					`))`
-				]);
-			}
-		case 'assignment_expression':
-			let left = n('left');
-			if (left?.type === 'subscript_expression') {
-				return s([
-					c(left.childForFieldName('object')!),
-					'.__index_assign(',
-					c(left.childForFieldName('index')!),
-					', ',
-					c(n('right')!),
-					')'
-				]);
-			} else if (left?.type == 'member_expression') {
-				let prop = left.childForFieldName('property')!;
-				let p = prop.text ?? '';
-				if (p.length > 0 && p.length < 5) {
-					// Could be a swizzle
-					let isSwizzle = true;
+          generateDefaultForType(typeName),
+          ";\n",
+        ]);
+      }
+    case "workgroup":
+      return s([...children()]);
+    case "async_block":
+      return s([
+        "/** Runs immediately but does not block when running async code inside (e.g. downloading textures from the gpu)*/(async () => ",
+        c(n("body")!),
+        ")()",
+      ]);
+    case "shader":
+      let encoder = new TextEncoder();
+      let u8a = encoder.encode(n("body")!.text);
+      let key = sha256(u8a)
+        .map((x) => x.toString(16).padStart(2, "0"))
+        .join("");
+      if (hasName("type_arguments")) {
+        let isComputeShader = n("type_arguments")?.namedChildCount == 3;
+        if (isComputeShader) {
+          let templateArgsRaw = join(
+            n(`type_arguments`).namedChildren.map((nc) => {
+              let innerString = c(nc).print();
+              return innerString.replace(/__\.int\((\d+)\)/g, "$1");
+            }),
+            ", "
+          );
+          let templateArgs = join(
+            n(`type_arguments`).namedChildren.map((nc) => {
+              return c(nc);
+            }),
+            ", "
+          );
+          return new SourceNode(ast.startIndex, ast.endIndex, [
+            new SourceNode(
+              ast.startIndex,
+              ast.startIndex,
+              `shader_start_shd_(`
+            ),
+            new SourceNode(
+              ast.startIndex,
+              ast.startIndex + "shader".length,
+              `makeShader(`
+            ),
+            `"${key}", /**@shadeup=shader*/(__in: ShaderInput`,
+            `, __out: {}`,
+            `) => `,
+            c(n("body")!),
+            `) as any, [`,
+            ...templateArgs,
+            `]) as shader<`,
+            ...templateArgsRaw,
+            ">",
+          ]);
+        } else {
+          let arg1 = n("type_arguments")?.firstNamedChild;
+          let arg2 = n("type_arguments")?.lastNamedChild;
+          return new SourceNode(ast.startIndex, ast.endIndex, [
+            new SourceNode(
+              ast.startIndex,
+              ast.startIndex,
+              `shader_start_shd_(`
+            ),
+            new SourceNode(
+              ast.startIndex,
+              ast.startIndex + "shader".length,
+              `makeShader(`
+            ),
+            `"${key}", /**@shadeup=shader*/(__in:`,
+            c(arg1),
+            ` & {vertexIndex: __.int}, __out: `,
+            c(arg2),
+            `) => `,
+            c(n("body")!),
+            `))`,
+          ]);
+        }
+      } else {
+        return new SourceNode(ast.startIndex, ast.endIndex, [
+          new SourceNode(ast.startIndex, ast.startIndex, `shader_start_shd_(`),
+          new SourceNode(
+            ast.startIndex,
+            ast.startIndex + "shader".length,
+            `makeShader(`
+          ),
+          `"${key}", /**@shadeup=shader*/(__in, __out) => `,
+          c(n("body")!),
+          `))`,
+        ]);
+      }
+    case "assignment_expression":
+      let left = n("left");
+      if (left?.type === "subscript_expression") {
+        return s([
+          c(left.childForFieldName("object")!),
+          ".__index_assign(",
+          c(left.childForFieldName("index")!),
+          ", ",
+          c(n("right")!),
+          ")",
+        ]);
+      } else if (left?.type == "member_expression") {
+        let prop = left.childForFieldName("property")!;
+        let p = prop.text ?? "";
+        if (p.length > 0 && p.length < 5) {
+          // Could be a swizzle
+          let isSwizzle = true;
 
-					for (let i = 0; i < p.length; i++) {
-						let char = p[i];
-						if (
-							char !== 'x' &&
-							char !== 'y' &&
-							char !== 'z' &&
-							char !== 'w' &&
-							char !== 'r' &&
-							char !== 'g' &&
-							char !== 'b' &&
-							char !== 'a'
-						) {
-							isSwizzle = false;
-							break;
-						}
-					}
+          for (let i = 0; i < p.length; i++) {
+            let char = p[i];
+            if (
+              char !== "x" &&
+              char !== "y" &&
+              char !== "z" &&
+              char !== "w" &&
+              char !== "r" &&
+              char !== "g" &&
+              char !== "b" &&
+              char !== "a"
+            ) {
+              isSwizzle = false;
+              break;
+            }
+          }
 
-					if (isSwizzle) {
-						return s([c(n('left')!)]);
-					} else {
-						return s([c(n('left')!), ' = ', c(n('right')!)]);
-					}
-				} else {
-					return s([c(n('left')!), ' = ', c(n('right')!)]);
-				}
-			} else {
-				return s([c(n('left')!), ' = ', c(n('right')!)]);
-			}
-		case 'sequence_expression':
-			return s([...join(children(), ', ')]);
-		case 'subscript_expression':
-			return s([c(n('object')!), '.__index(', c(n('index')!), ')']);
-		case 'empty_statement':
-			return s(['']);
-		case 'true':
-			return s(['true']);
-		case 'false':
-			return s(['false']);
-		case 'null':
-			return s(['null']);
-		case 'union_type':
-			return s([...join(children(), ' | ')]);
-		case 'intersection_type':
-			return s([...join(children(), ' & ')]);
-		case 'ERROR':
-			ctx.report(ast, 'Syntax error');
-			if (ast.firstNamedChild?.type == 'identifier') {
-				return s([c(ast.firstNamedChild), '.']);
-			}
-			return s(['/* ERROR */ 0']);
-		default:
-			ctx.report(ast, 'Unsupported syntax');
-			console.error(new Error('Bad AST ' + ast.type));
-			return s(['/* ERROR */ 0']);
-	}
+          if (isSwizzle) {
+            return s([c(n("left")!)]);
+          } else {
+            return s([c(n("left")!), " = ", c(n("right")!)]);
+          }
+        } else {
+          return s([c(n("left")!), " = ", c(n("right")!)]);
+        }
+      } else {
+        return s([c(n("left")!), " = ", c(n("right")!)]);
+      }
+    case "sequence_expression":
+      return s([...join(children(), ", ")]);
+    case "subscript_expression":
+      return s([c(n("object")!), ".__index(", c(n("index")!), ")"]);
+    case "empty_statement":
+      return s([""]);
+    case "true":
+      return s(["true"]);
+    case "false":
+      return s(["false"]);
+    case "null":
+      return s(["null"]);
+    case "union_type":
+      return s([...join(children(), " | ")]);
+    case "intersection_type":
+      return s([...join(children(), " & ")]);
+    case "ERROR":
+      ctx.report(ast, "Syntax error");
+      if (ast.firstNamedChild?.type == "identifier") {
+        return s([c(ast.firstNamedChild), "."]);
+      }
+      return s(["/* ERROR */ 0"]);
+    default:
+      ctx.report(ast, "Unsupported syntax");
+      console.error(new Error("Bad AST " + ast.type));
+      return s(["/* ERROR */ 0"]);
+  }
 }
 
 export function compileToString(ctx: AstContext, ast: SyntaxNode): string {
-	let sn = compile(ctx, ast);
-	let ss = {
-		str: '',
-		indexMapping: []
-	} as SourceString;
+  let sn = compile(ctx, ast);
+  let ss = {
+    str: "",
+    indexMapping: [],
+  } as SourceString;
 
-	sn.toString(ss);
-	return ss.str;
+  sn.toString(ss);
+  return ss.str;
 }
 
 function isInShader(ast: SyntaxNode) {
-	if (ast.type === 'shader') {
-		return true;
-	}
+  if (ast.type === "shader") {
+    return true;
+  }
 
-	if (ast.parent) {
-		return isInShader(ast.parent);
-	}
+  if (ast.parent) {
+    return isInShader(ast.parent);
+  }
 
-	return false;
+  return false;
 }

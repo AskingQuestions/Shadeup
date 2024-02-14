@@ -1,0 +1,32 @@
+{
+  "name": "@shadeup/cli",
+  "version": "1.2.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cli": "node cli.js"
+  },
+  "bin": {
+    "shadeup": "./cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AskingQuestions/Shadeup"
+  },
+  "author": "AskingQuestions <npm@jrmy.dev>",
+  "license": "MIT",
+  "dependencies": {
+    "@typescript/vfs": "^1.5.0",
+    "boxen": "^7.0.0",
+    "colors": "^1.4.0",
+    "commander": "^9.2.0",
+    "electron": "^28.2.2",
+    "inquirer": "^8.2.4",
+    "typescript": "^5.3.3",
+    "uglify-js": "^3.17.4",
+    "vite": "^5.1.1",
+    "web-tree-sitter": "^0.20.8"
+  }
+}

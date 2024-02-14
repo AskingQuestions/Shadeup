@@ -1,0 +1,67 @@
+{
+  "name": "shadeup-vscode",
+  "displayName": "Shadeup for VS Code",
+  "description": "Shadeup language server and tools",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "publisher": "Shadeup",
+  "keywords": [
+    "shadeup",
+    "language",
+    "syntax",
+    "highlighting"
+  ],
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AskingQuestions/shadeup"
+  },
+  "main": "./client/out/extension",
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "shadeup",
+        "aliases": [
+          "Shadeup",
+          "shadeup"
+        ],
+        "extensions": [
+          ".shadeup"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "shadeup",
+        "scopeName": "source.shadeup",
+        "path": "./shadeup.tmlanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
+    "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.3.3"
+  }
+}

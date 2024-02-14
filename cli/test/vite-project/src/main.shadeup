@@ -1,0 +1,44 @@
+// Create a cube at the origin (0.xyz)
+// with a size of 100 units (100.xyz)
+let cube = mesh::box(0.xyz, 100.xyz);
+let tex = texture2d<float4>(10.xy);
+
+tex.draw(shader {
+	out.color = 1.xxxx;
+});
+
+pub fn setTexture(newTex: texture2d<float4>) {
+	tex = newTex;
+}
+pub fn setModel(newModel: Model) {
+	cube = newModel.parts[0].mesh.scale(20.xxx);
+	
+	tex = newModel.parts[0].material.color;
+}
+
+fn main() {
+	ui::button("Hello, world!");
+
+	draw(
+		cube,
+		shader {
+			out.position =
+				env.camera.getCombinedMatrix()
+				*
+				(quat::rotate(quat::fromEulerAngles((0, env.time, 0)), in.position), 1);
+		},
+		shader {
+			// Calculate the normal of the surface
+			let normal = normalize(in.normal);
+
+			// Calculate the direction of the light
+			let lightDir = normalize((2, 4.0, 0.5));
+
+			// Calculate the diffuse lighting
+			let diffuse = max(dot(normal, lightDir), 0.0) * tex.sample(in.uv);
+
+			// Output the color
+			out.color = (diffuse.xyz, 1);
+		}
+	);
+}

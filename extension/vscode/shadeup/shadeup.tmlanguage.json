@@ -1,0 +1,275 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Shadeup",
+  "scopeName": "source.shadeup",
+  "fileTypes": [
+    ".shadeup"
+  ],
+  "patterns": [
+    {
+      "include": "#expression"
+    },
+    {
+      "include": "#comments"
+    }
+  ],
+  "repository": {
+    "array-literal": {
+      "name": "meta.array-literal.shadeup",
+      "begin": "\\[(?!(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\bfor\\b)",
+      "end": "]",
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "block-comment": {
+      "name": "comment.block.shadeup",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    "comments": {
+      "patterns": [
+        {
+          "include": "#line-comment"
+        },
+        {
+          "include": "#block-comment"
+        }
+      ]
+    },
+    "decorator": {
+      "name": "meta.decorator.shadeup",
+      "begin": "@(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*(?=\\b[_$[:alpha:]][_$[:alnum:]]*\\b)",
+      "end": "",
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "directive": {
+      "name": "meta.directive.shadeup",
+      "begin": "#\\b[_a-zA-Z-0-9]+\\b",
+      "end": "$",
+      "patterns": [
+        {
+          "include": "#directive-variable"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "directive-variable": {
+      "name": "keyword.control.declaration.shadeup",
+      "match": "\\b[_a-zA-Z-0-9]+\\b"
+    },
+    "escape-character": {
+      "name": "constant.character.escape.shadeup",
+      "match": "\\\\(u{[0-9A-Fa-f]+}|n|r|t|\\\\|'|\\${)"
+    },
+    "expression": {
+      "patterns": [
+        {
+          "include": "#string-literal-double"
+        },
+        {
+          "include": "#string-literal"
+        },
+        {
+          "include": "#string-verbatim"
+        },
+        {
+          "include": "#numeric-literal"
+        },
+        {
+          "include": "#named-literal"
+        },
+        {
+          "include": "#object-literal"
+        },
+        {
+          "include": "#array-literal"
+        },
+        {
+          "include": "#keyword"
+        },
+        {
+          "include": "#storage-func"
+        },
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#storage-modifier"
+        },
+        {
+          "include": "#identifier"
+        },
+        {
+          "include": "#function-call"
+        },
+        {
+          "include": "#decorator"
+        },
+        {
+          "include": "#lambda-start"
+        },
+        {
+          "include": "#directive"
+        }
+      ]
+    },
+    "function-call": {
+      "name": "meta.function-call.shadeup",
+      "begin": "(\\b[_$[:alpha:]][_$[:alnum:]]*\\b)(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\(",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.function.shadeup"
+        }
+      },
+      "end": "\\)",
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "identifier": {
+      "name": "variable.other.readwrite.shadeup",
+      "match": "\\b[_$[:alpha:]][_$[:alnum:]]*\\b(?!(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\()"
+    },
+    "keyword": {
+      "name": "keyword.control.declaration.shadeup",
+      "match": "\\b(metadata|targetScope|resource|module|param|shader|workgroup|output|for|in|if|while|break|continue|else|return|existing|import|as|type|with|using|assert|provider)\\b"
+    },
+    "lambda-start": {
+      "name": "meta.lambda-start.shadeup",
+      "begin": "(\\((?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\b[_$[:alpha:]][_$[:alnum:]]*\\b(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*(,(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\b[_$[:alpha:]][_$[:alnum:]]*\\b(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*)*\\)|\\((?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\)|(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*\\b[_$[:alpha:]][_$[:alnum:]]*\\b(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*)(?=(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*=>)",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.undefined.shadeup",
+          "patterns": [
+            {
+              "include": "#identifier"
+            },
+            {
+              "include": "#comments"
+            }
+          ]
+        }
+      },
+      "end": "(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*=>"
+    },
+    "line-comment": {
+      "name": "comment.line.double-slash.shadeup",
+      "match": "//.*(?=$)"
+    },
+    "named-literal": {
+      "name": "constant.language.shadeup",
+      "match": "\\b(true|false|null)\\b"
+    },
+    "numeric-literal": {
+      "name": "constant.numeric.shadeup",
+      "match": "[0-9]+"
+    },
+    "object-literal": {
+      "name": "meta.object-literal.shadeup",
+      "begin": "{",
+      "end": "}",
+      "patterns": [
+        {
+          "include": "#object-property-key"
+        },
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "object-property-key": {
+      "name": "variable.other.property.shadeup",
+      "match": "\\b[_$[:alpha:]][_$[:alnum:]]*\\b(?=(?:[ \\t\\r\\n]|\\/\\*(?:\\*(?!\\/)|[^*])*\\*\\/)*:)"
+    },
+    "storage-func": {
+      "name": "storage.type.function.shadeup",
+      "match": "\\b(fn|struct|trait|impl)\\b"
+    },
+    "storage-modifier": {
+      "name": "storage.modifier.shadeup",
+      "match": "\\b(pub)\\b"
+    },
+    "string-literal": {
+      "name": "string.quoted.single.shadeup",
+      "begin": "'(?!'')",
+      "end": "'",
+      "patterns": [
+        {
+          "include": "#escape-character"
+        },
+        {
+          "include": "#string-literal-subst"
+        }
+      ]
+    },
+    "string-literal-double": {
+      "name": "string.quoted.double.shadeup",
+      "begin": "\"(?!\"\")",
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#escape-character"
+        },
+        {
+          "include": "#string-literal-subst"
+        }
+      ]
+    },
+    "string-literal-subst": {
+      "name": "meta.string-literal-subst.shadeup",
+      "begin": "(?<!\\\\)(\\${)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.template-expression.begin.shadeup"
+        }
+      },
+      "end": "(})",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.template-expression.end.shadeup"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#comments"
+        }
+      ]
+    },
+    "string-verbatim": {
+      "name": "string.quoted.multi.shadeup",
+      "begin": "'''",
+      "end": "'''",
+      "patterns": []
+    },
+    "variable": {
+      "name": "storage.type.shadeup",
+      "match": "\\b(let|const)\\b"
+    }
+  }
+}
