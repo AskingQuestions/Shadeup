@@ -22,9 +22,11 @@
     "boxen": "^7.0.0",
     "colors": "^1.4.0",
     "commander": "^9.2.0",
+    "electron": "^28.2.2",
     "inquirer": "^8.2.4",
     "typescript": "^5.3.3",
     "uglify-js": "^3.17.4",
+    "vite": "^5.1.1",
     "web-tree-sitter": "^0.20.8"
   }
 }

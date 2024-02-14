@@ -137,7 +137,7 @@ const buildFiles = async (files, options) => {
 
 program
   .command("build")
-  .description("Build files")
+  .description("Build file")
   .option("-o, --output <path>", "Output path", "")
   .argument("file", "File to build")
   .action(async (file, options) => {
@@ -169,80 +169,129 @@ const debounce = (fn, time) => {
   };
 };
 
+const setupWatcher = async (file, options, outdir = "") => {
+  file = path.resolve(file);
+  let comp = await makeIncrementalCompiler();
+  let rebuild = debounce(async () => {
+    let fileSet = scanImports(file);
+
+    let files = [...fileSet.values()];
+    let common = normalizePath(findCommonPath(files));
+    let start = performance.now();
+
+    let orig = console.log;
+    // console.log = () => {};
+    let outs = await comp({
+      files: files.map((f) => {
+        f = normalizePath(f).replace(common, "");
+        let data = fs.readFileSync(f, "utf8");
+        let filename = f.replace(".shadeup", "");
+        return { name: filename, body: data };
+      }),
+    });
+    console.log = orig;
+    (async () => {
+      // let errs = await outs.errors;
+      // printErrors(errs, common);
+    })();
+    let outPath = options.output || file.replace(".shadeup", ".js");
+    if (outdir) {
+      outPath = path.join(outdir, path.basename(outPath));
+    }
+    console.log(
+      `\x1b[32mCompiled in ${Math.round(
+        performance.now() - start
+      )}ms\x1b[0m: writing out to ${outPath}`
+    );
+    fs.writeFileSync(outPath, outs.output);
+    fs.writeFileSync(outPath.replace(/\.js$/, ".d.ts"), outs.dts);
+  }, 100);
+  rebuild();
+
+  let handlers = new Map();
+
+  const buildHandlers = () => {
+    let fileSet = scanImports(file);
+    let files = Array.from(fileSet);
+    let unwatch = new Set(handlers.keys());
+    for (let file of files) {
+      unwatch.delete(file);
+      if (!fs.existsSync(file)) {
+        console.error(`File ${file} does not exist`);
+        continue;
+      }
+      if (handlers.has(file)) {
+        continue;
+      }
+
+      let handler = () => {
+        rebuild();
+        buildHandlers();
+      };
+      let watcher = fs.watch(file, handler);
+      watcher.on("change", handler);
+      watcher.on("error", (e) => {
+        console.error(e);
+      });
+      handlers.set(file, watcher);
+    }
+    for (let file of unwatch) {
+      handlers.get(file).close();
+      handlers.delete(file);
+    }
+  };
+
+  buildHandlers();
+};
+
 program
   .command("watch")
-  .description("Watch shadeup file(s) and recompile on change")
+  .description("Watch a shadeup file and recompile on change")
   .argument("file", "Main file to watch")
   .action(async (file, options) => {
-    file = path.resolve(file);
-    let comp = await makeIncrementalCompiler();
-    let rebuild = debounce(async () => {
-      let fileSet = scanImports(file);
+    setupWatcher(file, options);
+  });
 
-      let files = [...fileSet.values()];
-      let common = normalizePath(findCommonPath(files));
-      let start = performance.now();
+program
+  .command("preview")
+  .description("Live preview of a shadeup file in electron")
+  .argument("file", "Main file to preview")
+  .action(async (file, options) => {
+    const electron = await import("electron");
+    const proc = await import("node:child_process");
 
-      let orig = console.log;
-      // console.log = () => {};
-      let outs = await comp({
-        files: files.map((f) => {
-          f = normalizePath(f).replace(common, "");
-          let data = fs.readFileSync(f, "utf8");
-          let filename = f.replace(".shadeup", "");
-          return { name: filename, body: data };
-        }),
-      });
-      console.log = orig;
-      (async () => {
-        // let errs = await outs.errors;
-        // printErrors(errs, common);
-      })();
-      let outPath = options.output || file.replace(".shadeup", ".js");
-      console.log(
-        `\x1b[32mCompiled in ${Math.round(
-          performance.now() - start
-        )}ms\x1b[0m: writing out to ${outPath}`
-      );
-      fs.writeFileSync(outPath, outs.output);
-      fs.writeFileSync(outPath.replace(/\.js$/, ".d.ts"), outs.dts);
-    }, 100);
-    rebuild();
+    fs.writeFileSync(path.join(__dirname, "vite/runner.js"), ``);
 
-    let handlers = new Map();
+    const child = proc.spawn(electron.default, [
+      path.join(__dirname, "electron/main.js"),
+    ]);
 
-    const buildHandlers = () => {
-      let fileSet = scanImports(file);
-      let files = Array.from(fileSet);
-      let unwatch = new Set(handlers.keys());
-      for (let file of files) {
-        unwatch.delete(file);
-        if (!fs.existsSync(file)) {
-          console.error(`File ${file} does not exist`);
-          continue;
-        }
-        if (handlers.has(file)) {
-          continue;
-        }
+    child.stdout.on("data", (data) => {
+      console.log(data.toString());
+    });
 
-        let handler = () => {
-          rebuild();
-          buildHandlers();
-        };
-        let watcher = fs.watch(file, handler);
-        watcher.on("change", handler);
-        watcher.on("error", (e) => {
-          console.error(e);
-        });
-        handlers.set(file, watcher);
-      }
-      for (let file of unwatch) {
-        handlers.get(file).close();
-        handlers.delete(file);
-      }
-    };
+    child.stderr.on("data", (data) => {
+      console.error(data.toString());
+    });
 
-    buildHandlers();
+    const viteDir = path.join(__dirname, "vite");
+
+    setupWatcher(
+      file,
+      {
+        output: path.join(viteDir, "runner.js"),
+      },
+      viteDir
+    );
+
+    const vite = await import("vite");
+    const server = await vite.createServer({
+      root: viteDir,
+      server: {
+        port: 5128,
+      },
+    });
+    await server.listen();
   });
 
 program.parse();
