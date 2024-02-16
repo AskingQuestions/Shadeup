@@ -167,7 +167,7 @@ export async function makeCompiler() {
               f.name ==
               o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", "")
           ) &&
-          !(item.files.length == 1 && item.files[0].name == "__lib")
+          !(item.files.length >= 1 && item.files[0].name == "__lib")
         )
           continue;
 
@@ -180,7 +180,7 @@ export async function makeCompiler() {
               .join("\n")
           );
         } else {
-          if (item.files.length == 1 && item.files[0].name == "__lib") {
+          if (item.files.length >= 1 && item.files[0].name == "__lib") {
             finalOutput += `
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);
@@ -199,6 +199,10 @@ export async function makeCompiler() {
       }
       let final =
         prefixConst(item.files.map((f) => f.name)) + finalOutput + `\n});`;
+
+      if (item.files.length >= 1 && item.files[0].name == "__lib") {
+        final = finalOutput;
+      }
       let doMinify = false;
 
       if (doMinify) {
@@ -296,7 +300,7 @@ export async function makeIncrementalCompiler() {
               f.name ==
               o.path.replace(/^\//g, "").replace(".js", "").replace(".d.ts", "")
           ) &&
-          !(item.files.length == 1 && item.files[0].name == "__lib")
+          !(item.files.length >= 1 && item.files[0].name == "__lib")
         )
           continue;
 
@@ -310,7 +314,7 @@ export async function makeIncrementalCompiler() {
               .join("\n")
           );
         } else {
-          if (item.files.length == 1 && item.files[0].name == "__lib") {
+          if (item.files.length >= 1 && item.files[0].name == "__lib") {
             finalOutput += `
 ((defineFunc) => {
 	let define = (deps, func) => defineFunc(${JSON.stringify(o.path)}, deps, func);

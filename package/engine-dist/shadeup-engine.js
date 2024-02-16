@@ -7578,10 +7578,10 @@ function initInput(canvas, mouseState, keyboardSink) {
   });
   let offsetLeft = document.querySelector(".ui-container")?.offsetLeft ?? 0;
   let offsetTop = document.querySelector(".ui-container")?.offsetTop ?? 0;
+  const hasUiContainer = document.querySelector(".ui-container") !== null;
   window.addEventListener("mousedown", (e) => {
-    if (e.target && e.target.closest(".ui-container")) {
+    if (e.target && (!hasUiContainer || e.target.closest(".ui-container"))) {
       mouseState.button[e.button] = true;
-      console.log("down", mouseState.button);
       mouseState.startScreen = [...mouseState.screen];
       mouseState.startUv = [...mouseState.uv];
       mouseState.deltaScreen = [0, 0];
@@ -7597,7 +7597,7 @@ function initInput(canvas, mouseState, keyboardSink) {
     mouseState.dragging = false;
   });
   window.addEventListener("click", (e) => {
-    if (e.target && e.target.closest(".ui-container")) {
+    if (e.target && (!hasUiContainer || e.target.closest(".ui-container"))) {
       mouseState.clicked[e.button] = true;
     }
   });
@@ -7622,7 +7622,7 @@ function initInput(canvas, mouseState, keyboardSink) {
     }
   });
   window.addEventListener("touchstart", (e) => {
-    if (e.target && e.target.closest(".ui-container")) {
+    if (e.target && (!hasUiContainer || e.target.closest(".ui-container"))) {
       mouseState.button[0] = true;
       mouseState.startScreen = [...mouseState.screen];
       mouseState.startUv = [...mouseState.uv];
