@@ -8770,6 +8770,10 @@ function compile$1(ctx, ast, originalMapping) {
         newExprSymbol?.members?.forEach((v, k) => {
           let decl2 = v.valueDeclaration;
           if (decl2 && ts.isPropertyDeclaration(decl2)) {
+            const typeStr = translateType(ctx.checker, ctx.checker.getTypeAtLocation(decl2));
+            if (typeStr.startsWith("atomic<")) {
+              return;
+            }
             structProps.push([k?.toString() ?? "", decl2.type]);
           }
         });
@@ -8793,7 +8797,6 @@ function compile$1(ctx, ast, originalMapping) {
                 let propValType = ctx.checker.getTypeAtLocation(prop2.initializer);
                 let propTypeStr = translateType(ctx.checker, propType);
                 let propValTypeStr = translateType(ctx.checker, propValType);
-                console.log("WRite prop", propTypeStr, propValTypeStr);
                 if (propTypeStr != propValTypeStr) {
                   return s([
                     "/* ",
@@ -12919,7 +12922,7 @@ var treeSitterExports = treeSitter.exports;
 const Parser = /* @__PURE__ */ getDefaultExportFromCjs(treeSitterExports);
 const treeSitterShadeupURL = "";
 async function getShadeupParser() {
-  if (typeof process === "object") {
+  if (typeof process === "object" && process.versions && process.versions.node) {
     return global.shadeupParser();
   }
   let url = treeSitterShadeupURL;

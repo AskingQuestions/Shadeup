@@ -47,6 +47,9 @@ function scanImports(baseFile) {
       if (!importPath.endsWith(".shadeup")) {
         importPath += ".shadeup";
       }
+      if (importPath.startsWith("/")) {
+        continue;
+      }
       let importFile = path.resolve(path.dirname(baseFile), importPath);
       if (!imports.has(importFile)) {
         imports.add(importFile);

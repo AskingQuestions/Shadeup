@@ -76,6 +76,7 @@ class GraphicsAdapter {
   contextMode = "draw";
   listeners = /* @__PURE__ */ new Map();
   viewportSize = [0, 0];
+  engine = null;
   constructor(cnvs) {
     this.canvas = cnvs;
   }
@@ -3630,7 +3631,7 @@ class WebGPUAdapter extends GraphicsAdapter {
         out[field[0]] = this.readStructuredBuffer(field[1], buffer, offset / 4);
         offset += size;
       }
-      let clazz = window.__shadeup_structs[structure.name].struct;
+      let clazz = (this.engine ?? window).__shadeup_structs[structure.name].struct;
       if (clazz) {
         return new clazz(out);
       }
@@ -10034,6 +10035,7 @@ const makeShadeupEngine = async (canvas, options) => {
   }
   graphicsAdapter.init();
   const engine = new ShadeupEngine(canvas, graphicsAdapter);
+  graphicsAdapter.engine = engine;
   engine.start();
   const inputHook = addInputHook(engine);
   engine.hooks.push(inputHook);
