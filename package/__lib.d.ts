@@ -1,13 +1,15 @@
 import * as __ from "shadeup/math";
 
 declare namespace ShadeupFiles {
-  declare namespace __lib {
-    export {};
-  }
+
 }
 
 export declare function makeShadeupInstance(
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  options?: {
+    preferredAdapter?: "webgl" | "webgpu";
+    limits?: GPUSupportedLimits;
+  }
 ): Promise<{
   /**
    * Set to false to pause

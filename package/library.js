@@ -2088,7 +2088,7 @@ define(["require", "exports"], function (require, exports) {
         }
         // Disable caching for now
         var cache = false;
-        if (!(0, exports.getShadeupLocalContext)()['shadeup_globals'][fileName][varName] || !cache) {
+        if (!(varName in (0, exports.getShadeupLocalContext)()['shadeup_globals'][fileName]) || !cache) {
             (0, exports.getShadeupLocalContext)()['shadeup_globals'][fileName][varName] = initFn();
         }
         (0, exports.getShadeupLocalContext)()['shadeup_globals'][fileName]['$getter_' + varName] = getterFn;
@@ -2202,12 +2202,12 @@ define(["require", "exports"], function (require, exports) {
             return new map(entries);
         };
         map.prototype._getStructure = function () {
-            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_8543_map\",\"fields\":[[\"pairs\",null]]}");
+            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_8545_map\",\"fields\":[[\"pairs\",null]]}");
         };
         return map;
     }());
     exports.map = map;
-    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_8543_map\",\"fields\":[[\"pairs\",null]]}"), map)
+    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_8545_map\",\"fields\":[[\"pairs\",null]]}"), map)
     function __makeMap(initial) {
         return new map(Object.entries(initial));
     }
@@ -2258,12 +2258,12 @@ define(["require", "exports"], function (require, exports) {
             return performance.now();
         };
         time.prototype._getStructure = function () {
-            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_10776_time\",\"fields\":[]}");
+            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_10778_time\",\"fields\":[]}");
         };
         return time;
     }());
     exports.time = time;
-    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_10776_time\",\"fields\":[]}"), time)
+    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_std_i_iistd_all_ts_10778_time\",\"fields\":[]}"), time)
 });
 
 })(define);
@@ -2307,44 +2307,44 @@ define(["require", "exports", "/_std/ui", "/_std/mesh", "/_std/sdf", "/_std/geo"
     var ui;
     (function (ui) {
         function puck(position) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_PUCK(position);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_PUCK(position);
         }
         ui.puck = puck;
         function draggable(position, radius) {
             if (radius === void 0) { radius = 10; }
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_PUCK(position, radius, true);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_PUCK(position, radius, true);
         }
         ui.draggable = draggable;
         function textbox(value) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('textbox', value);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('textbox', value);
         }
         ui.textbox = textbox;
         function slider(value, min, max) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_SLIDER(value, { min: min, max: max });
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_SLIDER(value, { min: min, max: max });
         }
         ui.slider = slider;
         function label(text) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('label', text);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('label', text);
         }
         ui.label = label;
         function checkbox(value) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('checkbox', value);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('checkbox', value);
         }
         ui.checkbox = checkbox;
         function combo(value, options) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('combo', value, { options: options });
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('combo', value, { options: options });
         }
         ui.combo = combo;
         function group(text) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('group', text);
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('group', text);
         }
         ui.group = group;
         function button(text) {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('button', false, { text: text });
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('button', false, { text: text });
         }
         ui.button = button;
         function pop() {
-            (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('pop');
+            return (0, context_1.getShadeupLocalContext)()._SHADEUP_UI_CONTROL('pop');
         }
         ui.pop = pop;
     })(ui = exports.ui || (exports.ui = {}));
@@ -2909,6 +2909,7 @@ define(["require", "exports", "/_std/context", "/std_math"], function (require, 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.buffer = exports.buffer_internal = void 0;
+    var __ = { intifyVector: std_math_1.intifyVector };
     var buffer_internal = /** @class */ (function () {
         function buffer_internal(size, typeName, structure) {
             var _this = this;
@@ -3246,12 +3247,12 @@ define(["require", "exports", "/_std/context", "/std_math"], function (require, 
             }
         };
         buffer_internal.prototype._getStructure = function () {
-            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_iistd_buffer_ts_271_buffer_internal\",\"fields\":[[\"__opaque_buffer\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"structArray\",null],[\"floatArray\",null],[\"intArray\",null],[\"uintArray\",null],[\"arrayBuffer\",null],[\"vectorSize\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"typeName\",null],[\"platformPayload\",null],[\"adapter\",null],[\"dirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"pendingWrites\",null],[\"cpuReadDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"cpuWriteDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"elementCount\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"elementBytes\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"structured\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"fastIndex\",{\"type\":\"unknown\"}],[\"fastIndexAssign\",{\"type\":\"unknown\"}],[\"watchMutation\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"symbol\",{\"type\":\"unknown\"}]]}");
+            return JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_iistd_buffer_ts_317_buffer_internal\",\"fields\":[[\"__opaque_buffer\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"structArray\",null],[\"floatArray\",null],[\"intArray\",null],[\"uintArray\",null],[\"arrayBuffer\",null],[\"vectorSize\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"typeName\",null],[\"platformPayload\",null],[\"adapter\",null],[\"dirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"pendingWrites\",null],[\"cpuReadDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"cpuWriteDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"elementCount\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"elementBytes\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"structured\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"fastIndex\",{\"type\":\"unknown\"}],[\"fastIndexAssign\",{\"type\":\"unknown\"}],[\"watchMutation\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"symbol\",{\"type\":\"unknown\"}]]}");
         };
         return buffer_internal;
     }());
     exports.buffer_internal = buffer_internal;
-    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_iistd_buffer_ts_271_buffer_internal\",\"fields\":[[\"__opaque_buffer\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"structArray\",null],[\"floatArray\",null],[\"intArray\",null],[\"uintArray\",null],[\"arrayBuffer\",null],[\"vectorSize\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"typeName\",null],[\"platformPayload\",null],[\"adapter\",null],[\"dirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"pendingWrites\",null],[\"cpuReadDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"cpuWriteDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"elementCount\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"elementBytes\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"structured\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"fastIndex\",{\"type\":\"unknown\"}],[\"fastIndexAssign\",{\"type\":\"unknown\"}],[\"watchMutation\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"symbol\",{\"type\":\"unknown\"}]]}"), buffer_internal)
+    __shadeup_register_struct(JSON.parse("{\"type\":\"struct\",\"name\":\"str_i_iistd_buffer_ts_317_buffer_internal\",\"fields\":[[\"__opaque_buffer\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"structArray\",null],[\"floatArray\",null],[\"intArray\",null],[\"uintArray\",null],[\"arrayBuffer\",null],[\"vectorSize\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"typeName\",null],[\"platformPayload\",null],[\"adapter\",null],[\"dirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"pendingWrites\",null],[\"cpuReadDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"cpuWriteDirty\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"elementCount\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"elementBytes\",{\"type\":\"primitive\",\"name\":\"int\"}],[\"structured\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"fastIndex\",{\"type\":\"unknown\"}],[\"fastIndexAssign\",{\"type\":\"unknown\"}],[\"watchMutation\",{\"type\":\"primitive\",\"name\":\"bool\"}],[\"symbol\",{\"type\":\"unknown\"}]]}"), buffer_internal)
     function buffer(e1, typeName, structure) {
         if (typeof e1 === 'number') {
             var size = e1;

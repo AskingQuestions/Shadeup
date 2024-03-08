@@ -22,7 +22,12 @@ ${[...files.entries()]
 }
 
 export declare function makeShadeupInstance(
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  options?: {
+    preferredAdapter?: "webgl" | "webgpu";
+    limits?: GPUSupportedLimits;
+    ui?: boolean;
+  }
 ): Promise<{
   /**
    * Set to false to pause
@@ -33,9 +38,9 @@ export declare function makeShadeupInstance(
 
   adapter: any;
   hooks: {
-    beforeFrame?: () => {};
-    afterFrame?: () => {};
-    reset?: () => {};
+    beforeFrame?: () => void;
+    afterFrame?: () => void;
+    reset?: () => void;
   }[];
   start: () => void;
 
@@ -71,8 +76,8 @@ export declare function makeShadeupInstance(
   loadTextureFromImageLike: (
 		img: HTMLImageElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | HTMLVideoElement
 	) => Promise<__.texture2d<__.float4>>;
-	loadTexture2dFromURL: (url: string) =? Promise<__.texture2d<__.float4>>;
-	loadModelFromURL(urlGltf: string) => Promise<__.texture2d<__.float4>>;
+	loadTexture2dFromURL: (url: string) => Promise<__.texture2d<__.float4>>;
+	loadModelFromURL: (urlGltf: string) => Promise<__.texture2d<__.float4>>;
 
   files: typeof ShadeupFiles;
 }>;
@@ -118,7 +123,7 @@ export async function makeCompiler() {
   let envPool = [];
 
   for (let i = 0; i < 1; i++) {
-    envPool.push(await makeSimpleShadeupEnvironment(true));
+    envPool.push(await makeSimpleShadeupEnvironment(true, true));
   }
 
   let queue = [];
@@ -221,7 +226,7 @@ export async function makeCompiler() {
     } catch (e) {
       console.error(e);
 
-      envPool.push(await makeSimpleShadeupEnvironment());
+      envPool.push(await makeSimpleShadeupEnvironment(true, true));
       item.callback({
         error: "Fatal error while compiling.",
       });
@@ -249,7 +254,7 @@ export async function makeIncrementalCompiler() {
     return parser;
   };
 
-  const env = await makeSimpleShadeupEnvironment(true);
+  const env = await makeSimpleShadeupEnvironment(true, true);
   const fileCache = new Map();
   const fileEmitCache = new Map();
 
@@ -372,7 +377,7 @@ export async function makeLSPCompiler() {
     return parser;
   };
 
-  const env = await makeSimpleShadeupEnvironment(true);
+  const env = await makeSimpleShadeupEnvironment(true, true);
 
   return env;
 }

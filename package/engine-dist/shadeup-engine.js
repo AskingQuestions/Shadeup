@@ -3643,11 +3643,8 @@ class WebGPUAdapter extends GraphicsAdapter {
     const { device } = this.getGPU();
     let commands = [];
     this.baseUniformValues;
-    const baseUniformBufferSize = this.baseUniformBufferSize;
-    const baseUniformBuffer = device.createBuffer({
-      size: baseUniformBufferSize,
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-    });
+    this.baseUniformBufferSize;
+    const baseUniformBuffer = this.baseUniformBuffer;
     const compute = this.buildUniformsForPipeline(
       shader,
       computeUniform,
@@ -3658,18 +3655,32 @@ class WebGPUAdapter extends GraphicsAdapter {
       return;
     }
     commands = compute.commands;
-    const pipelineLayout = device.createPipelineLayout({
-      bindGroupLayouts: [compute.bindGroupLayout]
-    });
+    let pipelineLayoutKey = `${shader.uniqueSourceKey}_${compute.bindGroupLayout.$__gpuKey}`;
+    let pipelineLayout;
+    if (this.cachedPipelineLayouts.has(pipelineLayoutKey)) {
+      pipelineLayout = this.cachedPipelineLayouts.get(pipelineLayoutKey);
+    } else {
+      pipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [compute.bindGroupLayout]
+      });
+      this.cachedPipelineLayouts.set(pipelineLayoutKey, pipelineLayout);
+    }
     this.startDispatch();
-    let pipeline = device.createComputePipeline({
-      label: "compute pipeline",
-      layout: pipelineLayout,
-      compute: {
-        module: shader.payload,
-        entryPoint: "main"
-      }
-    });
+    let pipelineKey = pipelineLayoutKey;
+    let pipeline;
+    if (this.cachedPipelinesCompute.has(pipelineKey)) {
+      pipeline = this.cachedPipelinesCompute.get(pipelineKey);
+    } else {
+      pipeline = device.createComputePipeline({
+        label: "compute pipeline",
+        layout: pipelineLayout,
+        compute: {
+          module: shader.payload,
+          entryPoint: "main"
+        }
+      });
+      this.cachedPipelinesCompute.set(pipelineKey, pipeline);
+    }
     this.endDispatch();
     return {
       pipeline,
@@ -3681,6 +3692,7 @@ class WebGPUAdapter extends GraphicsAdapter {
     };
   }
   cachedPipelines = /* @__PURE__ */ new Map();
+  cachedPipelinesCompute = /* @__PURE__ */ new Map();
   cachedPipelineLayouts = /* @__PURE__ */ new Map();
   setupDrawPipeline(shaders, fragmentUniform, vertexUniform, options, ignoreVertexLayout = false) {
     const { device } = this.getGPU();
@@ -10020,7 +10032,8 @@ const makeShadeupEngine = async (canvas, options) => {
         maxComputeInvocationsPerWorkgroup: Math.min(
           1024,
           supported.maxComputeInvocationsPerWorkgroup
-        )
+        ),
+        ...options.limits || {}
       };
       console.log("WebGPU limits", requiredLimits);
       window.shadeupWebGPUDevice = await window.shadeupWebGPUAdapter.requestDevice({

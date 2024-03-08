@@ -1,16 +1,16 @@
 import * as __ from "shadeup/math";
 
 declare namespace ShadeupFiles {
-  declare namespace main {
-    /**__SHADEUP_STRUCT_INJECTION_HOOK__*/
-    export declare function setTexture(newTex: texture2d<__.float4>): void;
-    export declare function setModel(newModel: Model): void;
-    export declare function main(): void;
-  }
+
 }
 
 export declare function makeShadeupInstance(
-  canvas: HTMLCanvasElement
+  canvas: HTMLCanvasElement,
+  options?: {
+    preferredAdapter?: "webgl" | "webgpu";
+    limits?: GPUSupportedLimits;
+    ui?: boolean;
+  }
 ): Promise<{
   /**
    * Set to false to pause

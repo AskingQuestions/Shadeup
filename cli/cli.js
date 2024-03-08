@@ -63,10 +63,10 @@ function scanImports(baseFile) {
 program
   .name("shadeup")
   .description("CLI tool for compiling shadeup files")
-  .version("1.0.1")
+  .version("1.2.3")
   .option("-v")
   .action(async (opts) => {
-    console.log("Shadeup v1.0.1".magenta);
+    console.log("Shadeup v1.2.3".magenta);
     if (opts.v) {
       return;
     }
