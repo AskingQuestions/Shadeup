@@ -3,6 +3,7 @@
 import colors from "colors";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import inquirer from "inquirer";
 
 import { program } from "commander";
@@ -63,10 +64,10 @@ function scanImports(baseFile) {
 program
   .name("shadeup")
   .description("CLI tool for compiling shadeup files")
-  .version("1.2.3")
+  .version("1.3.0")
   .option("-v")
   .action(async (opts) => {
-    console.log("Shadeup v1.2.3".magenta);
+    console.log("Shadeup v1.3.0".magenta);
     if (opts.v) {
       return;
     }
@@ -263,7 +264,37 @@ program
     const electron = await import("electron");
     const proc = await import("node:child_process");
 
-    fs.writeFileSync(path.join(__dirname, "vite/runner.js"), ``);
+    // shadeup home dir for vite
+
+    const shadeupHome = path.join(os.homedir(), ".shadeup_vite");
+    // Copy entire vite directory to shadeup home dir
+    if (!fs.existsSync(shadeupHome)) {
+      fs.mkdirSync(shadeupHome);
+    }
+
+    const viteDir = path.join(__dirname, "vite");
+
+    fs.cpSync(viteDir, shadeupHome, { recursive: true });
+
+    // run npm install on the vite directory if node_modules doesn't exist
+    if (!fs.existsSync(path.join(shadeupHome, "/node_modules"))) {
+      console.log(shadeupHome);
+      console.log("Installing dependencies...");
+      proc.execSync("npm install", {
+        cwd: shadeupHome,
+        stdio: "inherit",
+      });
+    }
+
+    fs.writeFileSync(
+      path.join(__dirname, "vite/runner.js"),
+      `export const makeShadeupInstance = async (canvas) => {
+  return {
+    enableUI: async () => {},
+  };
+};
+`
+    );
 
     const child = proc.spawn(electron.default, [
       path.join(__dirname, "electron/main.js"),
@@ -277,23 +308,27 @@ program
       console.error(data.toString());
     });
 
-    const viteDir = path.join(__dirname, "vite");
-
     setupWatcher(
       file,
       {
-        output: path.join(viteDir, "runner.js"),
+        output: path.join(shadeupHome, "runner.js"),
       },
-      viteDir
+      shadeupHome
     );
 
     const vite = await import("vite");
     const server = await vite.createServer({
-      root: viteDir,
+      root: shadeupHome,
       server: {
         port: 5128,
       },
     });
+    child.on("close", (code) => {
+      console.log(`child process exited with code ${code}`);
+      server.close();
+      process.exit();
+    });
+
     await server.listen();
   });
 

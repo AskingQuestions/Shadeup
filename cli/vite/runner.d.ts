@@ -1,7 +1,27 @@
 import * as __ from "shadeup/math";
 
 declare namespace ShadeupFiles {
-
+  declare namespace sand {
+    export declare function pcg_hash(input: __.uint): __.uint;
+    export declare function main(): void;
+  }
+  declare namespace camera {
+    declare class CustomCamera2d {
+        constructor(data: {
+            position?: __.float2;
+            zoom?: __.float;
+        });
+        screenToCamera(screen: __.float2): __.float2;
+        cameraToScreen(camera: __.float2): __.float2;
+        transform(position: __.float2): __.float2;
+        zoomBy(zoom: __.float, center: __.float2): void;
+        position: __.float2;
+        zoom: __.float;
+        clone(): CustomCamera2d;
+    }
+    export declare function getCamera2d(): CustomCamera2d;
+    export {};
+  }
 }
 
 export declare function makeShadeupInstance(
@@ -21,9 +41,9 @@ export declare function makeShadeupInstance(
 
   adapter: any;
   hooks: {
-    beforeFrame?: () => {};
-    afterFrame?: () => {};
-    reset?: () => {};
+    beforeFrame?: () => void;
+    afterFrame?: () => void;
+    reset?: () => void;
   }[];
   start: () => void;
 
@@ -59,8 +79,8 @@ export declare function makeShadeupInstance(
   loadTextureFromImageLike: (
 		img: HTMLImageElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | HTMLVideoElement
 	) => Promise<__.texture2d<__.float4>>;
-	loadTexture2dFromURL: (url: string) =? Promise<__.texture2d<__.float4>>;
-	loadModelFromURL(urlGltf: string) => Promise<__.texture2d<__.float4>>;
+	loadTexture2dFromURL: (url: string) => Promise<__.texture2d<__.float4>>;
+	loadModelFromURL: (urlGltf: string) => Promise<__.texture2d<__.float4>>;
 
   files: typeof ShadeupFiles;
 }>;

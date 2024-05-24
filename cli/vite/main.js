@@ -3,8 +3,9 @@ import { makeShadeupInstance } from "./runner";
 
 const canvas = document.querySelector("#canvas");
 (async () => {
-  let engine = await makeShadeupInstance(canvas);
-  await engine.enableUI();
+  let engine = await makeShadeupInstance(canvas, {
+    ui: true,
+  });
 })();
 
 function sizeCanvas() {
