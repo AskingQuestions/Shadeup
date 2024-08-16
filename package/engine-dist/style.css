@@ -1,4 +1,4 @@
-.scrollbar.svelte-1lm5wxt{scrollbar-width:auto;scrollbar-color:rgb(63, 63, 63) #161616}.scrollbar.svelte-1lm5wxt::-webkit-scrollbar{width:0px}.scrollbar.svelte-1lm5wxt::-webkit-scrollbar-track{background:transparent}.scrollbar.svelte-1lm5wxt::-webkit-scrollbar-thumb{background-color:rgb(63, 63, 63);border-radius:10px;border:1px solid #161616}/*
+.scrollbar.svelte-1hee3iu::-webkit-scrollbar{width:6px}.scrollbar.svelte-1hee3iu::-webkit-scrollbar-track{background:#1b1b1b}.scrollbar.svelte-1hee3iu::-webkit-scrollbar-thumb{background:#0c0c0c;border-radius:100px}.scrollbar.svelte-1hee3iu::-webkit-scrollbar-thumb:hover{background:#0c0c0c}/*
 ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com
 *//*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -1163,10 +1163,15 @@ select {
 .floating-panel > .control-text:last-child {
   margin-bottom: 0.25rem;
 }
+
+.control-label + .control-checkbox {
+  margin-top: -1rem;
+}
+
 .hover\:border-purple-600:hover {
   --tw-border-opacity: 1;
   border-color: rgb(147 51 234 / var(--tw-border-opacity));
-}.control-label + .control-checkbox{margin-top:-1rem}/*
+}/*
 ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com
 *//*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -2331,6 +2336,11 @@ select {
 .floating-panel > .control-text:last-child {
   margin-bottom: 0.25rem;
 }
+
+.control-label + .control-checkbox {
+  margin-top: -1rem;
+}
+
 .hover\:border-purple-600:hover {
   --tw-border-opacity: 1;
   border-color: rgb(147 51 234 / var(--tw-border-opacity));

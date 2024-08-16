@@ -8822,6 +8822,8 @@ class ShadeupAssetLoader {
   primedTextureAssets = /* @__PURE__ */ new Map();
   registeredLibs = /* @__PURE__ */ new Set();
   engine;
+  onProgress = () => {
+  };
   constructor(engine) {
     this.engine = engine;
   }
@@ -8850,6 +8852,8 @@ class ShadeupAssetLoader {
     );
   }
   async loadAssets() {
+    let targetDownloadAmount = 0;
+    let currentDownloadAmount = 0;
     let promises = [];
     console.log("Loading assets", [...this.registeredLoads.keys()]);
     this.registeredLoads = this.registeredLoads.filter((load) => {
@@ -8863,6 +8867,46 @@ class ShadeupAssetLoader {
           if (key.startsWith("http")) {
             baseUrl = "";
           }
+          const downloadWithProgress = (url, onDone, buf = false) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.responseType = "arraybuffer";
+            xhr.crossOrigin = "anonymous";
+            let oldDownloadAmount = 0;
+            let oldDownloadTotal = 0;
+            xhr.onprogress = (e) => {
+              if (e.lengthComputable) {
+                currentDownloadAmount += e.loaded - oldDownloadAmount;
+                oldDownloadAmount = e.loaded;
+                targetDownloadAmount += e.total - oldDownloadTotal;
+                oldDownloadTotal = e.total;
+                console.log(
+                  "Progress",
+                  currentDownloadAmount,
+                  targetDownloadAmount,
+                  currentDownloadAmount / targetDownloadAmount
+                );
+                this.onProgress?.(currentDownloadAmount / targetDownloadAmount);
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                if (buf) {
+                  console.log("Loaded binary", key);
+                  onDone(xhr.response);
+                } else {
+                  const blob = new Blob([xhr.response], {
+                    type: xhr.getResponseHeader("Content-Type")
+                  });
+                  const url2 = URL.createObjectURL(blob);
+                  onDone(url2);
+                }
+              } else {
+                onDone(xhr.statusText);
+              }
+            };
+            xhr.send();
+          };
           if (type == "image") {
             await new Promise((resolve) => {
               let img = new Image();
@@ -8892,7 +8936,9 @@ class ShadeupAssetLoader {
                 this.primedTextureAssets.set(key, tex);
                 resolve();
               };
-              img.src = baseUrl + key;
+              downloadWithProgress(baseUrl + key, (url) => {
+                img.src = url;
+              });
             });
           } else if (type == "audio") {
             await new Promise((resolve) => {
@@ -8901,7 +8947,9 @@ class ShadeupAssetLoader {
                 this.loadedAssets.set(key, audio);
                 resolve();
               };
-              audio.src = baseUrl + key;
+              downloadWithProgress(baseUrl + key, (url) => {
+                audio.src = url;
+              });
             });
           } else if (type == "video") {
             await new Promise((resolve) => {
@@ -8910,159 +8958,186 @@ class ShadeupAssetLoader {
                 this.loadedAssets.set(key, video);
                 resolve();
               };
-              video.src = baseUrl + key;
+              downloadWithProgress(baseUrl + key, (url) => {
+                video.src = url;
+              });
             });
           } else {
-            let raw = fetch(baseUrl + key);
+            fetch(baseUrl + key);
             if (type == "binary") {
-              await raw.then((res) => res.arrayBuffer()).then((res) => {
-                this.loadedAssets.set(key, res);
+              await new Promise((resolve) => {
+                downloadWithProgress(
+                  baseUrl + key,
+                  (buf) => {
+                    this.loadedAssets.set(key, buf);
+                    resolve();
+                  },
+                  true
+                );
               });
             } else if (type == "text") {
-              await raw.then((res) => res.text()).then((res) => {
-                this.loadedAssets.set(key, res);
+              await new Promise((resolve) => {
+                downloadWithProgress(
+                  baseUrl + key,
+                  (buf) => {
+                    this.loadedAssets.set(key, buf.toString());
+                    resolve();
+                  },
+                  true
+                );
               });
             } else if (type == "model") {
-              await raw.then((res) => res.arrayBuffer()).then(async (res) => {
-                const { GLTFLoader } = await import('./GLTFLoader-94b38cf6.js');
-                const { Vector3, Mesh: THREEMesh, MeshStandardMaterial } = await import('./three.module-c8091b37.js');
-                const { DRACOLoader } = await import('./DRACOLoader-4fcd2f44.js');
-                const dracoLoader = new DRACOLoader();
-                dracoLoader.setDecoderPath("/lib/draco/");
-                const loader = new GLTFLoader();
-                loader.setDRACOLoader(dracoLoader);
-                let out = await new Promise((reso, rej) => {
-                  loader.parse(
-                    res,
-                    "",
-                    (d) => {
-                      reso(d);
-                    },
-                    (e) => {
-                      rej(e);
-                    }
-                  );
-                });
-                let parts = [];
-                let scene = out.scene;
-                function convertMesh(mesh) {
-                  let positions = [];
-                  let normals = [];
-                  let tangents = [];
-                  let bitangents = [];
-                  let uvs = [];
-                  let colors = [];
-                  let indices = [];
-                  if (mesh.geometry.index) {
-                    for (let i = 0; i < mesh.geometry.index.count; i++) {
-                      indices.push(mesh.geometry.index?.array[i]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.position) {
-                    for (let i = 0; i < mesh.geometry.attributes.position.array.length; i += 3) {
-                      positions.push([
-                        mesh.geometry.attributes.position.array[i],
-                        mesh.geometry.attributes.position.array[i + 1],
-                        mesh.geometry.attributes.position.array[i + 2]
-                      ]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.normal) {
-                    for (let i = 0; i < mesh.geometry.attributes.normal.array.length; i += 3) {
-                      normals.push([
-                        mesh.geometry.attributes.normal.array[i],
-                        mesh.geometry.attributes.normal.array[i + 1],
-                        mesh.geometry.attributes.normal.array[i + 2]
-                      ]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.tangent) {
-                    for (let i = 0; i < mesh.geometry.attributes.tangent.array.length; i += 4) {
-                      tangents.push([
-                        mesh.geometry.attributes.tangent.array[i],
-                        mesh.geometry.attributes.tangent.array[i + 1],
-                        mesh.geometry.attributes.tangent.array[i + 2]
-                      ]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.bitangent) {
-                    for (let i = 0; i < mesh.geometry.attributes.bitangent.array.length; i += 3) {
-                      bitangents.push([
-                        mesh.geometry.attributes.bitangent.array[i],
-                        mesh.geometry.attributes.bitangent.array[i + 1],
-                        mesh.geometry.attributes.bitangent.array[i + 2]
-                      ]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.uv) {
-                    for (let i = 0; i < mesh.geometry.attributes.uv.array.length; i += 2) {
-                      uvs.push([
-                        mesh.geometry.attributes.uv.array[i],
-                        mesh.geometry.attributes.uv.array[i + 1]
-                      ]);
-                    }
-                  }
-                  if (mesh.geometry.attributes.color) {
-                    for (let i = 0; i < mesh.geometry.attributes.color.array.length; i += 4) {
-                      colors.push([
-                        mesh.geometry.attributes.color.array[i],
-                        mesh.geometry.attributes.color.array[i + 1],
-                        mesh.geometry.attributes.color.array[i + 2],
-                        mesh.geometry.attributes.color.array[i + 3]
-                      ]);
-                    }
-                  }
-                  let m = new window.SHD_Mesh({});
-                  m.vertices = positions;
-                  m.normals = normals;
-                  m.uvs = uvs;
-                  m.colors = colors;
-                  m.triangles = indices;
-                  return m;
-                }
-                let that = this;
-                function convertTexMap(map) {
-                  let t = that.engine.shadeupMakeTextureFromImageLike(map.source.data);
-                  return t;
-                }
-                scene.traverse((obj) => {
-                  if (obj instanceof THREEMesh && obj.isMesh) {
-                    let mobj = obj;
-                    let m = convertMesh(mobj);
-                    let mat = mobj.material;
-                    let part = new window.SHD_ModelPart({});
-                    if (!Array.isArray(mat)) {
-                      let shdMat = new window.SHD_Material({});
-                      if (mat instanceof MeshStandardMaterial) {
-                        shdMat.baseColor = [mat.color.r, mat.color.g, mat.color.b, 1];
-                        if (mat.normalMap) {
-                          shdMat.normal = convertTexMap(mat.normalMap);
-                          shdMat.normalScale = [mat.normalScale.x, mat.normalScale.y];
+              await new Promise(async (resolve) => {
+                downloadWithProgress(
+                  baseUrl + key,
+                  async (res) => {
+                    const { GLTFLoader } = await import('./GLTFLoader-94b38cf6.js');
+                    const {
+                      Vector3,
+                      Mesh: THREEMesh,
+                      MeshStandardMaterial
+                    } = await import('./three.module-c8091b37.js');
+                    const { DRACOLoader } = await import('./DRACOLoader-4fcd2f44.js');
+                    const dracoLoader = new DRACOLoader();
+                    dracoLoader.setDecoderPath("/lib/draco/");
+                    const loader = new GLTFLoader();
+                    loader.setDRACOLoader(dracoLoader);
+                    let out = await new Promise((reso, rej) => {
+                      loader.parse(
+                        res,
+                        "",
+                        (d) => {
+                          reso(d);
+                        },
+                        (e) => {
+                          rej(e);
                         }
-                        if (mat.map) {
-                          shdMat.color = convertTexMap(mat.map);
+                      );
+                    });
+                    let parts = [];
+                    let scene = out.scene;
+                    function convertMesh(mesh) {
+                      let positions = [];
+                      let normals = [];
+                      let tangents = [];
+                      let bitangents = [];
+                      let uvs = [];
+                      let colors = [];
+                      let indices = [];
+                      if (mesh.geometry.index) {
+                        for (let i = 0; i < mesh.geometry.index.count; i++) {
+                          indices.push(mesh.geometry.index?.array[i]);
                         }
-                        if (mat.metalnessMap) {
-                          shdMat.metallic = convertTexMap(mat.metalnessMap);
-                        }
-                        if (mat.roughnessMap) {
-                          shdMat.roughness = convertTexMap(mat.roughnessMap);
-                        }
-                        if (mat.emissiveMap) {
-                          shdMat.emissive = convertTexMap(mat.emissiveMap);
-                        }
-                        part.material = shdMat;
                       }
+                      if (mesh.geometry.attributes.position) {
+                        for (let i = 0; i < mesh.geometry.attributes.position.array.length; i += 3) {
+                          positions.push([
+                            mesh.geometry.attributes.position.array[i],
+                            mesh.geometry.attributes.position.array[i + 1],
+                            mesh.geometry.attributes.position.array[i + 2]
+                          ]);
+                        }
+                      }
+                      if (mesh.geometry.attributes.normal) {
+                        for (let i = 0; i < mesh.geometry.attributes.normal.array.length; i += 3) {
+                          normals.push([
+                            mesh.geometry.attributes.normal.array[i],
+                            mesh.geometry.attributes.normal.array[i + 1],
+                            mesh.geometry.attributes.normal.array[i + 2]
+                          ]);
+                        }
+                      }
+                      if (mesh.geometry.attributes.tangent) {
+                        for (let i = 0; i < mesh.geometry.attributes.tangent.array.length; i += 4) {
+                          tangents.push([
+                            mesh.geometry.attributes.tangent.array[i],
+                            mesh.geometry.attributes.tangent.array[i + 1],
+                            mesh.geometry.attributes.tangent.array[i + 2]
+                          ]);
+                        }
+                      }
+                      if (mesh.geometry.attributes.bitangent) {
+                        for (let i = 0; i < mesh.geometry.attributes.bitangent.array.length; i += 3) {
+                          bitangents.push([
+                            mesh.geometry.attributes.bitangent.array[i],
+                            mesh.geometry.attributes.bitangent.array[i + 1],
+                            mesh.geometry.attributes.bitangent.array[i + 2]
+                          ]);
+                        }
+                      }
+                      if (mesh.geometry.attributes.uv) {
+                        for (let i = 0; i < mesh.geometry.attributes.uv.array.length; i += 2) {
+                          uvs.push([
+                            mesh.geometry.attributes.uv.array[i],
+                            mesh.geometry.attributes.uv.array[i + 1]
+                          ]);
+                        }
+                      }
+                      if (mesh.geometry.attributes.color) {
+                        for (let i = 0; i < mesh.geometry.attributes.color.array.length; i += 4) {
+                          colors.push([
+                            mesh.geometry.attributes.color.array[i],
+                            mesh.geometry.attributes.color.array[i + 1],
+                            mesh.geometry.attributes.color.array[i + 2],
+                            mesh.geometry.attributes.color.array[i + 3]
+                          ]);
+                        }
+                      }
+                      let m = new window.SHD_Mesh({});
+                      m.vertices = positions;
+                      m.normals = normals;
+                      m.uvs = uvs;
+                      m.colors = colors;
+                      m.triangles = indices;
+                      return m;
                     }
-                    part.mesh = m;
-                    let world = obj.getWorldPosition(new Vector3());
-                    part.position = [world.x, world.y, world.z];
-                    parts.push(part);
-                  }
-                });
-                let model = new window.SHD_Model({});
-                model.parts = parts;
-                this.loadedAssets.set(key, model);
+                    let that = this;
+                    function convertTexMap(map) {
+                      let t = that.engine.shadeupMakeTextureFromImageLike(map.source.data);
+                      return t;
+                    }
+                    scene.traverse((obj) => {
+                      if (obj instanceof THREEMesh && obj.isMesh) {
+                        let mobj = obj;
+                        let m = convertMesh(mobj);
+                        let mat = mobj.material;
+                        let part = new window.SHD_ModelPart({});
+                        if (!Array.isArray(mat)) {
+                          let shdMat = new window.SHD_Material({});
+                          if (mat instanceof MeshStandardMaterial) {
+                            shdMat.baseColor = [mat.color.r, mat.color.g, mat.color.b, 1];
+                            if (mat.normalMap) {
+                              shdMat.normal = convertTexMap(mat.normalMap);
+                              shdMat.normalScale = [mat.normalScale.x, mat.normalScale.y];
+                            }
+                            if (mat.map) {
+                              shdMat.color = convertTexMap(mat.map);
+                            }
+                            if (mat.metalnessMap) {
+                              shdMat.metallic = convertTexMap(mat.metalnessMap);
+                            }
+                            if (mat.roughnessMap) {
+                              shdMat.roughness = convertTexMap(mat.roughnessMap);
+                            }
+                            if (mat.emissiveMap) {
+                              shdMat.emissive = convertTexMap(mat.emissiveMap);
+                            }
+                            part.material = shdMat;
+                          }
+                        }
+                        part.mesh = m;
+                        let world = obj.getWorldPosition(new Vector3());
+                        part.position = [world.x, world.y, world.z];
+                        parts.push(part);
+                      }
+                    });
+                    let model = new window.SHD_Model({});
+                    model.parts = parts;
+                    this.loadedAssets.set(key, model);
+                    resolve();
+                  },
+                  true
+                );
               });
             }
           }
@@ -9073,6 +9148,26 @@ class ShadeupAssetLoader {
     console.log("Loaded assets", [...this.loadedAssets.keys()]);
   }
 }
+
+(function() {
+  var timeouts = [];
+  var messageName = "zero-timeout-message";
+  function setZeroTimeout(fn) {
+    timeouts.push(fn);
+    window.postMessage(messageName, "*");
+  }
+  function handleMessage(event) {
+    if (event.source == window && event.data == messageName) {
+      event.stopPropagation();
+      if (timeouts.length > 0) {
+        var fn = timeouts.shift();
+        fn();
+      }
+    }
+  }
+  window.addEventListener("message", handleMessage, true);
+  window.setZeroTimeout = setZeroTimeout;
+})();
 
 class ShadeupEngine {
   adapter;
@@ -9127,6 +9222,7 @@ class ShadeupEngine {
   statsGraphMark = /* @__PURE__ */ new Map();
   hooks = [];
   preferredAdapter = "webgpu";
+  onFirstFrame;
   constructor(canvas, adapter) {
     this.canvas = canvas;
     this.adapter = adapter;
@@ -9418,6 +9514,7 @@ class ShadeupEngine {
         (async () => {
           await this.adapter.waitForDraw();
           window.parent.postMessage({ type: "firstFrame" }, "*");
+          this.onFirstFrame?.();
         })();
       }
     }
@@ -10057,8 +10154,8 @@ const makeShadeupEngine = async (canvas, options) => {
   const cameraHook = addCameraHook(engine);
   engine.hooks.push(cameraHook);
   engine.enableUI = async () => {
-    const { addUIHook } = await import('./ui-37189365.js');
-    const cssLink = await import('./host-f3c963cd.js');
+    const { addUIHook } = await import('./ui-f4b4a003.js');
+    const cssLink = await import('./host-fa5c0296.js');
     let style = document.createElement("style");
     style.innerHTML = cssLink.default;
     document.head.appendChild(style);

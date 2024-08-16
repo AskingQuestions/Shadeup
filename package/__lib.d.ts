@@ -1,7 +1,9 @@
 import * as __ from "shadeup/math";
 
 declare namespace ShadeupFiles {
-
+  declare namespace __lib {
+    export {};
+  }
 }
 
 export declare function makeShadeupInstance(
@@ -9,6 +11,7 @@ export declare function makeShadeupInstance(
   options?: {
     preferredAdapter?: "webgl" | "webgpu";
     limits?: GPUSupportedLimits;
+    ui?: boolean;
   }
 ): Promise<{
   /**
@@ -20,9 +23,9 @@ export declare function makeShadeupInstance(
 
   adapter: any;
   hooks: {
-    beforeFrame?: () => {};
-    afterFrame?: () => {};
-    reset?: () => {};
+    beforeFrame?: () => void;
+    afterFrame?: () => void;
+    reset?: () => void;
   }[];
   start: () => void;
 
@@ -58,8 +61,8 @@ export declare function makeShadeupInstance(
   loadTextureFromImageLike: (
 		img: HTMLImageElement | HTMLCanvasElement | ImageBitmap | OffscreenCanvas | HTMLVideoElement
 	) => Promise<__.texture2d<__.float4>>;
-	loadTexture2dFromURL: (url: string) =? Promise<__.texture2d<__.float4>>;
-	loadModelFromURL(urlGltf: string) => Promise<__.texture2d<__.float4>>;
+	loadTexture2dFromURL: (url: string) => Promise<__.texture2d<__.float4>>;
+	loadModelFromURL: (urlGltf: string) => Promise<__.texture2d<__.float4>>;
 
   files: typeof ShadeupFiles;
 }>;
