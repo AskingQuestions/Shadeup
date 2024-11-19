@@ -10108,10 +10108,6 @@ const makeShadeupEngine = async (canvas, options) => {
       if (!window.shadeupWebGPUAdapter) {
         throw new Error("WebGPU not supported");
       }
-      console.log(
-        "Using WebGPU adapter",
-        await window.shadeupWebGPUAdapter.requestAdapterInfo()
-      );
       let supported = await window.shadeupWebGPUAdapter.limits;
       let requiredLimits = {
         maxStorageBufferBindingSize: Math.min(
